@@ -20,6 +20,7 @@ try(){
 
 try 0 0
 try 45 45
+try 6 '5+10-9'
 
 echo OK
 
