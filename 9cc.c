@@ -130,6 +130,8 @@ typedef enum{
   ND_SUB, // -
   ND_MUL, // *
   ND_DIV, // /
+  ND_EQU, // ==
+  ND_NEQ, // !=
   ND_NUM, // number
 } NodeKind;
 
@@ -162,6 +164,8 @@ Node* new_node_num(int val){
 
 Node* num();
 Node* expr();
+Node* equality();
+Node* relational();
 Node* mul();
 Node* term();
 Node* unary();
@@ -171,8 +175,28 @@ Node* num(){
   return new_node_num(expect_number());
 }
 
-//ENBF expr = mul ( "+" mul | "-" mul )*
+//ENBF expr = equality
 Node* expr(){
+  return equality();
+}
+
+// ENBF equality = relational ( "==" relational | "!=" relatinal ) *
+Node* equality(){
+  Node* node = relational();
+
+  for(;;){
+    if(consume("==")){
+      node = new_node(ND_EQU, node, relational());
+    }else if(consume("!=")){
+      node = new_node(ND_NEQ, node, relational());
+    }else{
+      return node;
+    }
+  }
+  
+}
+// ENBF relational = mul ( "+" mul | "-" mul )*
+Node* relational(){
   Node* node = mul();
   
   for(;;){
@@ -250,6 +274,11 @@ void gen(Node* node){
   case ND_DIV:
     printf("  cqo\n");
     printf("  idiv rdi\n");
+    break;
+  case ND_EQU:
+    printf("  cmp rax, rdi\n");
+    printf("  sete al\n");
+    printf("  movzb rax, al\n");
     break;
   }
   printf("  push rax\n");

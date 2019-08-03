@@ -47,6 +47,9 @@ try 1 "((4-2)*2 - 2)/(3-1)"
 try 5 "-3+8"
 try 6 "-2*(-3)"
 try 0 "-(2+1)*+5+15"
+# introduced ==  operator
+try 1 "1==1"
+try 0 "2==(3*2)"
 echo OK
 
 
