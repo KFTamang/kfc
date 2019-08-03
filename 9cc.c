@@ -151,6 +151,7 @@ Node* num();
 Node* expr();
 Node* mul();
 Node* term();
+Node* unary();
 
 // ENBF terminal symbol for number
 Node *num(){
@@ -172,15 +173,15 @@ Node *expr(){
   }
 }
 
-// ENBF mul = term ( "*" term | "/" term )*
+// ENBF mul = unary ( "*" unary | "/" unary )*
 Node *mul(){
-  Node *node = term();
+  Node *node = unary();
 
   for(;;){
     if(consume('*')){
-      node = new_node(ND_MUL, node, term());
+      node = new_node(ND_MUL, node, unary());
     }else if(consume('/')){
-      node = new_node(ND_DIV, node, term());
+      node = new_node(ND_DIV, node, unary());
     }else{
       return node;
     }
@@ -197,6 +198,16 @@ Node *term(){
   return num();
 }
 
+// ENBF unary = ('+' | '-')? term
+Node *unary(){
+  if(consume('+')){
+    return term();
+  }
+  if(consume('-')){
+    return new_node(ND_SUB,new_node_num(0), term());
+  }
+  return term();
+}
 
 // generate stack machine from the sytax tree
 // only print syntax tree

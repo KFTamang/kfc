@@ -43,6 +43,10 @@ try 10 "40/2 -30/3*2 + 5*2"
 # introduced ()
 try 6 "2*(2+1)"
 try 1 "((4-2)*2 - 2)/(3-1)"
+# introduced unary like -1, +3
+try 5 "-3+8"
+try 6 "-2*(-3)"
+try 0 "-(2+1)*+5+15"
 echo OK
 
 
