@@ -22,11 +22,11 @@ struct Token{
 };
 
 // curent token in interest
-Token *token;
-char *user_input;
+Token* token;
+char* user_input;
 
 // error messager
-void error(char *fmt, ...){
+void error(char* fmt, ...){
   va_list ap;
   va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
@@ -34,7 +34,7 @@ void error(char *fmt, ...){
   exit(1);
 }
 
-void error_at(char *loc, char *fmt, ...){
+void error_at(char* loc, char* fmt, ...){
   va_list ap;
   va_start(ap, fmt);
 
@@ -47,7 +47,7 @@ void error_at(char *loc, char *fmt, ...){
   exit(1);
 }
 
-bool consume(char *op){
+bool consume(char* op){
   if(token->kind != TK_RESERVED ||
      strlen(op) != token->len   ||
      memcmp(token->str, op, token->len) ){
@@ -79,8 +79,8 @@ bool at_eof(){
   return token->kind == TK_EOF;
 }
 
-Token *new_token(TokenKind kind, Token *cur, char *str, int len){
-  Token *tok = calloc(1, sizeof(Token));
+Token* new_token(TokenKind kind, Token* cur, char* str, int len){
+  Token* tok = calloc(1, sizeof(Token));
   tok->kind = kind;
   tok->str = str;
   tok->len = len;
@@ -88,10 +88,10 @@ Token *new_token(TokenKind kind, Token *cur, char *str, int len){
   return tok;
 }
 
-Token *tokenize(char *p){
+Token* tokenize(char* p){
   Token head;
   head.next = NULL;
-  Token *cur = &head;
+  Token* cur = &head;
 
   while(*p){
     if (isspace(*p)){
@@ -138,14 +138,14 @@ typedef struct Node Node;
 // abstract syntax tree
 struct Node {
   NodeKind kind; // node kind
-  Node *lhs;     // pointer to left hand side
-  Node *rhs;     // pointer to right hand side
+  Node* lhs;     // pointer to left hand side
+  Node* rhs;     // pointer to right hand side
   int val;       // value if kind is ND_NUM
 };
 
 // node generator if not number
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs){
-  Node *node = calloc(1, sizeof(Node));
+Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
+  Node* node = calloc(1, sizeof(Node));
   node->kind = kind;
   node->lhs  = lhs;
   node->rhs  = rhs;
@@ -153,7 +153,7 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs){
 }
 
 // node generator if number (meaning end node)
-Node *new_node_num(int val){
+Node* new_node_num(int val){
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_NUM;
   node->val  = val;
@@ -167,13 +167,13 @@ Node* term();
 Node* unary();
 
 // ENBF terminal symbol for number
-Node *num(){
+Node* num(){
   return new_node_num(expect_number());
 }
 
 //ENBF expr = mul ( "+" mul | "-" mul )*
-Node *expr(){
-  Node *node = mul();
+Node* expr(){
+  Node* node = mul();
   
   for(;;){
     if(consume("+")){
@@ -187,8 +187,8 @@ Node *expr(){
 }
 
 // ENBF mul = unary ( "*" unary | "/" unary )*
-Node *mul(){
-  Node *node = unary();
+Node* mul(){
+  Node* node = unary();
 
   for(;;){
     if(consume("*")){
@@ -202,7 +202,7 @@ Node *mul(){
 }
 
 // ENBF term = ( expr ) | num
-Node *term(){
+Node* term(){
   if(consume("(")){
     Node* node = expr();
     expect(")");
@@ -212,7 +212,7 @@ Node *term(){
 }
 
 // ENBF unary = ("+" | "-")? term
-Node *unary(){
+Node* unary(){
   if(consume("+")){
     return term();
   }
