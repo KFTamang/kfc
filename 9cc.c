@@ -160,14 +160,11 @@ Node *num(){
 //ENBF expr = mul ( "+" mul | "-" mul )*
 Node *expr(){
   Node *node = mul();
-  //  printf("%d",node->val); // for debug
   
   for(;;){
     if(consume('+')){
-      //      printf("+"); // for debug
       node = new_node(ND_ADD, node, mul());
     }else if(consume('-')){
-      //      printf("-"); // for debug
       node = new_node(ND_SUB, node, mul());
     }else{
       return node;
@@ -207,7 +204,6 @@ Node *term(){
 void gen(Node* node){
   if(node->kind == ND_NUM){
     printf("  push %d\n", node->val);
-    //    printf("%d\n",node->val); // for debug
     return;
   }
     
@@ -220,11 +216,9 @@ void gen(Node* node){
   switch(node->kind){
   case ND_ADD:
     printf("  add rax, rdi\n");
-    //    printf("+\n"); // for debug
     break;
   case ND_SUB:
     printf("  sub rax, rdi\n");
-    //    printf("-\n"); // for debug
     break;
   case ND_MUL:
     printf("  imul rax, rdi\n");
