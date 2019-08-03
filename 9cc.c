@@ -208,6 +208,10 @@ Node* relational(){
       node = new_node(ND_LWT, node, add());
     }else if(consume("<=")){
       node = new_node(ND_LEQ, node, add());
+    }else if(consume(">")){
+      node = new_node(ND_LWT, add(), node);
+    }else if(consume(">=")){
+      node = new_node(ND_LEQ, add(), node);
     }else{
       return node;
     }
