@@ -54,6 +54,12 @@ try 0 "2==(3*2)"
 try 0 "1!=1"
 try 1 "(2/1+1)!=(3*2)"
 try 1 "((2!=(3*2))==1)"
+# introduced < and <=  operator
+try 1 "1<2"
+try 0 "1<1"
+try 1 "1<=2"
+try 1 "1<=1"
+try 0 "(2*3)<(4/2)"
 echo OK
 
 

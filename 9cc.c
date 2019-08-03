@@ -132,6 +132,8 @@ typedef enum{
   ND_DIV, // /
   ND_EQU, // ==
   ND_NEQ, // !=
+  ND_LWT, // <
+  ND_LEQ, // <=
   ND_NUM, // number
 } NodeKind;
 
@@ -166,6 +168,7 @@ Node* num();
 Node* expr();
 Node* equality();
 Node* relational();
+Node* add();
 Node* mul();
 Node* term();
 Node* unary();
@@ -195,8 +198,24 @@ Node* equality(){
   }
   
 }
-// ENBF relational = mul ( "+" mul | "-" mul )*
+
+// ENBF relational = add ("<" add | "<=" add | ">" add | ">=" add) *
 Node* relational(){
+  Node* node = add();
+  
+  for(;;){
+    if(consume("<")){
+      node = new_node(ND_LWT, node, add());
+    }else if(consume("<=")){
+      node = new_node(ND_LEQ, node, add());
+    }else{
+      return node;
+    }
+  }
+}
+
+// ENBF add = mul ( "+" mul | "-" mul )*
+Node* add(){
   Node* node = mul();
   
   for(;;){
@@ -283,6 +302,16 @@ void gen(Node* node){
   case ND_NEQ:
     printf("  cmp rax, rdi\n");
     printf("  setne al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_LWT:
+    printf("  cmp rax, rdi\n");
+    printf("  setl al\n");
+    printf("  movzb rax, al\n");
+    break;
+  case ND_LEQ:
+    printf("  cmp rax, rdi\n");
+    printf("  setle al\n");
     printf("  movzb rax, al\n");
     break;
   }
