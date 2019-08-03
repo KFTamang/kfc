@@ -14,10 +14,11 @@ typedef enum{
 typedef struct Token Token;
 
 struct Token{
-  TokenKind kind;
-  Token *next;
-  int val;
-  char *str;
+  TokenKind kind; // token type symbol, number, end of file
+  Token *next;    // pointer to next token
+  int val;        // integer value if number
+  char *str;      // token content if symbol
+  int len;        // length of token 
 };
 
 // curent token in interest
@@ -46,23 +47,27 @@ void error_at(char *loc, char *fmt, ...){
   exit(1);
 }
 
-bool consume(char op){
-  if (token->kind != TK_RESERVED || token->str[0] != op){
+bool consume(char *op){
+  if(token->kind != TK_RESERVED ||
+     strlen(op) != token->len   ||
+     memcmp(token->str, op, token->len) ){
     return false;
   }
   token = token->next;
   return true;
 }
 
-void expect(char op){
-  if (token->kind != TK_RESERVED || token->str[0] != op){
+void expect(char* op){
+  if(token->kind != TK_RESERVED ||
+     strlen(op) != token->len   ||
+     memcmp(token->str, op, token->len) ){
     error_at(token->str, "Not %s", op);
   }
   token = token->next;
 }
 
 int expect_number(){
-  if (token->kind != TK_NUM){
+  if(token->kind != TK_NUM){
     error_at(token->str, "Not a number");
   }
   int val = token->val;
@@ -74,10 +79,11 @@ bool at_eof(){
   return token->kind == TK_EOF;
 }
 
-Token *new_token(TokenKind kind, Token *cur, char *str){
+Token *new_token(TokenKind kind, Token *cur, char *str, int len){
   Token *tok = calloc(1, sizeof(Token));
   tok->kind = kind;
   tok->str = str;
+  tok->len = len;
   cur->next = tok;
   return tok;
 }
@@ -92,13 +98,20 @@ Token *tokenize(char *p){
       p++;
       continue;
     }
-
-    if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'){
-      cur = new_token(TK_RESERVED, cur, p++);
+    if(strncmp(p,"==",2) == 0 || strncmp(p,">=",2) == 0 ||
+       strncmp(p,"<=",2) == 0 || strncmp(p,"!=",2) == 0 ){
+      cur = new_token(TK_RESERVED, cur, p, 2);
+      p += 2;
+      continue;
+    }
+    if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'||
+	*p == '<' || *p == '>'){
+      cur = new_token(TK_RESERVED, cur, p, 1);
+      p++;
       continue;
     }
     if (isdigit(*p)){
-      cur = new_token(TK_NUM, cur, p);
+      cur = new_token(TK_NUM, cur, p, 1);
       cur->val = strtol(p, &p, 10);
       continue;
     }
@@ -106,7 +119,7 @@ Token *tokenize(char *p){
     error_at(cur->str, "Failed tokenizing\n");
   }
 
-  new_token(TK_EOF, cur, p);
+  new_token(TK_EOF, cur, p, 1);
   return head.next;
 
 }
@@ -163,9 +176,9 @@ Node *expr(){
   Node *node = mul();
   
   for(;;){
-    if(consume('+')){
+    if(consume("+")){
       node = new_node(ND_ADD, node, mul());
-    }else if(consume('-')){
+    }else if(consume("-")){
       node = new_node(ND_SUB, node, mul());
     }else{
       return node;
@@ -178,9 +191,9 @@ Node *mul(){
   Node *node = unary();
 
   for(;;){
-    if(consume('*')){
+    if(consume("*")){
       node = new_node(ND_MUL, node, unary());
-    }else if(consume('/')){
+    }else if(consume("/")){
       node = new_node(ND_DIV, node, unary());
     }else{
       return node;
@@ -190,20 +203,20 @@ Node *mul(){
 
 // ENBF term = ( expr ) | num
 Node *term(){
-  if(consume('(')){
+  if(consume("(")){
     Node* node = expr();
-    expect(')');
+    expect(")");
     return node;
   }
   return num();
 }
 
-// ENBF unary = ('+' | '-')? term
+// ENBF unary = ("+" | "-")? term
 Node *unary(){
-  if(consume('+')){
+  if(consume("+")){
     return term();
   }
-  if(consume('-')){
+  if(consume("-")){
     return new_node(ND_SUB,new_node_num(0), term());
   }
   return term();
@@ -243,11 +256,16 @@ void gen(Node* node){
 
 }
 
+size_t hoge(char* op){
+  return strlen(op);
+}
+
 int main(int argc, char **argv){
   if (argc != 2){
     fprintf(stderr, "wrong number of arguments\n");
   return 1;
   }
+
 
   // tokenize and parse
   user_input = argv[1];
