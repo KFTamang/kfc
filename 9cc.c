@@ -149,44 +149,45 @@ Node *new_node_num(int val){
 
 Node* num();
 Node* expr();
+Node* mul();
 
 // ENBF terminal symbol for number
 Node *num(){
   return new_node_num(expect_number());
 }
 
-//ENBF expr = num ( "+" num | "-" num )*
+//ENBF expr = mul ( "+" mul | "-" mul )*
 Node *expr(){
-  Node *node = num();
+  Node *node = mul();
   //  printf("%d",node->val); // for debug
   
   for(;;){
     if(consume('+')){
       //      printf("+"); // for debug
-      node = new_node(ND_ADD, node, num());
+      node = new_node(ND_ADD, node, mul());
     }else if(consume('-')){
       //      printf("-"); // for debug
-      node = new_node(ND_SUB, node, num());
+      node = new_node(ND_SUB, node, mul());
     }else{
       return node;
     }
   }
 }
 
-/* // ENBF mul = num ( "*" num | "/" num )* */
-/* Node *mul(){ */
-/*   Node *node = new_node_num(expect_number()); */
+// ENBF mul = num ( "*" num | "/" num )*
+Node *mul(){
+  Node *node = num();
 
-/*   for(;;){ */
-/*     if(consume('*')){ */
-/*       node = new_node(ND_MUL, node, ); */
-/*     }else if(consume('/')){ */
-/*       node = new_node(ND_DIV, node, term()); */
-/*     }else{ */
-/*       return node; */
-/*     } */
-/*   } */
-/* } */
+  for(;;){
+    if(consume('*')){
+      node = new_node(ND_MUL, node, num());
+    }else if(consume('/')){
+      node = new_node(ND_DIV, node, num());
+    }else{
+      return node;
+    }
+  }
+}
 
 /* // ENBF term = ( expr ) | num */
 /* Node *term(){ */
@@ -224,9 +225,9 @@ void gen(Node* node){
     printf("  sub rax, rdi\n");
     //    printf("-\n"); // for debug
     break;
-  default:
-    printf("hoge");
-    
+  case ND_MUL:
+    printf("  imul rax, rdi\n");
+    break;
   }
   printf("  push rax\n");
 

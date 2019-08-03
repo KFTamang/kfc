@@ -13,6 +13,7 @@ try(){
 	echo "$input => $actual"
     else
 	echo "$input => $expected expected, but got $actual"
+	cat tmp.s
 	exit 1
     fi
 
@@ -28,6 +29,10 @@ try 12 "30 - 3 - 4 -5-6"
 #try -16 "2 - 3 - 4 -5-6" # negative number not yet implemented
 try 150 "90 - 10 + 120 - 30 + 10 - 20 + 30 - 40"
 try 0 "90-100+1+14-29+24"
+try 2 "1*2"
+try 42 "2*20 + 2"
+try 30 "5*2 + 10*2"
+try 35 "5 + 1* 2*5+10 *2"
 echo OK
 
 
