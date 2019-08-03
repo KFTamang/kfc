@@ -93,7 +93,7 @@ Token *tokenize(char *p){
       continue;
     }
 
-    if (*p == '+' || *p == '-'){
+    if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'){
       cur = new_token(TK_RESERVED, cur, p++);
       continue;
     }
@@ -111,33 +111,146 @@ Token *tokenize(char *p){
 
 }
 
+// node kind of abstract syntax tree
+typedef enum{
+  ND_ADD, // +
+  ND_SUB, // -
+  ND_MUL, // *
+  ND_DIV, // /
+  ND_NUM, // number
+} NodeKind;
+
+typedef struct Node Node;
+
+// abstract syntax tree
+struct Node {
+  NodeKind kind; // node kind
+  Node *lhs;     // pointer to left hand side
+  Node *rhs;     // pointer to right hand side
+  int val;       // value if kind is ND_NUM
+};
+
+// node generator if not number
+Node *new_node(NodeKind kind, Node *lhs, Node *rhs){
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = kind;
+  node->lhs  = lhs;
+  node->rhs  = rhs;
+  return node;
+}
+
+// node generator if number (meaning end node)
+Node *new_node_num(int val){
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_NUM;
+  node->val  = val;
+  return node;
+}
+
+Node* num();
+Node* expr();
+
+// ENBF terminal symbol for number
+Node *num(){
+  return new_node_num(expect_number());
+}
+
+//ENBF expr = num ( "+" num | "-" num )*
+Node *expr(){
+  Node *node = num();
+  //  printf("%d",node->val); // for debug
+  
+  for(;;){
+    if(consume('+')){
+      //      printf("+"); // for debug
+      node = new_node(ND_ADD, node, num());
+    }else if(consume('-')){
+      //      printf("-"); // for debug
+      node = new_node(ND_SUB, node, num());
+    }else{
+      return node;
+    }
+  }
+}
+
+/* // ENBF mul = num ( "*" num | "/" num )* */
+/* Node *mul(){ */
+/*   Node *node = new_node_num(expect_number()); */
+
+/*   for(;;){ */
+/*     if(consume('*')){ */
+/*       node = new_node(ND_MUL, node, ); */
+/*     }else if(consume('/')){ */
+/*       node = new_node(ND_DIV, node, term()); */
+/*     }else{ */
+/*       return node; */
+/*     } */
+/*   } */
+/* } */
+
+/* // ENBF term = ( expr ) | num */
+/* Node *term(){ */
+/*   if(consume('(')){ */
+/*     Node* node = expr(); */
+/*     expect(')'); */
+/*     return node; */
+/*   } */
+/*   return new_node_num(expect_number()); */
+/* } */
+
+
+// generate stack machine from the sytax tree
+// only print syntax tree
+// TODO: implement stack machine
+void gen(Node* node){
+  if(node->kind == ND_NUM){
+    printf("  push %d\n", node->val);
+    //    printf("%d\n",node->val); // for debug
+    return;
+  }
+    
+  gen(node->lhs);
+  gen(node->rhs);
+
+  printf("  pop rdi\n");
+  printf("  pop rax\n");
+
+  switch(node->kind){
+  case ND_ADD:
+    printf("  add rax, rdi\n");
+    //    printf("+\n"); // for debug
+    break;
+  case ND_SUB:
+    printf("  sub rax, rdi\n");
+    //    printf("-\n"); // for debug
+    break;
+  default:
+    printf("hoge");
+    
+  }
+  printf("  push rax\n");
+
+}
+
 int main(int argc, char **argv){
   if (argc != 2){
     fprintf(stderr, "wrong number of arguments\n");
   return 1;
   }
 
+  // tokenize and parse
   user_input = argv[1];
-  
-  token = tokenize(argv[1]);
+  token = tokenize(user_input);
+  Node* node = expr();
 
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
   printf("main:\n");
 
-  printf("  mov rax, %d\n", expect_number());
-
-  while(!at_eof()){
-
-    if (consume('+')){
-      printf("  add rax, %d\n", expect_number());
-      continue;
-    }
-
-    expect('-');
-    printf("  sub rax, %d\n", expect_number());
-  }
+  // climbing down the tree and generate code
+  gen(node);
   
+  printf("  pop rax\n");
   printf("  ret\n");
   return 0;
 }
