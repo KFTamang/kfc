@@ -29,15 +29,20 @@ try 12 "30 - 3 - 4 -5-6"
 #try -16 "2 - 3 - 4 -5-6" # negative number not yet implemented
 try 150 "90 - 10 + 120 - 30 + 10 - 20 + 30 - 40"
 try 0 "90-100+1+14-29+24"
+# introduced multiplication
 try 2 "1*2"
 try 42 "2*20 + 2"
 try 30 "5*2 + 10*2"
 try 35 "5 + 1* 2*5+10 *2"
+# introduced division
 try 6 "30/5"
 try 12 "30/5*2"
 try 3 "30/5/2"
 try 1 "30/5/2/2" # rounded down
 try 10 "40/2 -30/3*2 + 5*2"
+# introduced ()
+try 6 "2*(2+1)"
+try 1 "((4-2)*2 - 2)/(3-1)"
 echo OK
 
 

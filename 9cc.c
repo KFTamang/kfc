@@ -150,6 +150,7 @@ Node *new_node_num(int val){
 Node* num();
 Node* expr();
 Node* mul();
+Node* term();
 
 // ENBF terminal symbol for number
 Node *num(){
@@ -174,30 +175,30 @@ Node *expr(){
   }
 }
 
-// ENBF mul = num ( "*" num | "/" num )*
+// ENBF mul = term ( "*" term | "/" term )*
 Node *mul(){
-  Node *node = num();
+  Node *node = term();
 
   for(;;){
     if(consume('*')){
-      node = new_node(ND_MUL, node, num());
+      node = new_node(ND_MUL, node, term());
     }else if(consume('/')){
-      node = new_node(ND_DIV, node, num());
+      node = new_node(ND_DIV, node, term());
     }else{
       return node;
     }
   }
 }
 
-/* // ENBF term = ( expr ) | num */
-/* Node *term(){ */
-/*   if(consume('(')){ */
-/*     Node* node = expr(); */
-/*     expect(')'); */
-/*     return node; */
-/*   } */
-/*   return new_node_num(expect_number()); */
-/* } */
+// ENBF term = ( expr ) | num
+Node *term(){
+  if(consume('(')){
+    Node* node = expr();
+    expect(')');
+    return node;
+  }
+  return num();
+}
 
 
 // generate stack machine from the sytax tree
