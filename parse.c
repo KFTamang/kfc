@@ -94,10 +94,6 @@ Node* new_node_num(int val){
   return node;
 }
 
-// ENBF terminal symbol for number
-Node* num(){
-  return new_node_num(expect_number());
-}
 
 //ENBF expr = equality
 Node* expr(){
@@ -190,3 +186,7 @@ Node* unary(){
   return term();
 }
 
+// ENBF terminal symbol for number
+Node* num(){
+  return new_node_num(expect_number());
+}

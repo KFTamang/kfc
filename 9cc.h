@@ -9,9 +9,9 @@
 
 // tokenizer
 typedef enum{
-  TK_RESERVED,
-  TK_NUM,
-  TK_EOF,
+  TK_RESERVED, // symbol
+  TK_IDENT,    // identifier
+  TK_EOF,      // end of file
 } TokenKind;
 
 typedef struct Token Token;
@@ -61,7 +61,6 @@ struct Node {
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
-Node* num();
 Node* expr();
 Node* equality();
 Node* relational();
@@ -69,6 +68,7 @@ Node* add();
 Node* mul();
 Node* term();
 Node* unary();
+Node* num();
 
 // code generator
 void gen(Node* node);
