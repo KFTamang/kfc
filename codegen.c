@@ -1,10 +1,50 @@
 #include "9cc.h"
 
+// syntax tree print function for debug
+void tree_print(Node* node, int i){
+  switch(node->kind){
+  case ND_NUM:
+    printf("%d:num:%d\n", i, node->val);
+    return;
+  case ND_LVAR:
+    printf("%d:var:%c\n", i, node->offset/8+'a'-1);
+    return;
+  }
+  
+  ++i;
+  tree_print(node->lhs, i);
+  printf("- - - -\n");
+  tree_print(node->rhs, i);
+
+  --i;
+  printf("-------\n");
+  printf("%d:%d\n", i, node->kind);
+  return;
+  
+}
+
 // generate stack machine from the sytax tree
 void gen(Node* node){
-  if(node->kind == ND_NUM){
+  switch(node->kind){
+  case ND_NUM:
     printf("  push %d\n", node->val);
     return;
+  case ND_LVAR:
+    gen_lval(node);
+    printf("  pop rax\n");
+    printf("  mov rax, [rax]\n");
+    printf("  push rax\n");
+    return;
+  case ND_ASSIGN:
+    gen_lval(node->lhs);
+    gen(node->rhs);
+    
+    printf("  pop rdi\n");
+    printf("  pop rax\n");
+    printf("  mov [rax], rdi\n");
+    printf("  push rdi\n");
+    return;
+
   }
     
   gen(node->lhs);
@@ -51,3 +91,19 @@ void gen(Node* node){
   printf("  push rax\n");
 
 }
+
+void gen_lval(Node* node){
+  if(node->kind != ND_LVAR){
+    printf("%d\n",node->kind);
+    error("left hand side is not a variable");
+  }
+
+  printf("  mov rax, rbp\n");
+  printf("  sub rax, %d\n", node->offset);
+  printf("  push rax\n");
+
+}
+
+
+
+

@@ -11,6 +11,7 @@
 typedef enum{
   TK_RESERVED, // symbol
   TK_IDENT,    // identifier
+  TK_NUM,      // number
   TK_EOF,      // end of file
 } TokenKind;
 
@@ -25,6 +26,7 @@ struct Token{
 };
 
 bool consume(char* op);
+Token* consume_ident();
 void expect(char* op);
 int expect_number();
 bool at_eof();
@@ -46,6 +48,8 @@ typedef enum{
   ND_LWT, // <
   ND_LEQ, // <=
   ND_NUM, // number
+  ND_ASSIGN, // assignment
+  ND_LVAR, // local variable
 } NodeKind;
 
 typedef struct Node Node;
@@ -56,12 +60,20 @@ struct Node {
   Node* lhs;     // pointer to left hand side
   Node* rhs;     // pointer to right hand side
   int val;       // value if kind is ND_NUM
+  int offset;    // offset if kind is ND_LVAR
 };
 
+// global array for program nodes
+Node* code[100];
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
+
+void program();
+
+Node* stmt();
 Node* expr();
+Node* assign();
 Node* equality();
 Node* relational();
 Node* add();
@@ -71,7 +83,9 @@ Node* unary();
 Node* num();
 
 // code generator
+void tree_print(Node* node, int i);
 void gen(Node* node);
+void gen_lval(Node* node);
 
 // error messager
 void error(char* fmt, ...);

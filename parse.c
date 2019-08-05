@@ -10,6 +10,15 @@ bool consume(char* op){
   return true;
 }
 
+Token* consume_ident(){
+  Token* ret = NULL;
+  if(token->kind == TK_IDENT ){
+    ret = token;
+    token = token->next;
+  }
+  return ret;
+}
+
 void expect(char* op){
   if(token->kind != TK_RESERVED ||
      strlen(op) != token->len   ||
@@ -58,7 +67,7 @@ Token* tokenize(char* p){
       continue;
     }
     if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'||
-	*p == '<' || *p == '>'){
+	*p == '<' || *p == '>' || *p == ';' || *p == '='){
       cur = new_token(TK_RESERVED, cur, p, 1);
       p++;
       continue;
@@ -66,6 +75,11 @@ Token* tokenize(char* p){
     if (isdigit(*p)){
       cur = new_token(TK_NUM, cur, p, 1);
       cur->val = strtol(p, &p, 10);
+      continue;
+    }
+    if ('a' <= *p && *p <= 'z'){
+      cur = new_token(TK_IDENT, cur, p, 1);
+      p++;
       continue;
     }
 
@@ -94,10 +108,35 @@ Node* new_node_num(int val){
   return node;
 }
 
+// ENBF program = stmt*
+void program(){
+  int i = 0;
+  while(!at_eof()){
+    code[i] = stmt();
+    ++i;
+  }
+  code[i] = NULL;
+}
 
-//ENBF expr = equality
+// ENBF stmt = expr ";"
+Node* stmt(){
+  Node* node = expr();
+  expect(";");
+  return node;
+}
+
+// ENBF expr = assign
 Node* expr(){
-  return equality();
+  return assign();
+}
+
+// ENBF assign = equality ("=" assign)?
+Node* assign(){
+  Node* node = equality();
+  if (consume("=")){
+    node = new_node(ND_ASSIGN, node, assign());
+  }
+  return node;
 }
 
 // ENBF equality = relational ( "==" relational | "!=" relatinal ) *
@@ -165,11 +204,18 @@ Node* mul(){
   }
 }
 
-// ENBF term = ( expr ) | num
+// ENBF term = ( expr ) | num | ident
 Node* term(){
   if(consume("(")){
     Node* node = expr();
     expect(")");
+    return node;
+  }
+  Token* tok = consume_ident();
+  if(tok){
+    Node* node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    node->offset = (tok->str[0] - 'a' + 1)*8;
     return node;
   }
   return num();
