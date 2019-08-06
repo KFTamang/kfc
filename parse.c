@@ -78,8 +78,12 @@ Token* tokenize(char* p){
       continue;
     }
     if ('a' <= *p && *p <= 'z'){
-      cur = new_token(TK_IDENT, cur, p, 1);
-      p++;
+      int i = 1;
+      while('a' <= *(p+i) && *(p+i) <= 'z'){
+	++i;
+      }
+      cur = new_token(TK_IDENT, cur, p, i);
+      p += i;
       continue;
     }
 
@@ -106,6 +110,16 @@ Node* new_node_num(int val){
   node->kind = ND_NUM;
   node->val  = val;
   return node;
+}
+
+// search for local variable from var chain
+LVar* find_lvar(Token* tok){
+  for(LVar* var=locals; var; var=var->next){
+    if(var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
+      return var;
+    }
+  }
+  return NULL;
 }
 
 // ENBF program = stmt*
@@ -215,7 +229,26 @@ Node* term(){
   if(tok){
     Node* node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
-    node->offset = (tok->str[0] - 'a' + 1)*8;
+    LVar* var = find_lvar(tok);
+    if(var){
+      node->offset = var->offset;
+    }else{
+      if(locals){
+	LVar* new_var = calloc(1, sizeof(LVar));
+	new_var->next = locals;
+	new_var->name = tok->str;
+	new_var->len = tok->len;
+	new_var->offset = locals->offset + 8;
+	node->offset = new_var->offset;
+	locals = new_var;
+      }else{
+	locals = calloc(1, sizeof(LVar));
+	locals->next = NULL;
+	locals->name = tok->str;
+	locals->len = tok->len;
+	locals->offset = 0;
+      }
+    }
     return node;
   }
   return num();

@@ -73,6 +73,10 @@ try 1 "a=1;"
 try 5 "a=5;"
 try 1 "a=5;a==5;"
 try 0 "b=(2*(2+1));a=6;b==a+1;"
+# local variable (multiple alphabet)
+try 1 "aa=1;" 
+try 26 "hoge=26;"
+try 1 "hoge=9;fuga=9;hoge==fuga;"
 echo OK
 
 

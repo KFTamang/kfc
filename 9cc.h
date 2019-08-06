@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 // tokenizer
 typedef enum{
   TK_RESERVED, // symbol
@@ -63,11 +61,25 @@ struct Node {
   int offset;    // offset if kind is ND_LVAR
 };
 
+typedef struct LVar LVar;
+
+// local variable
+struct LVar{
+  LVar* next; // next variable or NULL
+  char* name; // name of variable
+  int len;    // length of name
+  int offset; // offset from RBP
+};
+
+// a chain of local variables
+LVar* locals;
+
 // global array for program nodes
 Node* code[100];
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
+LVar* find_lvar(Token* tok);
 
 void program();
 

@@ -6,8 +6,9 @@ int main(int argc, char **argv){
     fprintf(stderr, "wrong number of arguments\n");
   return 1;
   }
-
-
+  // initialize local variable chain
+  locals = NULL;
+  
   // tokenize and parse
   user_input = argv[1];
   token = tokenize(user_input);
