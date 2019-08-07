@@ -10,6 +10,14 @@ bool consume(char* op){
   return true;
 }
 
+bool consumeByKind(TokenKind tkind){
+  if(token->kind == tkind){
+    token = token->next;
+    return true;
+  }
+  return false;
+}
+
 int is_alnum(char c){
   return (('a' <= c && c <= 'z') ||
 	  ('A' <= c && c <= 'Z') ||
@@ -89,6 +97,13 @@ Token* tokenize(char* p){
       while(is_alnum(*(p+i))){
 	++i;
       }
+      // if return
+      if(i==6 && strncmp(p, "return", 6)==0){ 
+	cur = new_token(TK_RETURN, cur, p, 6);
+	p += 6;
+	continue;
+      }
+      // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
       continue;
@@ -139,9 +154,16 @@ void program(){
   code[i] = NULL;
 }
 
-// ENBF stmt = expr ";"
+// ENBF stmt = expr ";" | "return" expr ";"
 Node* stmt(){
-  Node* node = expr();
+  Node* node = calloc(1, sizeof(Node));
+  // if return statement
+  if(consumeByKind(TK_RETURN)){
+    node->kind = ND_RETURN;
+    node->lhs = expr();
+  }else{ // normal statement
+    node = expr();
+  }
   expect(";");
   return node;
 }

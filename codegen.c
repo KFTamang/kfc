@@ -1,3 +1,4 @@
+
 #include "9cc.h"
 
 // syntax tree print function for debug
@@ -8,6 +9,10 @@ void tree_print(Node* node, int i){
     return;
   case ND_LVAR:
     printf("%d:var:%c\n", i, node->offset/8+'a'-1);
+    return;
+  case ND_RETURN:
+    printf("%d:return\n", i);
+    tree_print(node->lhs, i+1);
     return;
   }
   
@@ -44,7 +49,13 @@ void gen(Node* node){
     printf("  mov [rax], rdi\n");
     printf("  push rdi\n");
     return;
-
+  case ND_RETURN:
+    gen(node->lhs);
+    printf("  pop rax\n");
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
+    printf("  ret\n");
+    return;
   }
     
   gen(node->lhs);

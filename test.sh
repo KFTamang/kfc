@@ -78,6 +78,10 @@ try 1 "aa=1;"
 try 26 "hoge=26;"
 try 1 "hoge=9;fuga=9;hoge==fuga;"
 try 1 "ho_ge=9;fu0GA=9;ho_ge==fu0GA;"
+# add return statement
+try 1 "return 1;"
+try 3 "a=3;a;"
+try 4 "hoge=4;return hoge;"
 echo OK
 
 

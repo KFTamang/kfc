@@ -25,6 +25,7 @@ struct Token{
 };
 
 bool consume(char* op);
+bool consumeByKind(TokenKind tkind);
 int is_alnum(char c);
 Token* consume_ident();
 void expect(char* op);
@@ -50,6 +51,7 @@ typedef enum{
   ND_NUM, // number
   ND_ASSIGN, // assignment
   ND_LVAR, // local variable
+  ND_RETURN, // return statement
 } NodeKind;
 
 typedef struct Node Node;
