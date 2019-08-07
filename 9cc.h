@@ -10,6 +10,7 @@ typedef enum{
   TK_RESERVED, // symbol
   TK_IDENT,    // identifier
   TK_NUM,      // number
+  TK_RETURN,   // return
   TK_EOF,      // end of file
 } TokenKind;
 
@@ -24,6 +25,7 @@ struct Token{
 };
 
 bool consume(char* op);
+int is_alnum(char c);
 Token* consume_ident();
 void expect(char* op);
 int expect_number();

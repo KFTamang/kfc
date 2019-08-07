@@ -10,6 +10,13 @@ bool consume(char* op){
   return true;
 }
 
+int is_alnum(char c){
+  return (('a' <= c && c <= 'z') ||
+	  ('A' <= c && c <= 'Z') ||
+	  ('0' <= c && c <= '9') ||
+	  ( c == '_') );
+}
+
 Token* consume_ident(){
   Token* ret = NULL;
   if(token->kind == TK_IDENT ){
@@ -77,9 +84,9 @@ Token* tokenize(char* p){
       cur->val = strtol(p, &p, 10);
       continue;
     }
-    if ('a' <= *p && *p <= 'z'){
+    if (is_alnum(*p)){
       int i = 1;
-      while('a' <= *(p+i) && *(p+i) <= 'z'){
+      while(is_alnum(*(p+i))){
 	++i;
       }
       cur = new_token(TK_IDENT, cur, p, i);
