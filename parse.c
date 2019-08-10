@@ -99,8 +99,8 @@ Token* tokenize(char* p){
       }
       // if return
       if(i==6 && strncmp(p, "return", 6)==0){ 
-	cur = new_token(TK_RETURN, cur, p, 6);
-	p += 6;
+	cur = new_token(TK_RETURN, cur, p, i);
+	p += i;
 	continue;
       }
       // local var
