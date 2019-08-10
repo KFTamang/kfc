@@ -156,11 +156,10 @@ void program(){
 
 // ENBF stmt = expr ";" | "return" expr ";"
 Node* stmt(){
-  Node* node = calloc(1, sizeof(Node));
+  Node* node;
   // if return statement
   if(consumeByKind(TK_RETURN)){
-    node->kind = ND_RETURN;
-    node->lhs = expr();
+    node = new_node(ND_RETURN, expr(), NULL);
   }else{ // normal statement
     node = expr();
   }
