@@ -43,6 +43,15 @@ void expect(char* op){
   token = token->next;
 }
 
+void expect_in_future(char* op){
+  if(token->next->kind != TK_RESERVED ||
+     strlen(op) != token->next->len   ||
+     memcmp(token->next->str, op, token->next->len) ){
+    error_at(token->next->str, "Not %s", op);
+  }
+  token->next = token->next->next;
+}
+
 int expect_number(){
   if(token->kind != TK_NUM){
     error_at(token->str, "Not a number");
@@ -96,6 +105,12 @@ Token* tokenize(char* p){
       int i = 1;
       while(is_alnum(*(p+i))){
 	++i;
+      }
+      // if "if"
+      if(i==2 && strncmp(p, "if", 2)==0){ 
+	cur = new_token(TK_IF, cur, p, i);
+	p += i;
+	continue;
       }
       // if return
       if(i==6 && strncmp(p, "return", 6)==0){ 
@@ -155,15 +170,22 @@ void program(){
 }
 
 // ENBF stmt = expr ";" | "return" expr ";"
+//           | "if" "(" expr ")" stmt
 Node* stmt(){
   Node* node;
   // if return statement
   if(consumeByKind(TK_RETURN)){
     node = new_node(ND_RETURN, expr(), NULL);
+    expect(";");
+  }else if(consumeByKind(TK_IF)){ // "if" statement
+    expect("(");
+    node = expr();
+    expect(")");
+    node = new_node(ND_IF, node, stmt());
   }else{ // normal statement
     node = expr();
+    expect(";");
   }
-  expect(";");
   return node;
 }
 

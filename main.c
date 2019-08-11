@@ -8,6 +8,9 @@ int main(int argc, char **argv){
   }
   // initialize local variable chain
   locals = NULL;
+
+  // initialize label number
+  label_num = 0;
   
   // tokenize and parse
   user_input = argv[1];

@@ -56,6 +56,15 @@ void gen(Node* node){
     printf("  pop rbp\n");
     printf("  ret\n");
     return;
+  case ND_IF: // if(A) B;
+    gen(node->lhs); // code for conditional expression i.e. A
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je .Lend%d\n", label_num);
+    gen(node->rhs); // code for resultant statement i.e. B
+    printf(".Lend%d:\n", label_num);
+    label_num++;
+    return;
   }
     
   gen(node->lhs);

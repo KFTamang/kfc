@@ -11,6 +11,7 @@ typedef enum{
   TK_IDENT,    // identifier
   TK_NUM,      // number
   TK_RETURN,   // return
+  TK_IF,       // if
   TK_EOF,      // end of file
 } TokenKind;
 
@@ -29,6 +30,7 @@ bool consumeByKind(TokenKind tkind);
 int is_alnum(char c);
 Token* consume_ident();
 void expect(char* op);
+void expect_in_future(char* op);
 int expect_number();
 bool at_eof();
 Token* new_token(TokenKind kind, Token* cur, char* str, int len);
@@ -52,6 +54,7 @@ typedef enum{
   ND_ASSIGN, // assignment
   ND_LVAR, // local variable
   ND_RETURN, // return statement
+  ND_IF, // if statement
 } NodeKind;
 
 typedef struct Node Node;
@@ -80,6 +83,9 @@ LVar* locals;
 
 // global array for program nodes
 Node* code[100];
+
+// global number for label
+int label_num;
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);

@@ -82,6 +82,15 @@ try 1 "ho_ge=9;fu0GA=9;ho_ge==fu0GA;"
 try 1 "return 1;"
 try 3 "a=3;a;"
 try 4 "hoge=4;return hoge;"
+# add if statement
+try 2 "if(1)2;"
+try 5 "a=3;if(a)return 5;"
+try 2 "b=4;if(b==4)return 2;"
+try 5 "b=4;if(b==3)return 2;return 5;"
+try 5 "a=9;b=4;if(b==3)if(a-5>0)return 2;return 5;"
+try 2 "a=9;b=4;if(b==4)if(a-5>0)return 2;return 5;"
+try 3 "if(a=2)return 3;return 4;"
+try 4 "if(a=0)return 3;return 4;"
 echo OK
 
 
