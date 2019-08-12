@@ -107,25 +107,25 @@ Token* tokenize(char* p){
 	++i;
       }
       // if "if"
-      if(i==2 && strncmp(p, "if", 2)==0){ 
+      if(i==2 && strncmp(p, "if", i)==0){ 
 	cur = new_token(TK_IF, cur, p, i);
 	p += i;
 	continue;
       }
       // if else
-      if(i==4 && strncmp(p, "else", 4)==0){ 
+      if(i==4 && strncmp(p, "else", i)==0){ 
 	cur = new_token(TK_ELSE, cur, p, i);
 	p += i;
 	continue;
       }
       // if return
-      if(i==6 && strncmp(p, "return", 6)==0){ 
+      if(i==6 && strncmp(p, "return", i)==0){ 
 	cur = new_token(TK_RETURN, cur, p, i);
 	p += i;
 	continue;
       }
       // if while
-      if(i==5 && strncmp(p, "while", 5)==0){ 
+      if(i==5 && strncmp(p, "while", i)==0){ 
 	cur = new_token(TK_WHILE, cur, p, i);
 	p += i;
 	continue;
