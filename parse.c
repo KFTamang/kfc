@@ -124,6 +124,12 @@ Token* tokenize(char* p){
 	p += i;
 	continue;
       }
+      // if while
+      if(i==5 && strncmp(p, "while", 5)==0){ 
+	cur = new_token(TK_WHILE, cur, p, i);
+	p += i;
+	continue;
+      }
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
@@ -177,6 +183,7 @@ void program(){
 
 // ENBF stmt = expr ";" | "return" expr ";"
 //           | "if" "(" expr ")" stmt ("else" stmt)?
+//           | "while" "(" expr ")" stmt
 Node* stmt(){
   Node* node;
   // if return statement
@@ -197,6 +204,14 @@ Node* stmt(){
     }else{
       node->els = NULL;
     }
+  }else if(consumeByKind(TK_WHILE)){
+    expect("(");
+    Node* cond = expr();
+    expect(")");
+    Node* then = stmt();
+    node = new_node(ND_WHILE, NULL, NULL);
+    node->cond = cond;
+    node->then = then;
   }else{ // normal statement
     node = expr();
     expect(";");

@@ -14,6 +14,11 @@ void tree_print(Node* node, int i){
     printf("%d:return\n", i);
     tree_print(node->lhs, i+1);
     return;
+  case ND_WHILE:
+    printf("%d:while\n", i);
+    tree_print(node->cond, i+1);
+    tree_print(node->then, i+1);
+    return;
   }
   
   ++i;
@@ -44,7 +49,6 @@ void gen(Node* node){
   case ND_ASSIGN:
     gen_lval(node->lhs);
     gen(node->rhs);
-    
     printf("  pop rdi\n");
     printf("  pop rax\n");
     printf("  mov [rax], rdi\n");
@@ -74,6 +78,17 @@ void gen(Node* node){
       gen(node->els); // code for "else" statement i.e. B
       printf(".Lendif%d:\n", l_label_num);
     }
+    return;
+  case ND_WHILE: // while(A) B
+    g_label_num++;
+    printf(".Lbeginwhile%d:\n", l_label_num);
+    gen(node->cond); // code for conditional expression i.e. A
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je .Lendwhile%d\n", l_label_num);
+    gen(node->then); // code 
+    printf("  jmp .Lbeginwhile%d\n", l_label_num); 
+    printf(".Lendwhile%d:\n", l_label_num);
     return;
   }
     

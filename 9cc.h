@@ -13,6 +13,7 @@ typedef enum{
   TK_RETURN,   // return
   TK_IF,       // if
   TK_ELSE,     // else
+  TK_WHILE,    // while
   TK_EOF,      // end of file
 } TokenKind;
 
@@ -56,6 +57,7 @@ typedef enum{
   ND_LVAR, // local variable
   ND_RETURN, // return statement
   ND_IF, // if statement
+  ND_WHILE, // while statement
 } NodeKind;
 
 typedef struct Node Node;
