@@ -101,6 +101,11 @@ try 9 "a=4;if(a>4) return bzz=3; else if(3<-10)return 5;else return 9;"
 try 1 "while(1) return 1;return 0;"
 try 0 "while(0) return 1;return 0;"
 try 10 "i=0;while(i<10) i = i+1;return i;"
+# add for loop
+try 10 "a=0;for(i=0;i<10;i=i+1) a=a+1;return a;"
+try 10 "a=0;i=0;for(;i<10;i=i+1) a=a+1;return a;"
+try 0 "i=0;for(;;)return 0;"
+try 10 "i=0;for(;;)if(i>9)return i;else i=i+1;"
 echo OK
 
 

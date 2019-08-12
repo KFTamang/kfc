@@ -52,6 +52,16 @@ void expect_in_future(char* op){
   token->next = token->next->next;
 }
 
+bool is_next_symbol(char* op){
+  if(token->next->kind != TK_RESERVED ||
+     strlen(op) != token->next->len   ||
+     memcmp(token->next->str, op, token->next->len)){
+    return false;
+  }
+  return true;
+}
+
+
 int expect_number(){
   if(token->kind != TK_NUM){
     error_at(token->str, "Not a number");
@@ -130,6 +140,12 @@ Token* tokenize(char* p){
 	p += i;
 	continue;
       }
+      // if for
+      if(i==3 && strncmp(p, "for", i)==0){ 
+	cur = new_token(TK_FOR, cur, p, i);
+	p += i;
+	continue;
+      }
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
@@ -184,6 +200,7 @@ void program(){
 // ENBF stmt = expr ";" | "return" expr ";"
 //           | "if" "(" expr ")" stmt ("else" stmt)?
 //           | "while" "(" expr ")" stmt
+//           | "for" "(" expr? ";" expr? ";" expr? ")" stmt
 Node* stmt(){
   Node* node;
   // if return statement
@@ -204,7 +221,7 @@ Node* stmt(){
     }else{
       node->els = NULL;
     }
-  }else if(consumeByKind(TK_WHILE)){
+  }else if(consumeByKind(TK_WHILE)){ // while loop
     expect("(");
     Node* cond = expr();
     expect(")");
@@ -212,7 +229,40 @@ Node* stmt(){
     node = new_node(ND_WHILE, NULL, NULL);
     node->cond = cond;
     node->then = then;
-  }else{ // normal statement
+  }else if(consumeByKind(TK_FOR)){ // for loop
+    expect("(");
+    Node* init;
+    Node* cond;
+    Node* end;
+    //    if(is_next_symbol(";")){ // empty initialize section
+    if(consume(";")){
+      init = NULL;
+    }else{ // initialize section
+      init = expr();
+      expect(";");      
+    }
+    //    if(is_next_symbol(";")){ // empty condition section
+    if(consume(";")){
+      cond = NULL;
+    }else{ // initialize section
+      cond = expr();
+      //      consume(";");
+      expect(";");      
+    }
+    //    if(is_next_symbol(")")){ // empty initialize section
+    if(consume(")")){
+      end = NULL;
+    }else{ // initialize section
+      end = expr();
+      expect(")");
+    }
+    Node* then = stmt();
+    node = new_node(ND_FOR, NULL, NULL);
+    node->init = init;
+    node->cond = cond;
+    node->end = end;
+    node->then = then;
+  }else{
     node = expr();
     expect(";");
   }

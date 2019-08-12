@@ -8,7 +8,7 @@ void tree_print(Node* node, int i){
     printf("%d:num:%d\n", i, node->val);
     return;
   case ND_LVAR:
-    printf("%d:var:%c\n", i, node->offset/8+'a'-1);
+    printf("%d:var:%c\n", i, node->offset/8+'a');
     return;
   case ND_RETURN:
     printf("%d:return\n", i);
@@ -17,6 +17,17 @@ void tree_print(Node* node, int i){
   case ND_WHILE:
     printf("%d:while\n", i);
     tree_print(node->cond, i+1);
+    tree_print(node->then, i+1);
+    return;
+  case ND_FOR:
+    printf("%d:for\n", i);
+    printf("---init\n");
+    tree_print(node->init, i+1);
+    printf("---cond\n");
+    tree_print(node->cond, i+1);
+    printf("---end\n");
+    tree_print(node->end, i+1);
+    printf("---then\n");
     tree_print(node->then, i+1);
     return;
   }
@@ -89,6 +100,27 @@ void gen(Node* node){
     gen(node->then); // code 
     printf("  jmp .Lbeginwhile%d\n", l_label_num); 
     printf(".Lendwhile%d:\n", l_label_num);
+    return;
+  case ND_FOR: // for(A;B;C)D
+    g_label_num++;
+    if(node->init != NULL){
+      gen(node->init); // A
+    }
+    printf(".Lbeginfor%d:\n",l_label_num);
+    if(node->cond != NULL){
+      gen(node->cond); // B
+    }else{
+      printf("  push 1\n");
+    }
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  je .Lendfor%d\n", l_label_num);
+    gen(node->then); // D
+    if(node->end != NULL){
+      gen(node->end); // C
+    }
+    printf("  jmp .Lbeginfor%d\n", l_label_num); 
+    printf(".Lendfor%d:\n",l_label_num);
     return;
   }
     

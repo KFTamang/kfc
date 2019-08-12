@@ -14,6 +14,7 @@ typedef enum{
   TK_IF,       // if
   TK_ELSE,     // else
   TK_WHILE,    // while loop
+  TK_FOR,      // for loop
   TK_EOF,      // end of file
 } TokenKind;
 
@@ -33,6 +34,7 @@ int is_alnum(char c);
 Token* consume_ident();
 void expect(char* op);
 void expect_in_future(char* op);
+bool is_next_symbol(char* op);
 int expect_number();
 bool at_eof();
 Token* new_token(TokenKind kind, Token* cur, char* str, int len);
@@ -44,20 +46,21 @@ char* user_input;
 
 // abstract syntax tree kind
 typedef enum{
-  ND_ADD, // +
-  ND_SUB, // -
-  ND_MUL, // *
-  ND_DIV, // /
-  ND_EQU, // ==
-  ND_NEQ, // !=
-  ND_LWT, // <
-  ND_LEQ, // <=
-  ND_NUM, // number
-  ND_ASSIGN, // assignment
-  ND_LVAR, // local variable
-  ND_RETURN, // return statement
-  ND_IF, // if statement
-  ND_WHILE, // while statement
+  ND_ADD, // + 0
+  ND_SUB, // - 1
+  ND_MUL, // * 2
+  ND_DIV, // / 3
+  ND_EQU, // == 4
+  ND_NEQ, // != 5
+  ND_LWT, // < 6
+  ND_LEQ, // <= 7
+  ND_NUM, // number 8
+  ND_ASSIGN, // assignment 9
+  ND_LVAR, // local variable 10
+  ND_RETURN, // return statement 11
+  ND_IF, // if statement 12
+  ND_WHILE, // while statement 13
+  ND_FOR,      // for loop 14
 } NodeKind;
 
 typedef struct Node Node;
@@ -69,9 +72,11 @@ struct Node {
   Node* rhs;     // pointer to right hand side
   int val;       // value if kind is ND_NUM
   int offset;    // offset if kind is ND_LVAR
-  Node* cond;    // condition for "if" statement
+  Node* cond;    // condition for "if"/"for" statement
   Node* then;    // then-statement for "if" statement
   Node* els;     // else-statement for "if" statement
+  Node* init;    // initialize section for "for" loop
+  Node* end;     // end section for "for" loop
 };
 
 typedef struct LVar LVar;
