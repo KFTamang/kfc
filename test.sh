@@ -106,6 +106,10 @@ try 10 "a=0;for(i=0;i<10;i=i+1) a=a+1;return a;"
 try 10 "a=0;i=0;for(;i<10;i=i+1) a=a+1;return a;"
 try 0 "i=0;for(;;)return 0;"
 try 10 "i=0;for(;;)if(i>9)return i;else i=i+1;"
+# add {} block (compound statement)
+try 0 "1;{}"
+try 0 "{0;1;2;}"
+try 20 "a=0;i=0;while(i<10){i=i+1;a=a+2;}return a;"
 echo OK
 
 

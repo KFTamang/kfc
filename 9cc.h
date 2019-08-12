@@ -61,9 +61,11 @@ typedef enum{
   ND_IF, // if statement 12
   ND_WHILE, // while statement 13
   ND_FOR,      // for loop 14
+  ND_BLOCK, // compound statement 15
 } NodeKind;
 
 typedef struct Node Node;
+typedef struct node_list node_list;
 
 // abstract syntax tree struct
 struct Node {
@@ -77,7 +79,16 @@ struct Node {
   Node* els;     // else-statement for "if" statement
   Node* init;    // initialize section for "for" loop
   Node* end;     // end section for "for" loop
+  node_list* comp_stmt; // compound statement
 };
+
+//typedef struct node_list node_list;
+struct node_list{
+  Node* data;
+  node_list* next;
+};
+
+node_list* append_node_list(node_list* current, Node* data);
 
 typedef struct LVar LVar;
 
@@ -119,6 +130,7 @@ Node* num();
 void tree_print(Node* node, int i);
 void gen(Node* node);
 void gen_lval(Node* node);
+void gen_node_list(node_list* nl);
 
 // error messager
 void error(char* fmt, ...);

@@ -122,6 +122,9 @@ void gen(Node* node){
     printf("  jmp .Lbeginfor%d\n", l_label_num); 
     printf(".Lendfor%d:\n",l_label_num);
     return;
+  case ND_BLOCK:
+    gen_node_list(node->comp_stmt);
+    return;
   }
     
   gen(node->lhs);
@@ -181,6 +184,17 @@ void gen_lval(Node* node){
 
 }
 
-
+void gen_node_list(node_list* nl){
+  if(nl->data == NULL){
+    return;
+  }
+  gen(nl->data);
+  printf("  pop rax\n");
+  if(nl->next == NULL){
+    return;
+  }
+  gen_node_list(nl->next);
+  return;
+}
 
 

@@ -101,7 +101,7 @@ Token* tokenize(char* p){
       continue;
     }
     if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'||
-	*p == '<' || *p == '>' || *p == ';' || *p == '='){
+	*p == '<' || *p == '>' || *p == ';' || *p == '=' || *p == '{' || *p == '}'){
       cur = new_token(TK_RESERVED, cur, p, 1);
       p++;
       continue;
@@ -160,6 +160,14 @@ Token* tokenize(char* p){
 
 }
 
+node_list* append_node_list(node_list* current, Node* data){
+  node_list* new_nl = calloc(1, sizeof(node_list));
+  new_nl->data = data;
+  new_nl->next = NULL;
+  current->next = new_nl;
+  return new_nl;
+}
+
 // node generator if not number
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
   Node* node = calloc(1, sizeof(Node));
@@ -198,6 +206,7 @@ void program(){
 }
 
 // ENBF stmt = expr ";" | "return" expr ";"
+//           | "{" stmt* "}"
 //           | "if" "(" expr ")" stmt ("else" stmt)?
 //           | "while" "(" expr ")" stmt
 //           | "for" "(" expr? ";" expr? ";" expr? ")" stmt
@@ -207,6 +216,19 @@ Node* stmt(){
   if(consumeByKind(TK_RETURN)){
     node = new_node(ND_RETURN, expr(), NULL);
     expect(";");
+  }else if(consume("{")){ // compound statement (block) {}
+    node = new_node(ND_BLOCK, NULL, NULL);
+    node_list* comp_stmt = calloc(1, sizeof(node_list));
+    node->comp_stmt = comp_stmt;
+    comp_stmt->next = NULL;
+    if(consume("}")){
+      comp_stmt->data = NULL;
+    }else{
+      comp_stmt->data = stmt();
+      while(!consume("}")){
+	comp_stmt = append_node_list(comp_stmt, stmt());
+      }
+    }
   }else if(consumeByKind(TK_IF)){ // "if" statement
     expect("(");
     Node* cond = expr();
