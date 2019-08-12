@@ -112,6 +112,12 @@ Token* tokenize(char* p){
 	p += i;
 	continue;
       }
+      // if else
+      if(i==4 && strncmp(p, "else", 4)==0){ 
+	cur = new_token(TK_IF, cur, p, i);
+	p += i;
+	continue;
+      }
       // if return
       if(i==6 && strncmp(p, "return", 6)==0){ 
 	cur = new_token(TK_RETURN, cur, p, i);
@@ -170,7 +176,7 @@ void program(){
 }
 
 // ENBF stmt = expr ";" | "return" expr ";"
-//           | "if" "(" expr ")" stmt
+//           | "if" "(" expr ")" stmt ("else" stmt)?
 Node* stmt(){
   Node* node;
   // if return statement
@@ -179,9 +185,15 @@ Node* stmt(){
     expect(";");
   }else if(consumeByKind(TK_IF)){ // "if" statement
     expect("(");
-    node = expr();
+    Node* cond = expr();
     expect(")");
-    node = new_node(ND_IF, node, stmt());
+    Node* then = stmt();
+    node = new_node(ND_IF, NULL, NULL);
+    node->cond = cond;
+    node->then = then;
+    /* if(consumeByKind(TK_ELSE)){ */
+    /*   node = new_node(ND_ELSE, node, stmt()); */
+    /* } */
   }else{ // normal statement
     node = expr();
     expect(";");
