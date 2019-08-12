@@ -67,9 +67,9 @@ void gen(Node* node){
     printf("  pop rax\n");
     printf("  cmp rax, 0\n");
     if(!node->els){ // without "else"
-      printf("  je .Lifend%d\n", l_label_num);
+      printf("  je .Lendif%d\n", l_label_num);
       gen(node->then); // code for resultant statement i.e. B
-      printf(".Lifend%d:\n", l_label_num);
+      printf(".Lendif%d:\n", l_label_num);
     }else{ // with "else"
       printf("  je .Lelse%d\n", l_label_num);
       gen(node->then); // code for "then" statement i.e. B
