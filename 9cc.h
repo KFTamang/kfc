@@ -56,7 +56,6 @@ typedef enum{
   ND_LVAR, // local variable
   ND_RETURN, // return statement
   ND_IF, // if statement
-  ND_ELSE, // else statement
 } NodeKind;
 
 typedef struct Node Node;
@@ -70,6 +69,7 @@ struct Node {
   int offset;    // offset if kind is ND_LVAR
   Node* cond;    // condition for "if" statement
   Node* then;    // then-statement for "if" statement
+  Node* els;     // else-statement for "if" statement
 };
 
 typedef struct LVar LVar;
@@ -89,7 +89,7 @@ LVar* locals;
 Node* code[100];
 
 // global number for label
-int label_num;
+int g_label_num;
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);

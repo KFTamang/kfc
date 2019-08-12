@@ -30,6 +30,7 @@ void tree_print(Node* node, int i){
 
 // generate stack machine from the sytax tree
 void gen(Node* node){
+  int l_label_num = g_label_num;
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -57,17 +58,23 @@ void gen(Node* node){
     printf("  ret\n");
     return;
   case ND_IF: // if(A) B;
+    g_label_num++;
     gen(node->cond); // code for conditional expression i.e. A
     printf("  pop rax\n");
     printf("  cmp rax, 0\n");
-    printf("  je .Lif%d\n", label_num);
-    gen(node->then); // code for resultant statement i.e. B
-    printf(".Lif%d:\n", label_num);
-    label_num++;
+    if(!node->els){ // without "else"
+      printf("  je .Lifend%d\n", l_label_num);
+      gen(node->then); // code for resultant statement i.e. B
+      printf(".Lifend%d:\n", l_label_num);
+    }else{ // with "else"
+      printf("  je .Lelse%d\n", l_label_num);
+      gen(node->then); // code for "then" statement i.e. B
+      printf("  jmp .Lendif%d\n", l_label_num); // skip "else" statement
+      printf(".Lelse%d:\n", l_label_num); 
+      gen(node->els); // code for "else" statement i.e. B
+      printf(".Lendif%d:\n", l_label_num);
+    }
     return;
-  /* case ND_ELSE: */
-  /*   gen(node->lhs); // this must be an "if" statement */
-    
   }
     
   gen(node->lhs);

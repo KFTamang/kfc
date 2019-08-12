@@ -91,6 +91,12 @@ try 5 "a=9;b=4;if(b==3)if(a-5>0)return 2;return 5;"
 try 2 "a=9;b=4;if(b==4)if(a-5>0)return 2;return 5;"
 try 3 "if(a=2)return 3;return 4;"
 try 4 "if(a=0)return 3;return 4;"
+# add else to if statement
+try 2 "if(1)return 2;else return 3;"
+try 3 "if(0)return 2;else return 3;"
+try 3 "a=5;if(a>4) return bzz=3; else if(-21<-10)return 5;else return 9;"
+try 5 "a=1;if(a>4) return bzz=3; else if(-21<-10)return 5;else return 9;"
+try 9 "a=4;if(a>4) return bzz=3; else if(3<-10)return 5;else return 9;"
 echo OK
 
 

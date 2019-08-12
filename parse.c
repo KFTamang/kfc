@@ -114,7 +114,7 @@ Token* tokenize(char* p){
       }
       // if else
       if(i==4 && strncmp(p, "else", 4)==0){ 
-	cur = new_token(TK_IF, cur, p, i);
+	cur = new_token(TK_ELSE, cur, p, i);
 	p += i;
 	continue;
       }
@@ -191,9 +191,12 @@ Node* stmt(){
     node = new_node(ND_IF, NULL, NULL);
     node->cond = cond;
     node->then = then;
-    /* if(consumeByKind(TK_ELSE)){ */
-    /*   node = new_node(ND_ELSE, node, stmt()); */
-    /* } */
+    if(consumeByKind(TK_ELSE)){
+      Node* els = stmt();
+      node->els = els;
+    }else{
+      node->els = NULL;
+    }
   }else{ // normal statement
     node = expr();
     expect(";");

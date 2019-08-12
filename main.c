@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   locals = NULL;
 
   // initialize label number
-  label_num = 0;
+  g_label_num = 0;
   
   // tokenize and parse
   user_input = argv[1];
