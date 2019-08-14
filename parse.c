@@ -370,7 +370,7 @@ Node* mul(){
   }
 }
 
-// ENBF term = ( expr ) | num | ident
+// ENBF term = ( expr ) | num | ident ( "(" ")" )?
 Node* term(){
   if(consume("(")){
     Node* node = expr();
@@ -379,26 +379,35 @@ Node* term(){
   }
   Token* tok = consume_ident();
   if(tok){
-    Node* node = calloc(1, sizeof(Node));
-    node->kind = ND_LVAR;
-    LVar* var = find_lvar(tok);
-    if(var){
-      node->offset = var->offset;
-    }else{
-      if(locals){
-	LVar* new_var = calloc(1, sizeof(LVar));
-	new_var->next = locals;
-	new_var->name = tok->str;
-	new_var->len = tok->len;
-	new_var->offset = locals->offset + 8;
-	node->offset = new_var->offset;
-	locals = new_var;
+    Node* node;
+    if(consume("(")){ // function
+      expect(")");
+      node = calloc(1, sizeof(Node));
+      node->kind = ND_FUNC;
+      node->name = tok->str;
+      node->len = tok->len;
+    }else{ // variable
+      node = calloc(1, sizeof(Node));
+      node->kind = ND_LVAR;
+      LVar* var = find_lvar(tok);
+      if(var){
+	node->offset = var->offset;
       }else{
-	locals = calloc(1, sizeof(LVar));
-	locals->next = NULL;
-	locals->name = tok->str;
-	locals->len = tok->len;
-	locals->offset = 0;
+	if(locals){
+	  LVar* new_var = calloc(1, sizeof(LVar));
+	  new_var->next = locals;
+	  new_var->name = tok->str;
+	  new_var->len = tok->len;
+	  new_var->offset = locals->offset + 8;
+	  node->offset = new_var->offset;
+	  locals = new_var;
+	}else{
+	  locals = calloc(1, sizeof(LVar));
+	  locals->next = NULL;
+	  locals->name = tok->str;
+	  locals->len = tok->len;
+	  locals->offset = 0;
+	}
       }
     }
     return node;

@@ -5,7 +5,7 @@ try(){
     input="$2"
 
     ./9cc "$input" > tmp.s
-    gcc -o tmp tmp.s
+    gcc -o tmp tmp.s hoge.o
     ./tmp
     actual="$?"
 
@@ -16,7 +16,22 @@ try(){
 	cat tmp.s
 	exit 1
     fi
+}
+func_test(){
+    expected="$1"
+    input="$2"
+    gcc -c hoge.c
+    ./9cc "$input" > tmp.s
+    gcc -o tmp tmp.s hoge.o
+    actual=`./tmp`
 
+    if [ "$actual" = "$expected" ]; then
+	echo "$input => $actual"
+    else
+	echo "$input => $expected expected, but got $actual"
+	cat tmp.s
+	exit 1
+    fi
 }
 
 try 0 "0;"
@@ -110,6 +125,10 @@ try 10 "i=0;for(;;)if(i>9)return i;else i=i+1;"
 try 0 "1;{}"
 try 0 "{0;1;2;}"
 try 20 "a=0;i=0;while(i<10){i=i+1;a=a+2;}return a;"
+# add function call without arguments
+func_test "OK" "hoge();"
+func_test "OK\nOK\nOK" "for(i=0;i<3;i=i+1){hoge();}"
+
 echo OK
 
 

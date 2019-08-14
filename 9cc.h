@@ -62,6 +62,7 @@ typedef enum{
   ND_WHILE, // while statement 13
   ND_FOR,      // for loop 14
   ND_BLOCK, // compound statement 15
+  ND_FUNC, // function
 } NodeKind;
 
 typedef struct Node Node;
@@ -80,6 +81,8 @@ struct Node {
   Node* init;    // initialize section for "for" loop
   Node* end;     // end section for "for" loop
   node_list* comp_stmt; // compound statement
+  char* name;    // name of function
+  int len;       // length of name of function
 };
 
 //typedef struct node_list node_list;
@@ -102,6 +105,17 @@ struct LVar{
 
 // a chain of local variables
 LVar* locals;
+
+// functions
+typedef struct funcs funcs;
+struct funcs{
+  funcs* next; // next function or NULL
+  char* name; // name of function
+  int len;    // length of name
+};
+funcs* find_funcs(Token* tok);
+// a chain of functions
+funcs* functions;
 
 // global array for program nodes
 Node* code[100];

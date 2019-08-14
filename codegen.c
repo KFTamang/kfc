@@ -30,6 +30,9 @@ void tree_print(Node* node, int i){
     printf("---then\n");
     tree_print(node->then, i+1);
     return;
+  case ND_FUNC:
+    printf("func %s\n",node->name);
+    return;
   }
   
   ++i;
@@ -47,6 +50,7 @@ void tree_print(Node* node, int i){
 // generate stack machine from the sytax tree
 void gen(Node* node){
   int l_label_num = g_label_num;
+  char* str;
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -124,6 +128,10 @@ void gen(Node* node){
     return;
   case ND_BLOCK:
     gen_node_list(node->comp_stmt);
+    return;
+  case ND_FUNC:
+    strncpy(str, node->name, node->len);
+    printf("  call %s\n", str);
     return;
   }
     
