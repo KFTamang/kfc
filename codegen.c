@@ -1,8 +1,11 @@
 
 #include "9cc.h"
 
+const int VAR_NAME_SIZE = 512;
+
 // syntax tree print function for debug
 void tree_print(Node* node, int i){
+  char str[VAR_NAME_SIZE];
   switch(node->kind){
   case ND_NUM:
     printf("%d:num:%d\n", i, node->val);
@@ -30,8 +33,21 @@ void tree_print(Node* node, int i){
     printf("---then\n");
     tree_print(node->then, i+1);
     return;
+  case ND_BLOCK:
+    printf("block\n");
+    while(node->comp_stmt!=NULL){
+      tree_print(node->comp_stmt->data, i+1);
+      node->comp_stmt = node->comp_stmt->next;
+    }
+    return;
   case ND_FUNC:
-    printf("func %s\n",node->name);
+    if(node->len >= VAR_NAME_SIZE){
+      error("Too long name of variable");
+      return;
+    }
+    strncpy(str, node->name, node->len);
+    str[node->len] = '\0';
+    printf("func %s\n",str);
     return;
   }
   
@@ -50,7 +66,7 @@ void tree_print(Node* node, int i){
 // generate stack machine from the sytax tree
 void gen(Node* node){
   int l_label_num = g_label_num;
-  char* str;
+  char str[VAR_NAME_SIZE];
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -130,7 +146,12 @@ void gen(Node* node){
     gen_node_list(node->comp_stmt);
     return;
   case ND_FUNC:
+    if(node->len >= VAR_NAME_SIZE){
+      error("Too long name of variable");
+      return;
+    }
     strncpy(str, node->name, node->len);
+    str[node->len] = '\0';
     printf("  call %s\n", str);
     return;
   }

@@ -127,8 +127,9 @@ try 0 "{0;1;2;}"
 try 20 "a=0;i=0;while(i<10){i=i+1;a=a+2;}return a;"
 # add function call without arguments
 func_test "OK" "hoge();"
-func_test "OK\nOK\nOK" "for(i=0;i<3;i=i+1){hoge();}"
+OK3=`echo -e "OK\nOK\nOK"`
+func_test "$OK3" "for(i=0;i<3;i=i+1){hoge();}"
 
-echo OK
+echo "test passed"
 
 
