@@ -160,6 +160,13 @@ Token* tokenize(char* p){
 
 }
 
+node_list* new_node_list(Node* node){
+  node_list* nl = calloc(1, sizeof(node_list));
+  nl->next = NULL;
+  nl->data = node;
+  return nl;
+}
+
 node_list* append_node_list(node_list* current, Node* data){
   node_list* new_nl = calloc(1, sizeof(node_list));
   new_nl->data = data;
@@ -370,7 +377,7 @@ Node* mul(){
   }
 }
 
-// ENBF term = ( expr ) | num | ident ( "(" ")" )?
+// ENBF term = ( expr ) | num | ident ( "(" term? ")" )?
 Node* term(){
   if(consume("(")){
     Node* node = expr();
@@ -381,11 +388,16 @@ Node* term(){
   if(tok){
     Node* node;
     if(consume("(")){ // function
-      expect(")");
       node = calloc(1, sizeof(Node));
       node->kind = ND_FUNC;
       node->name = tok->str;
       node->len = tok->len;
+      if(consume(")")){ // no argument
+	node->func_args = NULL;
+      }else{ // one argument
+	node->func_args = new_node_list(expr());
+	expect(")");
+      }
     }else{ // variable
       node = calloc(1, sizeof(Node));
       node->kind = ND_LVAR;

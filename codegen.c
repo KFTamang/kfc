@@ -146,6 +146,11 @@ void gen(Node* node){
     gen_node_list(node->comp_stmt);
     return;
   case ND_FUNC:
+    if(node->func_args){
+      gen(node->func_args->data);
+      printf("  pop rdi\n");
+      //      node->func_args = node->func_args->next;
+    }
     if(node->len >= VAR_NAME_SIZE){
       error("Too long name of variable");
       return;
@@ -153,6 +158,7 @@ void gen(Node* node){
     strncpy(str, node->name, node->len);
     str[node->len] = '\0';
     printf("  call %s\n", str);
+    printf("  push rax\n");
     return;
   }
     

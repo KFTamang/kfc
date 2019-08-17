@@ -5,7 +5,7 @@ try(){
     input="$2"
 
     ./9cc "$input" > tmp.s
-    gcc -o tmp tmp.s hoge.o
+    gcc -o tmp tmp.s hoge.o foo.o
     ./tmp
     actual="$?"
 
@@ -22,7 +22,7 @@ func_test(){
     input="$2"
     gcc -c hoge.c
     ./9cc "$input" > tmp.s
-    gcc -o tmp tmp.s hoge.o
+    gcc -o tmp tmp.s hoge.o foo.o
     actual=`./tmp`
 
     if [ "$actual" = "$expected" ]; then
@@ -129,7 +129,11 @@ try 20 "a=0;i=0;while(i<10){i=i+1;a=a+2;}return a;"
 func_test "OK" "hoge();"
 OK3=`echo -e "OK\nOK\nOK"`
 func_test "$OK3" "for(i=0;i<3;i=i+1){hoge();}"
-
+# add function with one argument
+try "1" "return foo(1);"
+try "1" "i=0;while(i<10){i=foo((i+1));return i;}"
+try "1" "i=0;while(i<10){i=foo(i+1);return i;}"
+try "1" "i=0;while(i<10){i=foo(a=1);return i;}"
 echo "test passed"
 
 

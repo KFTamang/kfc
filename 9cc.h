@@ -83,6 +83,7 @@ struct Node {
   node_list* comp_stmt; // compound statement
   char* name;    // name of function
   int len;       // length of name of function
+  node_list* func_args; // arguments of function
 };
 
 //typedef struct node_list node_list;
@@ -91,6 +92,7 @@ struct node_list{
   node_list* next;
 };
 
+node_list* new_node_list(Node* node);
 node_list* append_node_list(node_list* current, Node* data);
 
 typedef struct LVar LVar;
