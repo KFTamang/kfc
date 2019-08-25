@@ -1,4 +1,4 @@
-#include "9cc.h"
+#include "kfc.h"
 
 bool consume(char* op){
   if(token->kind != TK_RESERVED ||

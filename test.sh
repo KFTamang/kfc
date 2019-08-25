@@ -4,7 +4,7 @@ try(){
     expected="$1"
     input="$2"
 
-    ./9cc "$input" > tmp.s
+    ./kfc "$input" > tmp.s
     gcc -o tmp tmp.s hoge.o foo.o
     ./tmp
     actual="$?"
@@ -21,7 +21,7 @@ func_test(){
     expected="$1"
     input="$2"
     gcc -c hoge.c
-    ./9cc "$input" > tmp.s
+    ./kfc "$input" > tmp.s
     gcc -o tmp tmp.s hoge.o foo.o
     actual=`./tmp`
 

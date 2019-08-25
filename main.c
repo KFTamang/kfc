@@ -1,4 +1,4 @@
-#include "9cc.h"
+#include "kfc.h"
 
 
 int main(int argc, char **argv){

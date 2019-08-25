@@ -1,5 +1,5 @@
 
-#include "9cc.h"
+#include "kfc.h"
 
 const int VAR_NAME_SIZE = 512;
 

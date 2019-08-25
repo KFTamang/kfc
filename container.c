@@ -1,4 +1,4 @@
-#include "9cc.h"
+#include "kfc.h"
 
 // error messager
 void error(char* fmt, ...){
