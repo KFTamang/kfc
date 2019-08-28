@@ -218,7 +218,7 @@ Node* mul(){
   }
 }
 
-// ENBF term = ( expr ) | num | ident ( "(" (expr (, expr)?)? ")" )?
+// ENBF term = ( expr ) | num | ident ( "(" (expr (, expr)*)? ")" )?
 Node* term(){
   if(consume("(")){
     Node* node = expr();
@@ -237,9 +237,9 @@ Node* term(){
 	node->func_args = NULL;
       }else{ // one argument
 	node->func_args = new_node_list(expr());
-	node_list* next;
-	if(consume(",")){
-	  next = append_node_list(node->func_args, expr());
+	node_list* next = node->func_args;
+	while(consume(",")){
+	  next = append_node_list(next, expr());
 	}
 	expect(")");
       }

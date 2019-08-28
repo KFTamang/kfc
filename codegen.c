@@ -2,7 +2,8 @@
 #include "kfc.h"
 
 const int VAR_NAME_SIZE = 512;
-
+const int MAX_ARG_NUM = 6;
+const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
 // syntax tree print function for debug
 void tree_print(Node* node, int i){
   char str[VAR_NAME_SIZE];
@@ -67,6 +68,7 @@ void tree_print(Node* node, int i){
 void gen(Node* node){
   int l_label_num = g_label_num;
   char str[VAR_NAME_SIZE];
+  int arg_num = 0;
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -146,14 +148,11 @@ void gen(Node* node){
     gen_node_list(node->comp_stmt);
     return;
   case ND_FUNC:
-    if(node->func_args){
+    while(node->func_args && (arg_num < MAX_ARG_NUM) ){
       gen(node->func_args->data);
-      printf("  pop rdi\n");
+      printf("  pop %s\n", ARG_REG[arg_num]);
       node->func_args = node->func_args->next;
-      if(node->func_args){
-	gen(node->func_args->data);
-	printf("  pop rsi\n");
-      }
+      arg_num++;
     }
     if(node->len >= VAR_NAME_SIZE){
       error("Too long name of variable");
