@@ -149,7 +149,11 @@ void gen(Node* node){
     if(node->func_args){
       gen(node->func_args->data);
       printf("  pop rdi\n");
-      //      node->func_args = node->func_args->next;
+      node->func_args = node->func_args->next;
+      if(node->func_args){
+	gen(node->func_args->data);
+	printf("  pop rsi\n");
+      }
     }
     if(node->len >= VAR_NAME_SIZE){
       error("Too long name of variable");

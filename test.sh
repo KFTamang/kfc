@@ -134,6 +134,10 @@ try "1" "return foo(1);"
 try "1" "i=0;while(i<10){i=foo((i+1));return i;}"
 try "1" "i=0;while(i<10){i=foo(i+1);return i;}"
 try "1" "i=0;while(i<10){i=foo(a=1);return i;}"
+# allow two argument function
+try "5" "return bar(2,3);"
+try "20" "hoge=2;fuga=18;return bar(hoge,fuga);"
+try "20" "hoge=2;fuga=10;return bar(foo(hoge)*5,fuga);"
 echo "test passed"
 
 
