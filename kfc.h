@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+static const int VAR_NAME_SIZE = 512;
+static const int MAX_ARG_NUM = 6;
+static const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
+static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
+
 // tokenizer
 typedef enum{
   TK_RESERVED, // symbol
@@ -175,9 +180,11 @@ struct symbol{
 };
 
 // symbol table
-const int MAX_SYMBOL_NUM = 65535; // 16bit for now
 symbol sym_table[MAX_SYMBOL_NUM];
 int hash_node(Node* node);
+Node* is_in_scope(Node* scope);
+void append_lvar(Node* scope, Node* node);
+void symtabgen(Node* node, Node* scope);
 
 // code generator
 void tree_print(Node* node, int i);
@@ -188,5 +195,4 @@ void gen_node_list(node_list* nl);
 // error messager
 void error(char* fmt, ...);
 void error_at(char* loc, char* fmt, ...);
-  
 

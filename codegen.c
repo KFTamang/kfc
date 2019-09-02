@@ -1,9 +1,9 @@
 
 #include "kfc.h"
 
-const int VAR_NAME_SIZE = 512;
-const int MAX_ARG_NUM = 6;
-const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
+//const int VAR_NAME_SIZE = 512;
+//const int MAX_ARG_NUM = 6;
+//const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
 // syntax tree print function for debug
 void tree_print(Node* node, int i){
   char str[VAR_NAME_SIZE];
