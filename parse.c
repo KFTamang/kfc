@@ -70,7 +70,9 @@ Node* func_def(){
     expect(")");
     expect("{");
     node = new_node(ND_FUNC_DEF, NULL, NULL);
-    node->name = tok->str;
+    char* node_name = calloc(1, sizeof(char)*(tok->len+1));
+    strncpy(node_name, tok->str, tok->len);
+    node->name = node_name;
     node->len = tok->len;
     node_list* comp_stmt = calloc(1, sizeof(node_list));
     node->comp_stmt = comp_stmt;
@@ -277,7 +279,10 @@ Node* ident(){
   }else{ // variable
     node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
-    node->name = tok->str;
+    char* node_name = calloc(1, sizeof(tok->len+1));
+    strncpy(node_name, tok->str, tok->len);
+    node_name[tok->len+1] = '\0';
+    node->name = node_name;
     node->len = tok->len;
     LVar* var = find_lvar(tok);
     if(var){

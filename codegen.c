@@ -69,6 +69,8 @@ void gen(Node* node){
   int l_label_num = g_label_num;
   char str[VAR_NAME_SIZE];
   int arg_num = 0;
+  unsigned int hash;
+  symbol* sym;
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -164,14 +166,17 @@ void gen(Node* node){
     printf("  push rax\n");
     return;
   case ND_FUNC_DEF:
-    strncpy(str, node->name, node->len);
-    str[node->len] = '\0';
+    // fetch symbol table
+    hash = hash_nodename(node->name);
+    sym = sym_table[hash];
+    //    strncpy(str, node->name, node->len);
+    //    str[node->len] = '\0';
     // prologue
     // allocate 26 variables
-    printf("%s:\n", str);
+    printf("%s:\n", sym->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, 208\n");
+    printf("  sub rsp, %d\n", sym->size);
     gen_node_list(node->comp_stmt);
     return;
   }
@@ -226,7 +231,6 @@ void gen_lval(Node* node){
     printf("%d\n",node->kind);
     error("left hand side is not a variable");
   }
-
   printf("  mov rax, rbp\n");
   printf("  sub rax, %d\n", node->offset);
   printf("  push rax\n");

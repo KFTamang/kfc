@@ -4,11 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 static const int VAR_NAME_SIZE = 512;
 static const int MAX_ARG_NUM = 6;
 static const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
-static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
+//static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
+#define MAX_SYMBOL_NUM  (65535) // 16bit for now
 
 // tokenizer
 typedef enum{
@@ -176,15 +178,17 @@ struct symbol{
   char* name;
   int size;
   int addr;
-  Node* scope;
+  char* scope;
 };
 
 // symbol table
 symbol* sym_table[MAX_SYMBOL_NUM];
-unsigned int hash_node(Node* node);
-int get_lvar_nuber_in_scope(Node* scope);
-void append_lvar(Node* scope, Node* node);
+unsigned int hash_nodename(char* node_name);
+int get_lvar_nuber_in_scope(char* scope_name);
+void register_func_def(char* func_name);
+void register_lvar(char* scope_name, char* node_name);
 void symtabgen(Node* node, Node* scope);
+int get_lvar_address(char* scope_name, char* name);
 
 // code generator
 void tree_print(Node* node, int i);

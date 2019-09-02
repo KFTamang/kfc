@@ -1,44 +1,40 @@
 #include "kfc.h"
 
+void compile(char* input_code);
 
-int main(int argc, char **argv){
-  if (argc != 2){
-    fprintf(stderr, "wrong number of arguments\n");
-  return 1;
-  }
+int main(){
+  compile("main(){return;}");
+  compile("main(){a=1;b=3; if(a>0){a = a + 2;} return a+b;}");
+  return 0;
+}
+
+void compile(char* input_code){
+
   // initialize local variable chain
   locals = NULL;
 
   // initialize label number
   g_label_num = 0;
-  
+
   // tokenize and parse
-  user_input = argv[1];
+  //  user_input = "main(){return 0;}";
+  user_input = "main(){return 0;}";
   token = tokenize(user_input);
   program();
-  // generate symbol table
-  int i = 0;
-  while(code[i] != NULL){
-    symtabgen(code[i],code[i]);
-    ++i;
-  }
-  
 
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
-  //  printf("main:\n");
 
-  // prologue
-  // allocate 26 variables
-  //  printf("  push rbp\n");
-  //  printf("  mov rbp, rsp\n");
-  //  printf("  sub rsp, 208\n");
+  int i = 0;
+  while(code[i] != NULL){
+	symtabgen(code[i],code[i]);
+    ++i;
+  }
 
   // climbing down the tree and generate code
   i = 0;
   while(code[i] != NULL){
     gen(code[i]);
-    //    tree_print(code[i], 0);
     ++i;
 
     // take out evaluation result of equation
@@ -50,5 +46,6 @@ int main(int argc, char **argv){
   printf("  mov rsp, rbp\n");
   printf("  pop rbp\n");
   printf("  ret\n");
-  return 0;
+
+  return;
 }
