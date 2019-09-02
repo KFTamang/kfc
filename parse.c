@@ -277,6 +277,8 @@ Node* ident(){
   }else{ // variable
     node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
+    node->name = tok->str;
+    node->len = tok->len;
     LVar* var = find_lvar(tok);
     if(var){
       node->offset = var->offset;

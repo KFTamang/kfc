@@ -1,20 +1,50 @@
-<<<<<<< HEAD
-#include "khc.h"
-=======
 #include "kfc.h"
->>>>>>> WIP for func definition
 
 // generate hash from node
-int hash_node(Node* node){
-  int hash = ((int)node) % MAX_SYMBOL_NUM; // temporary use address
+unsigned int hash_node(Node* node){
+  unsigned int hash = ((unsigned int)node) % MAX_SYMBOL_NUM; // temporary use address
   return hash;
 }
 
-Node* is_in_scope(Node* scope){
-  return scope;
+int get_lvar_number_in_scope(Node* scope){
+  printf("scope:%d,%s", scope->kind, scope->name);
+  int i = 0;
+  int scope_hash = hash_node(scope);
+
+  while(sym_table[scope_hash+i] != NULL){
+    i++;
+  }
+  return i;
 }
 
 void append_lvar(Node* scope, Node* node){
+  printf("scope:%d,%s\n", scope->kind, scope->name);
+  printf("node:%d,%s\n", node->kind, node->name);
+  printf("hash:%d\n", hash_node(node));
+  int lvar_num = get_lvar_number_in_scope(scope);
+  int scope_hash = hash_node(scope);
+  SymbolKind sk;
+  switch(node->kind){
+  case ND_LVAR:
+    sk = SY_LVAR;
+    break;
+  case ND_FUNC_DEF:
+    sk = SY_FUNC;
+    break;
+  default:
+    sk = SY_GVAR;
+    break;
+  }
+  symbol* sym = calloc(1, sizeof(symbol));
+  char* name = calloc(1, sizeof(char)*(node->len+1));
+  strncpy(name, node->name, node->len);
+  name[node->len] = '\0';
+  sym->kind = sk;
+  sym->name = name;
+  sym->size = 4;
+  sym->addr = 4*lvar_num;
+  sym->scope = scope;
+  sym_table[scope_hash + lvar_num] = sym;
   return;
 }
 
@@ -28,9 +58,7 @@ void symtabgen(Node* node, Node* scope){
   case ND_LVAR:
     strncpy(str, node->name, node->len);
     str[node->len] = '\0';
-    if(!is_in_scope(scope)){
-      append_lvar(scope, node);
-    }
+    append_lvar(scope, node);
     return;
   case ND_FUNC:
     return;
@@ -38,7 +66,7 @@ void symtabgen(Node* node, Node* scope){
     nl = node->comp_stmt;
     while(nl != NULL){
       symtabgen(nl->data, node);
-      nl = node->comp_stmt->next;
+      nl = nl->next;
     }
     return;
 

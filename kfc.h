@@ -180,9 +180,9 @@ struct symbol{
 };
 
 // symbol table
-symbol sym_table[MAX_SYMBOL_NUM];
-int hash_node(Node* node);
-Node* is_in_scope(Node* scope);
+symbol* sym_table[MAX_SYMBOL_NUM];
+unsigned int hash_node(Node* node);
+int get_lvar_nuber_in_scope(Node* scope);
 void append_lvar(Node* scope, Node* node);
 void symtabgen(Node* node, Node* scope);
 
