@@ -52,6 +52,22 @@ void expect_in_future(char* op){
   token->next = token->next->next;
 }
 
+bool is_symbol(char* op){
+  if(token->kind != TK_RESERVED ||
+     strlen(op) != token->len   ||
+     memcmp(token->str, op, token->len)){
+    return false;
+  }
+  return true;
+}
+
+bool is_kind(TokenKind tkind){
+  if(token->kind != tkind){
+    return false;
+  }
+  return true;
+}
+
 bool is_next_symbol(char* op){
   if(token->next->kind != TK_RESERVED ||
      strlen(op) != token->next->len   ||
@@ -61,6 +77,12 @@ bool is_next_symbol(char* op){
   return true;
 }
 
+bool is_next_kind(TokenKind tkind){
+  if(token->next->kind != tkind){
+    return false;
+  }
+  return true;
+}
 
 int expect_number(){
   if(token->kind != TK_NUM){

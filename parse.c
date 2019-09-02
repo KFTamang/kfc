@@ -218,58 +218,72 @@ Node* mul(){
   }
 }
 
-// ENBF term = ( expr ) | num | ident ( "(" (expr (, expr)*)? ")" )?
+// ENBF term = ( expr ) | num | ident
 Node* term(){
   if(consume("(")){
     Node* node = expr();
     expect(")");
     return node;
   }
-  Token* tok = consume_ident();
-  if(tok){
-    Node* node;
-    if(consume("(")){ // function
-      node = calloc(1, sizeof(Node));
-      node->kind = ND_FUNC;
-      node->name = tok->str;
-      node->len = tok->len;
-      if(consume(")")){ // no argument
-	node->func_args = NULL;
-      }else{ // one argument
-	node->func_args = new_node_list(expr());
-	node_list* next = node->func_args;
-	while(consume(",")){
-	  next = append_node_list(next, expr());
-	}
-	expect(")");
-      }
-    }else{ // variable
-      node = calloc(1, sizeof(Node));
-      node->kind = ND_LVAR;
-      LVar* var = find_lvar(tok);
-      if(var){
-	node->offset = var->offset;
-      }else{
-	if(locals){
-	  LVar* new_var = calloc(1, sizeof(LVar));
-	  new_var->next = locals;
-	  new_var->name = tok->str;
-	  new_var->len = tok->len;
-	  new_var->offset = locals->offset + 8;
-	  node->offset = new_var->offset;
-	  locals = new_var;
-	}else{
-	  locals = calloc(1, sizeof(LVar));
-	  locals->next = NULL;
-	  locals->name = tok->str;
-	  locals->len = tok->len;
-	  locals->offset = 0;
-	}
-      }
-    }
+  if(is_kind(TK_IDENT)){
+    Node* node = ident();
     return node;
   }
   return num();
+}
+
+// ENBF ident = lvar | func
+Node* ident(){
+  Token* tok = consume_ident();
+  Node* node;
+  if(is_symbol("(")){
+    node = func(tok);
+  }else{ // variable
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    LVar* var = find_lvar(tok);
+    if(var){
+      node->offset = var->offset;
+    }else{
+      if(locals){
+	LVar* new_var = calloc(1, sizeof(LVar));
+	new_var->next = locals;
+	new_var->name = tok->str;
+	new_var->len = tok->len;
+	new_var->offset = locals->offset + 8;
+	node->offset = new_var->offset;
+	locals = new_var;
+      }else{
+	locals = calloc(1, sizeof(LVar));
+	locals->next = NULL;
+	locals->name = tok->str;
+	locals->len = tok->len;
+	locals->offset = 0;
+      }
+    }
+  }
+  return node;
+}
+
+// ENBF func = ident ( "(" (expr (, expr)*)? ")" )
+Node* func(Token* tok){
+  Node* node;
+  node = calloc(1, sizeof(Node));
+  node->kind = ND_FUNC;
+  node->name = tok->str;
+  node->len = tok->len;
+  expect("(");
+  if(consume(")")){ // no argument
+    node->func_args = NULL;
+  }else{ // one argument
+    node->func_args = new_node_list(expr());
+    node_list* next = node->func_args;
+    while(consume(",")){
+      next = append_node_list(next, expr());
+    }
+    expect(")");
+  }
+  return node;
 }
 
 // ENBF unary = ("+" | "-")? term
