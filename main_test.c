@@ -3,7 +3,7 @@
 void compile(char* input_code);
 
 int main(){
-  compile("main(){return;}");
+  //  compile("main(){return 5;}");
   compile("main(){a=1;b=3; if(a>0){a = a + 2;} return a+b;}");
   return 0;
 }
@@ -17,9 +17,7 @@ void compile(char* input_code){
   g_label_num = 0;
 
   // tokenize and parse
-  //  user_input = "main(){return 0;}";
-  user_input = "main(){return 0;}";
-  token = tokenize(user_input);
+  token = tokenize(input_code);
   program();
 
   printf(".intel_syntax noprefix\n");
@@ -41,11 +39,6 @@ void compile(char* input_code){
     printf("  pop rax\n");
   }
 
-  // epilogue
-  // the last evaluation result in rax is the return value
-  printf("  mov rsp, rbp\n");
-  printf("  pop rbp\n");
-  printf("  ret\n");
 
   return;
 }

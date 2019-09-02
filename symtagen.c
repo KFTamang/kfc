@@ -51,21 +51,22 @@ void register_lvar(char* scope_name, char* node_name){
   char* name = calloc(1, sizeof(char)*(strlen(node_name)+1));
   sym->kind = sk;
   sym->name = node_name;
-  sym->size = 4;
-  sym->addr = 4*lvar_num;
+  sym->size = 8;
+  sym->addr = 8*(lvar_num+1);
   sym->scope = scope_name;
-  sym_table[scope_hash + lvar_num + 1] = sym; // plus one to avoid function itself
+  sym_table[scope_hash + lvar_num +1 ] = sym; // plus one to avoid function itself
   sym_table[scope_hash]->size += sym->size; // increase function's local var size
   return;
 }
 
+// find local variable name and return its ordinal number or -1 if no variable with that name
 int get_ordinal_number_in_scope(char* scope_name, char* lvar_name){
   unsigned int scope_hash = hash_nodename(scope_name);
   symbol* sym = sym_table[scope_hash];
   int i = 0;
   while(sym != NULL){
     if(strncmp(sym->name, lvar_name, strlen(lvar_name))==0){
-      return i;
+      return i + 1;
     }
     i++;
     sym = sym_table[scope_hash+i];
@@ -80,22 +81,26 @@ void symtabgen(Node* node, Node* scope){
   node_list* nl;
   char str[VAR_NAME_SIZE];
   int order;
+  int offset;
   switch(node->kind){
   case ND_LVAR:
     //    strncpy(str, node->name, node->len);
     //    str[node->len] = '\0';
-    order = get_ordinal_number_in_scope(scope->name, node->name);
-    if(order > 0){
-      node->offset = order;
+    //    order = get_ordinal_number_in_scope(scope->name, node->name);
+    offset = get_lvar_address(scope->name, node->name);
+    //    if(order > 0){
+    if(offset > 0){
+      node->offset = offset;
+      //      printf("lvar %s offset:%d\n",node->name, node->offset);
       return;
     }
-    node->offset = 4 * get_lvar_number_in_scope(scope->name);
+    node->offset = 8 * (get_lvar_number_in_scope(scope->name)+1);
     register_lvar(scope->name, node->name);
     return;
   case ND_FUNC:
     return;
   case ND_FUNC_DEF:
-    printf("func name : %s\n",node->name);
+    //    printf("func name : %s\n",node->name);
     register_func_def(node->name);
     nl = node->comp_stmt;
     while(nl != NULL){

@@ -26,29 +26,18 @@ int main(int argc, char **argv){
 
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
-  //  printf("main:\n");
-
-  // prologue
-  // allocate 26 variables
-  //  printf("  push rbp\n");
-  //  printf("  mov rbp, rsp\n");
-  //  printf("  sub rsp, 208\n");
 
   // climbing down the tree and generate code
   i = 0;
   while(code[i] != NULL){
+    if(i > 0){
+      // take out evaluation result of equation
+      printf("  pop rax\n");
+    }
     gen(code[i]);
     //    tree_print(code[i], 0);
     ++i;
-
-    // take out evaluation result of equation
-    printf("  pop rax\n");
   }
 
-  // epilogue
-  // the last evaluation result in rax is the return value
-  printf("  mov rsp, rbp\n");
-  printf("  pop rbp\n");
-  printf("  ret\n");
   return 0;
 }

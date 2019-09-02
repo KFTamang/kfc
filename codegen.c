@@ -178,6 +178,11 @@ void gen(Node* node){
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, %d\n", sym->size);
     gen_node_list(node->comp_stmt);
+    // epilogue
+    // the last evaluation result in rax is the return value
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
+    printf("  ret\n");
     return;
   }
     

@@ -140,7 +140,18 @@ func_test(){
 # try "20" "hoge=2;fuga=10;return bar(foo(hoge)*5,fuga);"
 # # allow up to 6 arguments
 # try "21" "return bar6(1,2,3,4,5,6);"
-src="main(){
+src1="main(){
+  a = 5;
+  b = 9;
+  return a+b;
+}"
+src2="main(){
+  a = 5;
+  b = 9;
+  a = a + 1;
+  return a+b;
+}"
+src3="main(){
   a = 5;
   b = 9;
   for(i=0;i<5;i=i+1){
@@ -148,12 +159,23 @@ src="main(){
   }
   return a+b;
 }"
-echo $src
+echo $src1
 #try "0" $src
-./kfc "$src" 1> tmp.s
+./kfc "$src1" 1> tmp.s
+gcc -o tmp tmp.s -g
+./tmp
+echo $?
+echo $src2
+./kfc "$src2" 1> tmp.s
 gcc -o tmp tmp.s
 ./tmp
 echo $?
+echo $src3
+./kfc "$src3" 1> tmp.s
+gcc -o tmp tmp.s
+./tmp
+echo $?
+
 echo "test passed"
 
 
