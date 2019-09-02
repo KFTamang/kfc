@@ -19,13 +19,13 @@ int main(int argc, char **argv){
 
   printf(".intel_syntax noprefix\n");
   printf(".global main\n");
-  printf("main:\n");
+  //  printf("main:\n");
 
   // prologue
   // allocate 26 variables
-  printf("  push rbp\n");
-  printf("  mov rbp, rsp\n");
-  printf("  sub rsp, 208\n");
+  //  printf("  push rbp\n");
+  //  printf("  mov rbp, rsp\n");
+  //  printf("  sub rsp, 208\n");
   
   // climbing down the tree and generate code
   int i = 0;

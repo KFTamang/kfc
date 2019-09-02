@@ -163,6 +163,17 @@ void gen(Node* node){
     printf("  call %s\n", str);
     printf("  push rax\n");
     return;
+  case ND_FUNC_DEF:
+    strncpy(str, node->name, node->len);
+    str[node->len] = '\0';
+    // prologue
+    // allocate 26 variables
+    printf("%s:\n", str);
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    printf("  sub rsp, 208\n");
+    gen_node_list(node->comp_stmt);
+    return;
   }
     
   gen(node->lhs);

@@ -65,11 +65,14 @@ typedef enum{
   ND_WHILE, // while statement 13
   ND_FOR,      // for loop 14
   ND_BLOCK, // compound statement 15
-  ND_FUNC, // function
+  ND_FUNC, // function call
+  ND_FUNC_DEF, // function definition
 } NodeKind;
 
 typedef struct Node Node;
 typedef struct node_list node_list;
+typedef struct lvar_info lvar_info;
+typedef struct funcs funcs;
 
 // abstract syntax tree struct
 struct Node {
@@ -87,9 +90,9 @@ struct Node {
   char* name;    // name of function
   int len;       // length of name of function
   node_list* func_args; // arguments of function
+  lvar_info* lv_i; // infomation of local variables in function
 };
 
-//typedef struct node_list node_list;
 struct node_list{
   Node* data;
   node_list* next;
@@ -108,11 +111,16 @@ struct LVar{
   int offset; // offset from RBP
 };
 
+// local variable information for function definition
+struct lvar_info{
+  LVar* lvar;     // a chain of local variable
+  int total_byte; // total size of local vars in byte
+};
+
 // a chain of local variables
 LVar* locals;
 
 // functions
-typedef struct funcs funcs;
 struct funcs{
   funcs* next; // next function or NULL
   char* name; // name of function
@@ -134,6 +142,7 @@ LVar* find_lvar(Token* tok);
 
 void program();
 
+Node* func_def();
 Node* stmt();
 Node* expr();
 Node* assign();
@@ -146,6 +155,29 @@ Node* ident();
 Node* func();
 Node* unary();
 Node* num();
+
+// symbol table generator
+// symbol kind
+typedef enum{
+  SY_GVAR,
+  SY_LVAR,
+  SY_FUNC,
+}SymbolKind;
+
+// symbol table element
+typedef struct symbol symbol;
+struct symbol{
+  SymbolKind kind;
+  char* name;
+  int size;
+  int addr;
+  Node* scope;
+};
+
+// symbol table
+const int MAX_SYMBOL_NUM = 65535; // 16bit for now
+symbol sym_table[MAX_SYMBOL_NUM];
+int hash_node(Node* node);
 
 // code generator
 void tree_print(Node* node, int i);

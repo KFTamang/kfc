@@ -43,14 +43,50 @@ LVar* find_lvar(Token* tok){
   return NULL;
 }
 
-// ENBF program = stmt*
+// ENBF program = func_def*
 void program(){
   int i = 0;
   while(!at_eof()){
-    code[i] = stmt();
+    code[i] = func_def();
     ++i;
   }
   code[i] = NULL;
+}
+
+// ENBF func_def = ident "(" ")" "{" stmt* "}"
+Node* func_def(){
+  Node* node;
+  Token* tok = consume_ident();
+  if(tok){
+    expect("(");
+    /* if(consume(")")){ // no argument */
+    /*   node->func_args = NULL; */
+    /* }else{ // one argument */
+    /*   node->func_args = new_node_list(expr()); */
+    /*   node_list* next = node->func_args; */
+    /*   while(consume(",")){ */
+    /* 	next = append_node_list(next, expr()); */
+    /*   } */
+    expect(")");
+    expect("{");
+    node = new_node(ND_FUNC_DEF, NULL, NULL);
+    node->name = tok->str;
+    node->len = tok->len;
+    node_list* comp_stmt = calloc(1, sizeof(node_list));
+    node->comp_stmt = comp_stmt;
+    comp_stmt->next = NULL;
+    if(consume("}")){
+      comp_stmt->data = NULL;
+    }else{
+      comp_stmt->data = stmt();
+      while(!consume("}")){
+	comp_stmt = append_node_list(comp_stmt, stmt());
+      }
+    }
+    return node;
+  }
+  return NULL;
+
 }
 
 // ENBF stmt = expr ";" | "return" expr ";"
