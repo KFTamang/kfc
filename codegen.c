@@ -178,6 +178,9 @@ void gen(Node* node){
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, %d\n", sym->size);
+    if(node->func_args != NULL){
+      gen_func_args(node->func_args);
+    }
     gen_node_list(node->comp_stmt);
     // epilogue
     // the last evaluation result in rax is the return value
@@ -253,6 +256,16 @@ void gen_node_list(node_list* nl){
     return;
   }
   gen_node_list(nl->next);
+  return;
+}
+
+void gen_func_args(node_list* fa){
+  int i = 0;
+  while(fa != NULL){
+    printf("  mov [rbp-%d], %s\n", fa->data->offset, ARG_REG[i]);
+    i++;
+    fa = fa->next;
+  }
   return;
 }
 

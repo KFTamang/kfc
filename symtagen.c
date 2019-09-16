@@ -102,6 +102,11 @@ void symtabgen(Node* node, Node* scope){
   case ND_FUNC_DEF:
     //    printf("func name : %s\n",node->name);
     register_func_def(node->name);
+    nl = node->func_args;
+    while(nl != NULL){
+      symtabgen(nl->data, node);
+      nl = nl->next;
+    }
     nl = node->comp_stmt;
     while(nl != NULL){
       symtabgen(nl->data, node);

@@ -196,6 +196,7 @@ void tree_print(Node* node, int i);
 void gen(Node* node);
 void gen_lval(Node* node);
 void gen_node_list(node_list* nl);
+void gen_func_args(node_list* fa);
 
 // error messager
 void error(char* fmt, ...);

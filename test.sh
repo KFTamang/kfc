@@ -67,6 +67,37 @@ main(){
 }"
 try "7" "$src4"
 
+src5="
+return_7(x){
+  return 7;
+}
+
+main(){
+  return return_7(0);
+}"
+try "7" "$src5"
+
+src6="
+return_x(x){
+  return x;
+}
+
+main(){
+  return return_x(9);
+}"
+try "9" "$src6"
+
+src7="
+return_x(x){
+  return x;
+}
+
+main(){
+  a = 9;
+  return return_x(a+7);
+}"
+try "16" "$src7"
+
 echo "test passed"
 
 
