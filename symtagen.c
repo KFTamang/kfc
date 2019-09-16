@@ -98,6 +98,11 @@ void symtabgen(Node* node, Node* scope){
     register_lvar(scope->name, node->name);
     return;
   case ND_FUNC:
+    nl = node->func_args;
+    while(nl != NULL){
+      symtabgen(nl->data, scope);
+      nl = nl->next;
+    }
     return;
   case ND_FUNC_DEF:
     //    printf("func name : %s\n",node->name);

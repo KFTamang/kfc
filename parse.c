@@ -73,10 +73,11 @@ Node* func_def(){
   }else{ // one argument
     Token* arg = consume_ident();
     node->func_args = new_node_list(lvar(arg));
-    /* node_list* next = node->func_args; */
-    /* while(consume(",")){ */
-    /* 	next = append_node_list(next, expr()); */
-    /* } */
+    node_list* next = node->func_args;
+    while(consume(",")){
+      arg = consume_ident();
+      next = append_node_list(next, lvar(arg));
+    }
     expect(")");
   }
   // statements

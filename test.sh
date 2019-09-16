@@ -98,6 +98,98 @@ main(){
 }"
 try "16" "$src7"
 
+src8="
+add_x_y(x, y){
+  return x+y;
+}
+
+main(){
+  return add_x_y(6,10);
+}"
+try "16" "$src8"
+
+src9="
+main(){
+  if(5<3){
+    return 7;
+  }else{
+    return 2;
+  }
+}
+"
+try "2" "$src9"
+
+src10="
+add(x,y){
+  return x+y;
+}
+main(){
+  if(add(5,3)==8){
+    return 7;
+  }else{
+    return 2;
+  }
+}
+"
+try "7" "$src10"
+
+fibonacci="
+fib(x){
+  if(x<3){
+    return 1;
+  }else{
+    return fib(x-1) + fib(x-2);
+  }
+}
+
+main(){
+  if( fib(1) == 1 ){
+    return 3;
+  }else{
+    return 5;
+  }
+}
+"
+try "3" "$fibonacci"
+
+fibonacci="
+fib(x){
+  if(x<3){
+    return 1;
+  }else{
+    return fib(x-1) + fib(x-2);
+  }
+}
+
+main(){
+  if( fib(5) == 5 ){
+    return 3;
+  }else{
+    return 5;
+  }
+}
+"
+try "3" "$fibonacci"
+
+fibonacci="
+fib(x){
+  if(x<3){
+    return 1;
+  }else{
+    return fib(x-1) + fib(x-2);
+  }
+}
+
+main(){
+  if( fib(13) == 233 ){
+    return 5;
+  }else{
+    return 3;
+  }
+}
+"
+try "5" "$fibonacci"
+
 echo "test passed"
 
 

@@ -15,9 +15,20 @@ void print_sym_table(){
 int main(){
 
   //  char* test_str = "main(){a=1;b=3; a=2; return a+b;}";
-  char* test_str = "main(){a=1;b=3; if(a>0){a = a + 2;} return a+b;}";
+  //  char* test_str = "main(){a=1;b=3; if(a>0){a = a + 2;} return a+b;}";
   //  char* test_str = "main(){a=1;b=3; for(i=0;i<10;i=i+1){a = a + 2;} return a+b;}";
   //  char* test_str = "main(){a=1;b=3; return a+b;}";
+  char* test_str = "fib(x){ \
+  if(x<3){ \
+    return 1; \
+  }else{ \
+    return fib(x-1) + fib(x-2); \
+  } \
+} \
+ \
+main(){ \
+  return fib(3); \
+}";
   locals = NULL;
   g_label_num = 0;
   token = tokenize(test_str);
