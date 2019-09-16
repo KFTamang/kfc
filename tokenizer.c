@@ -116,6 +116,10 @@ Token* tokenize(char* p){
       p++;
       continue;
     }
+    if(*p == '\n'){
+      p++;
+      continue;
+    }
     if(strncmp(p,"==",2) == 0 || strncmp(p,">=",2) == 0 ||
        strncmp(p,"<=",2) == 0 || strncmp(p,"!=",2) == 0 ){
       cur = new_token(TK_RESERVED, cur, p, 2);
