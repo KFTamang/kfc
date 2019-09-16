@@ -71,12 +71,12 @@ Node* func_def(){
   if(consume(")")){ // no argument
     node->func_args = NULL;
   }else{ // one argument
-    /* node->func_args = new_node_list(expr()); */
+    node->func_args = new_node_list(lvar(tok));
     /* node_list* next = node->func_args; */
     /* while(consume(",")){ */
     /* 	next = append_node_list(next, expr()); */
     /* } */
-    /* expect(")"); */
+    expect(")");
   }
   // statements
   expect("{");

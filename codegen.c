@@ -173,6 +173,7 @@ void gen(Node* node){
     //    str[node->len] = '\0';
     // prologue
     // allocate 26 variables
+    printf(".global %s\n", sym->name);
     printf("%s:\n", sym->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");

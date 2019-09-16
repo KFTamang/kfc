@@ -25,7 +25,7 @@ int main(int argc, char **argv){
   
 
   printf(".intel_syntax noprefix\n");
-  printf(".global main\n");
+  //  printf(".global main\n");
 
   // climbing down the tree and generate code
   i = 0;
