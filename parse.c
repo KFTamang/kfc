@@ -57,38 +57,41 @@ void program(){
 Node* func_def(){
   Node* node;
   Token* tok = consume_ident();
-  if(tok){
-    expect("(");
-    /* if(consume(")")){ // no argument */
-    /*   node->func_args = NULL; */
-    /* }else{ // one argument */
-    /*   node->func_args = new_node_list(expr()); */
-    /*   node_list* next = node->func_args; */
-    /*   while(consume(",")){ */
-    /* 	next = append_node_list(next, expr()); */
-    /*   } */
-    expect(")");
-    expect("{");
-    node = new_node(ND_FUNC_DEF, NULL, NULL);
-    char* node_name = calloc(1, sizeof(char)*(tok->len+1));
-    strncpy(node_name, tok->str, tok->len);
-    node->name = node_name;
-    node->len = tok->len;
-    node_list* comp_stmt = calloc(1, sizeof(node_list));
-    node->comp_stmt = comp_stmt;
-    comp_stmt->next = NULL;
-    if(consume("}")){
-      comp_stmt->data = NULL;
-    }else{
-      comp_stmt->data = stmt();
-      while(!consume("}")){
-	comp_stmt = append_node_list(comp_stmt, stmt());
-      }
-    }
-    return node;
+  if(tok == NULL){
+    return NULL;
   }
-  return NULL;
-
+  // name
+  node = new_node(ND_FUNC_DEF, NULL, NULL);
+  char* node_name = calloc(1, sizeof(char)*(tok->len+1));
+  strncpy(node_name, tok->str, tok->len);
+  node->name = node_name;
+  node->len = tok->len;
+  // arguments
+  expect("(");
+  if(consume(")")){ // no argument
+    node->func_args = NULL;
+  }else{ // one argument
+    /* node->func_args = new_node_list(expr()); */
+    /* node_list* next = node->func_args; */
+    /* while(consume(",")){ */
+    /* 	next = append_node_list(next, expr()); */
+    /* } */
+    /* expect(")"); */
+  }
+  // statements
+  expect("{");
+  node_list* comp_stmt = calloc(1, sizeof(node_list));
+  node->comp_stmt = comp_stmt;
+  comp_stmt->next = NULL;
+  if(consume("}")){
+    comp_stmt->data = NULL;
+  }else{
+    comp_stmt->data = stmt();
+    while(!consume("}")){
+      comp_stmt = append_node_list(comp_stmt, stmt());
+    }
+  }
+  return node;
 }
 
 // ENBF stmt = expr ";" | "return" expr ";"
@@ -277,32 +280,38 @@ Node* ident(){
   if(is_symbol("(")){
     node = func(tok);
   }else{ // variable
-    node = calloc(1, sizeof(Node));
-    node->kind = ND_LVAR;
-    char* node_name = calloc(1, sizeof(tok->len+1));
-    strncpy(node_name, tok->str, tok->len);
-    node_name[tok->len+1] = '\0';
-    node->name = node_name;
-    node->len = tok->len;
-    LVar* var = find_lvar(tok);
-    if(var){
-      node->offset = var->offset;
+    node = lvar(tok);
+  }
+  return node;
+}
+
+// ENBF lvar
+Node* lvar(Token* tok){
+  Node* node = calloc(1, sizeof(Node));
+  node->kind = ND_LVAR;
+  char* node_name = calloc(1, sizeof(tok->len+1));
+  strncpy(node_name, tok->str, tok->len);
+  node_name[tok->len+1] = '\0';
+  node->name = node_name;
+  node->len = tok->len;
+  LVar* var = find_lvar(tok);
+  if(var){
+    node->offset = var->offset;
+  }else{
+    if(locals){
+      LVar* new_var = calloc(1, sizeof(LVar));
+      new_var->next = locals;
+      new_var->name = tok->str;
+      new_var->len = tok->len;
+      new_var->offset = locals->offset + 8;
+      node->offset = new_var->offset;
+      locals = new_var;
     }else{
-      if(locals){
-	LVar* new_var = calloc(1, sizeof(LVar));
-	new_var->next = locals;
-	new_var->name = tok->str;
-	new_var->len = tok->len;
-	new_var->offset = locals->offset + 8;
-	node->offset = new_var->offset;
-	locals = new_var;
-      }else{
-	locals = calloc(1, sizeof(LVar));
-	locals->next = NULL;
-	locals->name = tok->str;
-	locals->len = tok->len;
-	locals->offset = 0;
-      }
+      locals = calloc(1, sizeof(LVar));
+      locals->next = NULL;
+      locals->name = tok->str;
+      locals->len = tok->len;
+      locals->offset = 0;
     }
   }
   return node;

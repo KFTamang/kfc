@@ -159,7 +159,8 @@ Node* add();
 Node* mul();
 Node* term();
 Node* ident();
-Node* func();
+Node* lvar(Token* tok);
+Node* func(Token* tok);
 Node* unary();
 Node* num();
 
