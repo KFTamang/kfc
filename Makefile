@@ -1,8 +1,8 @@
 CFLAGS=-std=c11 -g # -static
-SRCS=container.c parse.c tokenizer.c codegen.c foo.c hoge.c symtagen.c
+SRCS=container.c parse.c tokenizer.c codegen.c foo.c hoge.c symtabgen.c
 MAIN=main.c
 #SYMTAB_TEST=symtagen_test.c
-SYMTAB_TEST_O=symtagen_test.c
+SYMTAB_TEST_O=symtabgen_test.c
 MAIN_TEST=main_test.c
 OBJS=$(SRCS:.c=.o)
 
@@ -10,7 +10,7 @@ OBJS=$(SRCS:.c=.o)
 
 kfc: $(OBJS) $(MAIN)
 main.c:main.o
-symtegen.c:symtegen.o
+symtabgen.c:symtabgen.o
 
 kfc: $(OBJS)
 	$(CC) -o kfc $(MAIN) $(OBJS) $(CFLAGS)
