@@ -190,6 +190,18 @@ main(){
 "
 try "5" "$fibonacci"
 
+src="test(){
+  x = 3;
+  y = &x;
+  return *y;
+}
+
+main(){
+  return test();
+}
+"
+try "3" "$src"
+
 echo "test passed"
 
 

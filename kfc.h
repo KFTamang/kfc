@@ -74,6 +74,8 @@ typedef enum{
   ND_BLOCK, // compound statement 15
   ND_FUNC, // function call
   ND_FUNC_DEF, // function definition
+  ND_ADDR, // pointer address
+  ND_DEREF, // pointer dereference
 } NodeKind;
 
 typedef struct Node Node;

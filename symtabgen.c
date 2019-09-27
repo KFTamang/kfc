@@ -118,6 +118,12 @@ void symtabgen(Node* node, Node* scope){
       nl = nl->next;
     }
     return;
+  case ND_ADDR:
+    symtabgen(node->lhs, scope);
+    return;
+  case ND_DEREF:
+    symtabgen(node->lhs, scope);
+    return;
 
   // two term nodes
   case ND_ADD:

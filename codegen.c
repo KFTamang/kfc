@@ -132,6 +132,17 @@ void gen(Node* node){
     printf("  pop rbp\n");
     printf("  ret\n");
     return;
+  case ND_ADDR:
+    printf("  # addr\n");
+    gen_lval(node->lhs);
+    return;
+  case ND_DEREF:
+    printf("  # deref\n");
+    gen_lval(node->lhs);
+    printf("  pop rax\n");
+    printf("  mov rax, [rax]\n");
+    printf("  push rax\n");
+    return;
   }
     
   gen(node->lhs);
