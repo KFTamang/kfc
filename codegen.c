@@ -138,7 +138,7 @@ void gen(Node* node){
     return;
   case ND_DEREF:
     printf("  # deref\n");
-    gen_lval(node->lhs);
+    gen(node->lhs);
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
     printf("  push rax\n");
