@@ -96,9 +96,7 @@ void gen(Node* node){
       error("Too long name of variable");
       return;
     }
-    strncpy(str, node->name, node->len);
-    str[node->len] = '\0';
-    printf("  call %s\n", str);
+    printf("  call %s\n", node->name);
     printf("  push rax\n");
     return;
   case ND_FUNC_DEF:

@@ -324,7 +324,9 @@ Node* func(Token* tok){
   Node* node;
   node = calloc(1, sizeof(Node));
   node->kind = ND_FUNC;
-  node->name = tok->str;
+  char* node_name = calloc(1, sizeof(char)*(tok->len+1));
+  strncpy(node_name, tok->str, tok->len);
+  node->name = node_name;
   node->len = tok->len;
   expect("(");
   if(consume(")")){ // no argument
