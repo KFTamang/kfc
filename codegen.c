@@ -86,6 +86,7 @@ void gen(Node* node){
     gen_node_list(node->comp_stmt);
     return;
   case ND_FUNC:
+    g_label_num++;
     while(node->func_args && (arg_num < MAX_ARG_NUM) ){
       gen(node->func_args->data);
       printf("  pop %s\n", ARG_REG[arg_num]);
@@ -96,7 +97,18 @@ void gen(Node* node){
       error("Too long name of variable");
       return;
     }
+    printf("  mov rax, rsp\n");
+    printf("  and rax, 15\n");
+    printf("  jnz .Lcall%d\n", l_label_num);
+    printf("  mov rax, 0\n");
     printf("  call %s\n", node->name);
+    printf("  jmp .Lend%d\n", l_label_num);
+    printf(".Lcall%d:\n", l_label_num);
+    printf("  sub rsp, 8\n");
+    printf("  mov rax, 0\n");
+    printf("  call %s\n", node->name);
+    printf("  add rsp, 8\n");
+    printf(".Lend%d:\n", l_label_num);
     printf("  push rax\n");
     return;
   case ND_FUNC_DEF:
