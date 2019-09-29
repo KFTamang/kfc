@@ -1,5 +1,5 @@
 CFLAGS=-std=c11 -g # -static
-SRCS=container.c parse.c tokenizer.c codegen.c foo.c hoge.c symtabgen.c visualize_ast.c
+SRCS=container.c parse.c tokenizer.c codegen.c foo.c hoge.c visualize_ast.c
 MAIN=main.c
 #SYMTAB_TEST=symtagen_test.c
 SYMTAB_TEST_O=symtabgen_test.c

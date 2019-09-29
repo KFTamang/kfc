@@ -6,7 +6,6 @@ void gen(Node* node){
   char str[VAR_NAME_SIZE];
   int arg_num = 0;
   unsigned int hash;
-  symbol* sym;
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);
@@ -16,6 +15,8 @@ void gen(Node* node){
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
     printf("  push rax\n");
+    return;
+  case ND_LVAR_DEC:
     return;
   case ND_ASSIGN:
     gen_lval(node->lhs);
@@ -112,16 +113,13 @@ void gen(Node* node){
     printf("  push rax\n");
     return;
   case ND_FUNC_DEF:
-    // fetch symbol table
-    hash = hash_nodename(node->name);
-    sym = sym_table[hash];
     // prologue
     // allocate 26 variables
-    printf(".global %s\n", sym->name);
-    printf("%s:\n", sym->name);
+    printf(".global %s\n", node->name);
+    printf("%s:\n", node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %d\n", sym->size);
+    printf("  sub rsp, %d\n", node->lvar_size_byte);
     if(node->func_args != NULL){
       gen_func_args(node->func_args);
     }

@@ -23,6 +23,7 @@ typedef enum{
   TK_WHILE,    // while loop
   TK_FOR,      // for loop
   TK_EOF,      // end of file
+  TK_TYPE_INT, // type int 
 } TokenKind;
 
 typedef struct Token Token;
@@ -76,6 +77,7 @@ typedef enum{
   ND_FUNC_DEF, // function definition
   ND_ADDR, // pointer address
   ND_DEREF, // pointer dereference
+  ND_LVAR_DEC, // local variable declaration
 } NodeKind;
 
 typedef struct Node Node;
@@ -100,6 +102,7 @@ struct Node {
   int len;       // length of name of function
   node_list* func_args; // arguments of function
   lvar_info* lv_i; // infomation of local variables in function
+  int lvar_size_byte; // total size of local variables in bytes
 };
 
 struct node_list{
@@ -118,6 +121,8 @@ struct LVar{
   char* name; // name of variable
   int len;    // length of name
   int offset; // offset from RBP
+  int size_byte;    // size of the variable in byte
+  char* scope_name; // name of the scope function
 };
 
 // local variable information for function definition
@@ -148,11 +153,13 @@ int g_label_num;
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
 LVar* find_lvar(Token* tok);
-
+void append_lvar(Token* tok);
+int get_lvar_size_byte();
 void program();
 
 Node* func_def();
 Node* stmt();
+Node* lvar_dec();
 Node* expr();
 Node* assign();
 Node* equality();
@@ -166,32 +173,6 @@ Node* func(Token* tok);
 Node* unary();
 Node* num();
 
-// symbol table generator
-// symbol kind
-typedef enum{
-  SY_GVAR,
-  SY_LVAR,
-  SY_FUNC,
-}SymbolKind;
-
-// symbol table element
-typedef struct symbol symbol;
-struct symbol{
-  SymbolKind kind;
-  char* name;
-  int size;
-  int addr;
-  char* scope;
-};
-
-// symbol table
-symbol* sym_table[MAX_SYMBOL_NUM];
-unsigned int hash_nodename(char* node_name);
-int get_lvar_nuber_in_scope(char* scope_name);
-void register_func_def(char* func_name);
-void register_lvar(char* scope_name, char* node_name);
-void symtabgen(Node* node, Node* scope);
-int get_lvar_address(char* scope_name, char* name);
 
 // code generator
 void tree_print(Node* node, int i);

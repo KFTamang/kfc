@@ -43,6 +43,33 @@ LVar* find_lvar(Token* tok){
   return NULL;
 }
 
+void append_lvar(Token* tok){
+  if(locals){
+    LVar* new_var = calloc(1, sizeof(LVar));
+    new_var->next = locals;
+    new_var->name = tok->str;
+    new_var->len = tok->len;
+    new_var->size_byte = 16;
+    new_var->offset = locals->offset + new_var->size_byte;
+    locals = new_var;
+  }else{
+    locals = calloc(1, sizeof(LVar));
+    locals->next = NULL;
+    locals->name = tok->str;
+    locals->len = tok->len;
+    locals->size_byte = 16;
+    locals->offset = 0;
+  }
+}
+
+int get_lvar_size_byte(){
+  int lvar_size = 0;
+  for(LVar* var=locals; var; var=var->next){
+    lvar_size += var->size_byte;
+  }
+  return lvar_size;
+}
+
 // ENBF program = func_def*
 void program(){
   int i = 0;
@@ -93,6 +120,7 @@ Node* func_def(){
       comp_stmt = append_node_list(comp_stmt, stmt());
     }
   }
+  node->lvar_size_byte = get_lvar_size_byte();
   return node;
 }
 
@@ -101,6 +129,7 @@ Node* func_def(){
 //           | "if" "(" expr ")" stmt ("else" stmt)?
 //           | "while" "(" expr ")" stmt
 //           | "for" "(" expr? ";" expr? ";" expr? ")" stmt
+//           | lvar_dec ";"
 Node* stmt(){
   Node* node;
   // if return statement
@@ -176,9 +205,41 @@ Node* stmt(){
     node->end = end;
     node->then = then;
   }else{
+    node = lvar_dec();
+    if(node != NULL){
+      expect(";");
+      return node;
+    }
     node = expr();
     expect(";");
   }
+  return node;
+}
+
+// ENBF lvar_dec = "int" lvar ";"
+Node* lvar_dec(){
+  if(!consumeByKind(TK_TYPE_INT)){
+    return NULL;
+  }
+  Token* tok = consume_ident();
+  if(tok == NULL){
+    return NULL;
+  }
+  LVar* var = find_lvar(tok);
+  // if variable is already declared
+  if(var != NULL){
+    error_at(token->str,"Local variable %s is already defined\n", var->name);
+    exit(1);
+  }
+  append_lvar(tok);
+
+  Node* node = calloc(1, sizeof(Node));
+  node->kind = ND_LVAR_DEC;
+  char* node_name = calloc(1, sizeof(tok->len+1));
+  strncpy(node_name, tok->str, tok->len);
+  node_name[tok->len+1] = '\0';
+  node->name = node_name;
+  node->len = tok->len;
   return node;
 }
 
@@ -289,33 +350,21 @@ Node* ident(){
 
 // ENBF lvar
 Node* lvar(Token* tok){
-  Node* node = calloc(1, sizeof(Node));
-  node->kind = ND_LVAR;
   char* node_name = calloc(1, sizeof(tok->len+1));
   strncpy(node_name, tok->str, tok->len);
   node_name[tok->len+1] = '\0';
+  LVar* var = find_lvar(tok);
+  if(var == NULL){
+    error_at(token->str, "Variable %s is not declared\n", node_name);
+    exit(1);
+  }
+
+  Node* node = calloc(1, sizeof(Node));
+  node->kind = ND_LVAR;
   node->name = node_name;
   node->len = tok->len;
-  LVar* var = find_lvar(tok);
-  if(var){
-    node->offset = var->offset;
-  }else{
-    if(locals){
-      LVar* new_var = calloc(1, sizeof(LVar));
-      new_var->next = locals;
-      new_var->name = tok->str;
-      new_var->len = tok->len;
-      new_var->offset = locals->offset + 8;
-      node->offset = new_var->offset;
-      locals = new_var;
-    }else{
-      locals = calloc(1, sizeof(LVar));
-      locals->next = NULL;
-      locals->name = tok->str;
-      locals->len = tok->len;
-      locals->offset = 0;
-    }
-  }
+  node->offset = var->offset;
+
   return node;
 }
 

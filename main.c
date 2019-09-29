@@ -16,19 +16,12 @@ int main(int argc, char **argv){
   user_input = argv[1];
   token = tokenize(user_input);
   program();
-  // generate symbol table
-  int i = 0;
-  while(code[i] != NULL){
-    symtabgen(code[i],code[i]);
-    ++i;
-  }
-  
 
   printf(".intel_syntax noprefix\n");
   //  printf(".global main\n");
 
   // climbing down the tree and generate code
-  i = 0;
+  int i = 0;
   while(code[i] != NULL){
     if(i > 0){
       // take out evaluation result of equation

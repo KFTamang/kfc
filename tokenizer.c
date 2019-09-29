@@ -173,6 +173,12 @@ Token* tokenize(char* p){
 	p += i;
 	continue;
       }
+      // variable type int
+      if(i==3 && strncmp(p, "int", i)==0){ 
+	cur = new_token(TK_TYPE_INT, cur, p, i);
+	p += i;
+	continue;
+      }
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;

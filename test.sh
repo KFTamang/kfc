@@ -35,185 +35,188 @@ func_test(){
 }
 
 src1="main(){
+  int a;
   a = 5;
-  b = 9;
-  return a+b;
+  return a;
 }"
-try "14" "$src1"
- src2="main(){
-   a = 5;
-   b = 9;
-   a = a + 1;
-   return a+b;
- }"
- 
- try "15" "$src2"
- src3="main(){
-   a = 5;
-   b = 9;
-   for(i=0;i<5;i=i+1){
-     a = a + 1;
-   }
-   return a+b;
- }"
-try "19" "$src3"
-src4="
-return_7(){
-  return 7;
-}
+try "5" "$src1"
 
-main(){
-  return return_7();
-}"
-try "7" "$src4"
+src2="main(){
+    int a;
+    a = 5;
+    int b; 
+    b = 9;
+    a = a + 1;
+    return a+b;
+  }"
+try "15" "$src2"
 
-src5="
-return_7(x){
-  return 7;
-}
+#  src3="main(){
+#    a = 5;
+#    b = 9;
+#    for(i=0;i<5;i=i+1){
+#      a = a + 1;
+#    }
+#    return a+b;
+#  }"
+# try "19" "$src3"
+# src4="
+# return_7(){
+#   return 7;
+# }
 
-main(){
-  return return_7(0);
-}"
-try "7" "$src5"
+# main(){
+#   return return_7();
+# }"
+# try "7" "$src4"
 
-src6="
-return_x(x){
-  return x;
-}
+# src5="
+# return_7(x){
+#   return 7;
+# }
 
-main(){
-  return return_x(9);
-}"
-try "9" "$src6"
+# main(){
+#   return return_7(0);
+# }"
+# try "7" "$src5"
 
-src7="
-return_x(x){
-  return x;
-}
+# src6="
+# return_x(x){
+#   return x;
+# }
 
-main(){
-  a = 9;
-  return return_x(a+7);
-}"
-try "16" "$src7"
+# main(){
+#   return return_x(9);
+# }"
+# try "9" "$src6"
 
-src8="
-add_x_y(x, y){
-  return x+y;
-}
+# src7="
+# return_x(x){
+#   return x;
+# }
 
-main(){
-  return add_x_y(6,10);
-}"
-try "16" "$src8"
+# main(){
+#   a = 9;
+#   return return_x(a+7);
+# }"
+# try "16" "$src7"
 
-src9="
-main(){
-  if(5<3){
-    return 7;
-  }else{
-    return 2;
-  }
-}
-"
-try "2" "$src9"
+# src8="
+# add_x_y(x, y){
+#   return x+y;
+# }
 
-src10="
-add(x,y){
-  return x+y;
-}
-main(){
-  if(add(5,3)==8){
-    return 7;
-  }else{
-    return 2;
-  }
-}
-"
-try "7" "$src10"
+# main(){
+#   return add_x_y(6,10);
+# }"
+# try "16" "$src8"
 
-fibonacci="
-fib(x){
-  if(x<3){
-    return 1;
-  }else{
-    return fib(x-1) + fib(x-2);
-  }
-}
+# src9="
+# main(){
+#   if(5<3){
+#     return 7;
+#   }else{
+#     return 2;
+#   }
+# }
+# "
+# try "2" "$src9"
 
-main(){
-  if( fib(1) == 1 ){
-    return 3;
-  }else{
-    return 5;
-  }
-}
-"
-try "3" "$fibonacci"
+# src10="
+# add(x,y){
+#   return x+y;
+# }
+# main(){
+#   if(add(5,3)==8){
+#     return 7;
+#   }else{
+#     return 2;
+#   }
+# }
+# "
+# try "7" "$src10"
 
-fibonacci="
-fib(x){
-  if(x<3){
-    return 1;
-  }else{
-    return fib(x-1) + fib(x-2);
-  }
-}
+# fibonacci="
+# fib(x){
+#   if(x<3){
+#     return 1;
+#   }else{
+#     return fib(x-1) + fib(x-2);
+#   }
+# }
 
-main(){
-  if( fib(5) == 5 ){
-    return 3;
-  }else{
-    return 5;
-  }
-}
-"
-try "3" "$fibonacci"
+# main(){
+#   if( fib(1) == 1 ){
+#     return 3;
+#   }else{
+#     return 5;
+#   }
+# }
+# "
+# try "3" "$fibonacci"
 
-fibonacci="
-fib(x){
-  if(x<3){
-    return 1;
-  }else{
-    return fib(x-1) + fib(x-2);
-  }
-}
+# fibonacci="
+# fib(x){
+#   if(x<3){
+#     return 1;
+#   }else{
+#     return fib(x-1) + fib(x-2);
+#   }
+# }
 
-main(){
-  if( fib(13) == 233 ){
-    return 5;
-  }else{
-    return 3;
-  }
-}
-"
-try "5" "$fibonacci"
+# main(){
+#   if( fib(5) == 5 ){
+#     return 3;
+#   }else{
+#     return 5;
+#   }
+# }
+# "
+# try "3" "$fibonacci"
 
-src="test(){
-  x = 3;
-  y = &x;
-  return *y;
-}
+# fibonacci="
+# fib(x){
+#   if(x<3){
+#     return 1;
+#   }else{
+#     return fib(x-1) + fib(x-2);
+#   }
+# }
 
-main(){
-  return test();
-}
-"
-try "3" "$src"
+# main(){
+#   if( fib(13) == 233 ){
+#     return 5;
+#   }else{
+#     return 3;
+#   }
+# }
+# "
+# try "5" "$fibonacci"
 
-src="test(){
-  x = 3;
-  y = 5;
-  z = &x - 8;
-  return *z;
-}
+# src="test(){
+#   x = 3;
+#   y = &x;
+#   return *y;
+# }
 
-main(){
-  return test();
-}
-"
-try "5" "$src"
+# main(){
+#   return test();
+# }
+# "
+# try "3" "$src"
+
+# src="test(){
+#   x = 3;
+#   y = 5;
+#   z = &x - 8;
+#   return *z;
+# }
+
+# main(){
+#   return test();
+# }
+# "
+# try "5" "$src"
 
 echo "test passed"
 
