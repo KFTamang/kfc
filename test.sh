@@ -34,14 +34,14 @@ func_test(){
     fi
 }
 
-src1="main(){
+src="main(){
   int a;
   a = 5;
   return a;
 }"
-try "5" "$src1"
+try "5" "$src"
 
-src2="main(){
+src="main(){
     int a;
     a = 5;
     int b; 
@@ -49,21 +49,48 @@ src2="main(){
     a = a + 1;
     return a+b;
   }"
-try "15" "$src2"
+try "15" "$src"
 
-#  src3="main(){
-#    a = 5;
-#    b = 9;
-#    for(i=0;i<5;i=i+1){
-#      a = a + 1;
-#    }
-#    return a+b;
-#  }"
-# try "19" "$src3"
+src="
+return_9(){
+return 9;
+}
+
+main(){
+  return return_9();
+}"
+try "9" "$src"
+
+src="
+return_9(){
+return 9;
+}
+
+main(){
+  int a;
+  a = return_9();
+  return a;
+}"
+try "9" "$src"
+
+src="
+return_9(){
+int a;
+a = 9;
+return a;
+}
+
+main(){
+  int a;
+  a = return_9();
+  return a;
+}"
+try "14" "$src"
+
 # src4="
-# return_7(){
-#   return 7;
-# }
+#  return_7(){
+#    return 7;
+#  }
 
 # main(){
 #   return return_7();

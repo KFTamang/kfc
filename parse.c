@@ -33,10 +33,11 @@ Node* new_node_num(int val){
   return node;
 }
 
-// search for local variable from var chain
+// search for local variable in the scope from var chain
 LVar* find_lvar(Token* tok){
   for(LVar* var=locals; var; var=var->next){
-    if(var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
+    if(var->len == tok->len && !memcmp(tok->str, var->name, var->len) &&
+       !strncmp(var->scope_name, g_current_scope, strlen(var->scope_name))){
       return var;
     }
   }
@@ -51,6 +52,7 @@ void append_lvar(Token* tok){
     new_var->len = tok->len;
     new_var->size_byte = 16;
     new_var->offset = locals->offset + new_var->size_byte;
+    new_var->scope_name = g_current_scope;
     locals = new_var;
   }else{
     locals = calloc(1, sizeof(LVar));
@@ -58,14 +60,17 @@ void append_lvar(Token* tok){
     locals->name = tok->str;
     locals->len = tok->len;
     locals->size_byte = 16;
-    locals->offset = 0;
+    locals->offset = 8;
+    locals->scope_name = g_current_scope;
   }
 }
 
 int get_lvar_size_byte(){
   int lvar_size = 0;
   for(LVar* var=locals; var; var=var->next){
-    lvar_size += var->size_byte;
+    if(!strncmp(var->scope_name, g_current_scope, strlen(var->scope_name))){
+      lvar_size += var->size_byte;
+    }
   }
   return lvar_size;
 }
@@ -93,6 +98,7 @@ Node* func_def(){
   strncpy(node_name, tok->str, tok->len);
   node->name = node_name;
   node->len = tok->len;
+  g_current_scope = node_name;
   // arguments
   expect("(");
   if(consume(")")){ // no argument

@@ -17,6 +17,7 @@ void gen(Node* node){
     printf("  push rax\n");
     return;
   case ND_LVAR_DEC:
+    printf("  push rax\n");
     return;
   case ND_ASSIGN:
     gen_lval(node->lhs);

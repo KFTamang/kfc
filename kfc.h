@@ -150,6 +150,9 @@ Node* code[100];
 // global number for label
 int g_label_num;
 
+// global char for current scope name
+char* g_current_scope;
+
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
 LVar* find_lvar(Token* tok);
