@@ -51,7 +51,7 @@ void append_lvar(Token* tok){
     new_var->name = tok->str;
     new_var->len = tok->len;
     new_var->size_byte = 16;
-    new_var->offset = locals->offset + new_var->size_byte;
+    new_var->offset = get_lvar_size_byte() + 8;
     new_var->scope_name = g_current_scope;
     locals = new_var;
   }else{
@@ -59,8 +59,8 @@ void append_lvar(Token* tok){
     locals->next = NULL;
     locals->name = tok->str;
     locals->len = tok->len;
-    locals->size_byte = 16;
-    locals->offset = 16;
+    locals->size_byte = 8;
+    locals->offset = 8;
     locals->scope_name = g_current_scope;
   }
 }
@@ -85,7 +85,7 @@ void program(){
   code[i] = NULL;
 }
 
-// ENBF func_def = ident "(" ")" "{" stmt* "}"
+// ENBF func_def = ident "(" lvar_dec? ")" "{" stmt* "}"
 Node* func_def(){
   Node* node;
   Token* tok = consume_ident();
@@ -104,13 +104,17 @@ Node* func_def(){
   if(consume(")")){ // no argument
     node->func_args = NULL;
   }else{ // one argument
-    Token* arg = consume_ident();
-    node->func_args = new_node_list(lvar(arg));
-    node_list* next = node->func_args;
-    while(consume(",")){
-      arg = consume_ident();
-      next = append_node_list(next, lvar(arg));
+    Node* arg_lvar = lvar_dec();
+    //    Token* arg = consume_ident();
+    if(!arg_lvar){
+      error_at(token->str, "Argument variables are wrong\n");
     }
+    node->func_args = new_node_list(arg_lvar);
+    node_list* next = node->func_args;
+    /* while(consume(",")){ */
+    /*   arg = consume_ident(); */
+    /*   next = append_node_list(next, lvar(arg)); */
+    /* } */
     expect(")");
   }
   // statements
@@ -222,7 +226,7 @@ Node* stmt(){
   return node;
 }
 
-// ENBF lvar_dec = "int" lvar ";"
+// ENBF lvar_dec = "int" lvar
 Node* lvar_dec(){
   if(!consumeByKind(TK_TYPE_INT)){
     return NULL;
@@ -238,7 +242,7 @@ Node* lvar_dec(){
     exit(1);
   }
   append_lvar(tok);
-
+  var = find_lvar(tok);
   Node* node = calloc(1, sizeof(Node));
   node->kind = ND_LVAR_DEC;
   char* node_name = calloc(1, sizeof(tok->len+1));
@@ -246,6 +250,7 @@ Node* lvar_dec(){
   node_name[tok->len+1] = '\0';
   node->name = node_name;
   node->len = tok->len;
+  node->offset = var->offset;
   return node;
 }
 
