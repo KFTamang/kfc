@@ -60,7 +60,7 @@ void append_lvar(Token* tok){
     locals->name = tok->str;
     locals->len = tok->len;
     locals->size_byte = 16;
-    locals->offset = 8;
+    locals->offset = 16;
     locals->scope_name = g_current_scope;
   }
 }

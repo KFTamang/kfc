@@ -11,6 +11,8 @@ try(){
 
     if [ "$actual" = "$expected" ]; then
 	echo "$input => $actual"
+	echo "OK"
+	echo ""
     else
 	echo "$input => $expected expected, but got $actual"
 	cat tmp.s
@@ -62,30 +64,71 @@ main(){
 try "9" "$src"
 
 src="
+return_7(){
+return 7;
+}
+
+main(){
+  int a;
+  a = return_7();
+  return a;
+}"
+try "7" "$src"
+
+src="
 return_9(){
 return 9;
 }
 
 main(){
   int a;
-  a = return_9();
+  a = 9;
   return a;
 }"
 try "9" "$src"
 
+
 src="
-return_9(){
+return_5(){
 int a;
-a = 9;
+a = 5;
 return a;
 }
 
 main(){
-  int a;
-  a = return_9();
-  return a;
+  return return_5();
 }"
-try "14" "$src"
+try "5" "$src"
+
+src="
+return_3(){
+int a;
+a = 3;
+return a;
+}
+
+main(){
+  int b;
+  int c;
+  int d;
+  b = return_3();
+  return b;
+}"
+try "3" "$src"
+
+src="
+return_3(){
+int a;
+a = 3;
+return a;
+}
+
+main(){
+  int b;
+  b = return_3();
+  return b;
+}"
+try "3" "$src"
 
 # src4="
 #  return_7(){
