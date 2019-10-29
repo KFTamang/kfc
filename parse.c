@@ -111,10 +111,10 @@ Node* func_def(){
     }
     node->func_args = new_node_list(arg_lvar);
     node_list* next = node->func_args;
-    /* while(consume(",")){ */
-    /*   arg = consume_ident(); */
-    /*   next = append_node_list(next, lvar(arg)); */
-    /* } */
+    while(consume(",")){
+      arg_lvar = lvar_dec();
+      next = append_node_list(next, arg_lvar);
+    }
     expect(")");
   }
   // statements

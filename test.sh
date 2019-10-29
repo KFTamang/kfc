@@ -173,97 +173,116 @@ main(){
 }"
 try "16" "$src"
 
-# src8="
-# add_x_y(x, y){
-#   return x+y;
-# }
+src="
+add_x_y(int x, int y){
+  return x+y;
+}
 
-# main(){
-#   return add_x_y(6,10);
-# }"
-# try "16" "$src8"
+main(){
+  return add_x_y(6,10);
+}"
+try "16" "$src"
 
-# src9="
-# main(){
-#   if(5<3){
-#     return 7;
-#   }else{
-#     return 2;
-#   }
-# }
-# "
-# try "2" "$src9"
+src="
+add(int x, int y){
+  return x+y;
+}
+main(){
+  if(add(5,3)==8){
+    return 7;
+  }else{
+    return 2;
+  }
+}
+"
+try "7" "$src"
 
-# src10="
-# add(x,y){
-#   return x+y;
-# }
-# main(){
-#   if(add(5,3)==8){
-#     return 7;
-#   }else{
-#     return 2;
-#   }
-# }
-# "
-# try "7" "$src10"
+fibonacci="
+fib(int x){
+  if(x<3){
+    return 1;
+  }else{
+    return fib(x-1) + fib(x-2);
+  }
+}
 
-# fibonacci="
-# fib(x){
-#   if(x<3){
-#     return 1;
-#   }else{
-#     return fib(x-1) + fib(x-2);
-#   }
-# }
+main(){
+  if( fib(1) == 1 ){
+    return 3;
+  }else{
+    return 5;
+  }
+}
+"
+try "3" "$fibonacci"
 
-# main(){
-#   if( fib(1) == 1 ){
-#     return 3;
-#   }else{
-#     return 5;
-#   }
-# }
-# "
-# try "3" "$fibonacci"
+fibonacci="
+fib(int x){
+  if(x<3){
+    return 1;
+  }else{
+    return fib(x-1) + fib(x-2);
+  }
+}
 
-# fibonacci="
-# fib(x){
-#   if(x<3){
-#     return 1;
-#   }else{
-#     return fib(x-1) + fib(x-2);
-#   }
-# }
+main(){
+  if( fib(5) == 5 ){
+    return 3;
+  }else{
+    return 5;
+  }
+}
+"
+try "3" "$fibonacci"
 
-# main(){
-#   if( fib(5) == 5 ){
-#     return 3;
-#   }else{
-#     return 5;
-#   }
-# }
-# "
-# try "3" "$fibonacci"
+fibonacci="
+fib(int x){
+  if(x<3){
+    return 1;
+  }else{
+    return fib(x-1) + fib(x-2);
+  }
+}
 
-# fibonacci="
-# fib(x){
-#   if(x<3){
-#     return 1;
-#   }else{
-#     return fib(x-1) + fib(x-2);
-#   }
-# }
+main(){
+  if( fib(13) == 233 ){
+    return 5;
+  }else{
+    return 3;
+  }
+}
+"
+try "5" "$fibonacci"
 
-# main(){
-#   if( fib(13) == 233 ){
-#     return 5;
-#   }else{
-#     return 3;
-#   }
-# }
-# "
-# try "5" "$fibonacci"
+src="
+add_x_y_z(int x, int y, int z){
+  return x+y+z;
+}
+
+main(){
+  return add_x_y_z(6,10,7);
+}"
+try "23" "$src"
+
+src="
+add_x_y_z_minus_v(int x, int y, int z, int v){
+  return x+y+z-v;
+}
+
+main(){
+  return add_x_y_z_minus_v(6,10,7,5);
+}"
+try "18" "$src"
+
+src="
+add_x_y_z_times_v(int x, int y, int z, int v){
+  return (x+y+z)*v;
+}
+
+main(){
+  return add_x_y_z_times_v(6,10,4,2);
+}"
+try "40" "$src"
 
 # src="test(){
 #   x = 3;
