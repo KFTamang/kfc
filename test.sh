@@ -36,14 +36,14 @@ func_test(){
     fi
 }
 
-src="main(){
+src="int main(){
   int a;
   a = 5;
   return a;
 }"
 try "5" "$src"
 
-src="main(){
+src="int main(){
     int a;
     a = 5;
     int b; 
@@ -54,21 +54,21 @@ src="main(){
 try "15" "$src"
 
 src="
-return_9(){
+int return_9(){
 return 9;
 }
 
-main(){
+int main(){
   return return_9();
 }"
 try "9" "$src"
 
 src="
-return_7(){
+int return_7(){
 return 7;
 }
 
-main(){
+int main(){
   int a;
   a = return_7();
   return a;
@@ -76,11 +76,11 @@ main(){
 try "7" "$src"
 
 src="
-return_9(){
+int return_9(){
 return 9;
 }
 
-main(){
+int main(){
   int a;
   a = 9;
   return a;
@@ -89,25 +89,25 @@ try "9" "$src"
 
 
 src="
-return_5(){
+int return_5(){
 int a;
 a = 5;
 return a;
 }
 
-main(){
+int main(){
   return return_5();
 }"
 try "5" "$src"
 
 src="
-return_3(){
+int return_3(){
 int a;
 a = 3;
 return a;
 }
 
-main(){
+int main(){
   int b;
   int c;
   int d;
@@ -117,13 +117,13 @@ main(){
 try "3" "$src"
 
 src="
-return_3(){
+int return_3(){
 int a;
 a = 3;
 return a;
 }
 
-main(){
+int main(){
   int b;
   b = return_3();
   return b;
@@ -132,41 +132,41 @@ try "3" "$src"
 
 
 src="
-return_7(int x){
+int return_7(int x){
   return 7;
 }
 
- main(){
+int main(){
    return 7;
  }"
 try "7" "$src"
 
 src="
-return_7(int x){
+int return_7(int x){
   return 7;
 }
 
- main(){
+int main(){
    return return_7(0);
  }"
 try "7" "$src"
 
 src="
-return_x(int x){
+int return_x(int x){
   return x;
 }
 
-main(){
+int main(){
   return return_x(9);
 }"
 try "9" "$src"
 
 src="
-return_x(int x){
+int return_x(int x){
   return x;
 }
 
-main(){
+int main(){
   int a;
   a = 9;
   return return_x(a+7);
@@ -174,20 +174,20 @@ main(){
 try "16" "$src"
 
 src="
-add_x_y(int x, int y){
+int add_x_y(int x, int y){
   return x+y;
 }
 
-main(){
+int main(){
   return add_x_y(6,10);
 }"
 try "16" "$src"
 
 src="
-add(int x, int y){
+int add(int x, int y){
   return x+y;
 }
-main(){
+int main(){
   if(add(5,3)==8){
     return 7;
   }else{
@@ -198,7 +198,7 @@ main(){
 try "7" "$src"
 
 fibonacci="
-fib(int x){
+int fib(int x){
   if(x<3){
     return 1;
   }else{
@@ -206,7 +206,7 @@ fib(int x){
   }
 }
 
-main(){
+int main(){
   if( fib(1) == 1 ){
     return 3;
   }else{
@@ -217,7 +217,7 @@ main(){
 try "3" "$fibonacci"
 
 fibonacci="
-fib(int x){
+int fib(int x){
   if(x<3){
     return 1;
   }else{
@@ -225,7 +225,7 @@ fib(int x){
   }
 }
 
-main(){
+int main(){
   if( fib(5) == 5 ){
     return 3;
   }else{
@@ -236,7 +236,7 @@ main(){
 try "3" "$fibonacci"
 
 fibonacci="
-fib(int x){
+int fib(int x){
   if(x<3){
     return 1;
   }else{
@@ -244,7 +244,7 @@ fib(int x){
   }
 }
 
-main(){
+int main(){
   if( fib(13) == 233 ){
     return 5;
   }else{
@@ -255,34 +255,48 @@ main(){
 try "5" "$fibonacci"
 
 src="
-add_x_y_z(int x, int y, int z){
+int add_x_y_z(int x, int y, int z){
   return x+y+z;
 }
 
-main(){
+int main(){
   return add_x_y_z(6,10,7);
 }"
 try "23" "$src"
 
 src="
-add_x_y_z_minus_v(int x, int y, int z, int v){
+int add_x_y_z_minus_v(int x, int y, int z, int v){
   return x+y+z-v;
 }
 
-main(){
+int main(){
   return add_x_y_z_minus_v(6,10,7,5);
 }"
 try "18" "$src"
 
 src="
-add_x_y_z_times_v(int x, int y, int z, int v){
+int add_x_y_z_times_v(int x, int y, int z, int v){
   return (x+y+z)*v;
 }
 
-main(){
+int main(){
   return add_x_y_z_times_v(6,10,4,2);
 }"
 try "40" "$src"
+
+src="
+int return_x(int x){
+  return x;
+}
+
+int main(){
+  if(return_x(-2) == -2){
+    return 3;
+  }else{
+    return 5;
+  }
+}"
+try "3" "$src"
 
 # src="test(){
 #   x = 3;

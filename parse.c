@@ -85,9 +85,12 @@ void program(){
   code[i] = NULL;
 }
 
-// ENBF func_def = ident "(" lvar_dec? ")" "{" stmt* "}"
+// ENBF func_def = "int" ident "(" lvar_dec? ")" "{" stmt* "}"
 Node* func_def(){
   Node* node;
+  if(!consumeByKind(TK_TYPE_INT)){
+    error_at(token->str, "Function definition must follow type defition");
+  }
   Token* tok = consume_ident();
   if(tok == NULL){
     return NULL;
