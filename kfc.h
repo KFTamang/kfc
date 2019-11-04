@@ -78,12 +78,14 @@ typedef enum{
   ND_ADDR, // pointer address
   ND_DEREF, // pointer dereference
   ND_LVAR_DEC, // local variable declaration
+  ND_TYPE,  // type
 } NodeKind;
 
 typedef struct Node Node;
 typedef struct node_list node_list;
 typedef struct lvar_info lvar_info;
 typedef struct funcs funcs;
+typedef struct Type Type;
 
 // abstract syntax tree struct
 struct Node {
@@ -103,6 +105,7 @@ struct Node {
   node_list* func_args; // arguments of function
   lvar_info* lv_i; // infomation of local variables in function
   int lvar_size_byte; // total size of local variables in bytes
+  Type* type; // type of the variable
 };
 
 struct node_list{
@@ -123,6 +126,17 @@ struct LVar{
   int offset; // offset from RBP
   int size_byte;    // size of the variable in byte
   char* scope_name; // name of the scope function
+  Type* type; // type
+};
+
+typedef enum{
+  INT,
+  PTR,
+}TY;
+
+struct Type{
+  TY ty;
+  Type *ptr_to;
 };
 
 // local variable information for function definition
@@ -155,6 +169,7 @@ char* g_current_scope;
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
+Type* new_type(TY ty, Type* type);
 LVar* find_lvar(Token* tok);
 void append_lvar(Token* tok);
 int get_lvar_size_byte();
@@ -162,6 +177,7 @@ void program();
 
 Node* func_def();
 Node* stmt();
+Node* type_def();
 Node* lvar_dec();
 Node* expr();
 Node* assign();

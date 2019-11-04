@@ -33,6 +33,14 @@ Node* new_node_num(int val){
   return node;
 }
 
+// type generator
+Type* new_type(TY ty, Type* ptr_to){
+  Type* type = calloc(sizeof(Type),1);
+  type->ty = ty;
+  type->ptr_to = ptr_to;
+  return type;
+}
+
 // search for local variable in the scope from var chain
 LVar* find_lvar(Token* tok){
   for(LVar* var=locals; var; var=var->next){
@@ -229,9 +237,24 @@ Node* stmt(){
   return node;
 }
 
-// ENBF lvar_dec = "int" lvar
-Node* lvar_dec(){
+// ENBF type_def = "int" "*"*
+Node* type_def(){
   if(!consumeByKind(TK_TYPE_INT)){
+    return NULL;
+  }
+  Node* node = new_node(ND_TYPE, NULL, NULL);
+  Type* type = new_type(INT, NULL);
+  while(consume("*")){
+    type = new_type(PTR, type);
+  }
+  node->type = type;
+  return node;
+}
+
+// ENBF lvar_dec = type_def lvar
+Node* lvar_dec(){
+  Node* type = type_def();
+  if(type == NULL){
     return NULL;
   }
   Token* tok = consume_ident();
@@ -254,6 +277,7 @@ Node* lvar_dec(){
   node->name = node_name;
   node->len = tok->len;
   node->offset = var->offset;
+  node->type = type;
   return node;
 }
 
