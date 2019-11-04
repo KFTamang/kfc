@@ -90,10 +90,13 @@ void gen(Node* node){
   case ND_FUNC:
     g_label_num++;
     while(node->func_args && (arg_num < MAX_ARG_NUM) ){
+      printf("  #evaluate argument %d\n", arg_num+1);
       gen(node->func_args->data);
-      printf("  pop %s\n", ARG_REG[arg_num]);
       node->func_args = node->func_args->next;
       arg_num++;
+    }
+    for(int i=arg_num-1;i>=0;--i){
+      printf("  pop %s #argument %d\n", ARG_REG[i], i+1);
     }
     if(node->len >= VAR_NAME_SIZE){
       error("Too long name of variable");
