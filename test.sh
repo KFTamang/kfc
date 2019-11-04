@@ -298,30 +298,35 @@ int main(){
 }"
 try "3" "$src"
 
-# src="test(){
-#   x = 3;
-#   y = &x;
-#   return *y;
-# }
+src="int test(){
+  int x;
+  int y;
+  x = 5;
+  y = &x;
+  return *y;
+}
 
-# main(){
-#   return test();
-# }
-# "
-# try "3" "$src"
+int main(){
+  return test();
+}
+"
+try "5" "$src"
 
-# src="test(){
-#   x = 3;
-#   y = 5;
-#   z = &x - 8;
-#   return *z;
-# }
+src="int test(){
+  int x;
+  int y;
+  int z;
+  x = 3;
+  y = 7;
+  z = &x - 8;
+  return *z;
+}
 
-# main(){
-#   return test();
-# }
-# "
-# try "5" "$src"
+int main(){
+  return test();
+}
+"
+try "7" "$src"
 
 echo "test passed"
 
