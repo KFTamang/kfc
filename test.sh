@@ -353,20 +353,28 @@ int main(){
 "
 try "5" "$src"
 
-# src="
-# int main(){
-#   int *p;
-#   alloc4(&p, 1, 3, 5, 7);
-#   int *q;
-#   q = p + 2;
-#   if(q == 3){
-#     return 4;
-#   }else{
-#     return 8;
-#   }
-# }
-# "
-# try "4" "$src"
+src="
+int main(){
+  int a;  a = 3;
+  int b;  b = 5;
+  int c;  c = 7;
+  int *p;
+  p = &c;
+  return *(p+1);
+}
+"
+try "5" "$src"
+
+src="
+int main(){
+  int *p;
+  alloc4(&p, 1, 3, 5, 7);
+  int *q;
+  q = p + 3;
+  return *q;
+}
+"
+try "7" "$src"
 
 echo "test passed"
 

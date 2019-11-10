@@ -21,6 +21,10 @@ kfc: $(OBJS) main.o
 test: kfc
 	./test.sh
 
+test_alloc: test_alloc.c test_helper.o
+	$(CC) -o test_alloc test_alloc.c test_helper.o
+	./test_alloc
+
 symtab_test: $(OBJS) $(SYMTAB_TEST_O)
 	$(CC) -o symtab_test $(SYMTAB_TEST_O) $(OBJS) $(CFLAGS)
 	./symtab_test
