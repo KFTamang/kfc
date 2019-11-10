@@ -58,7 +58,7 @@ void append_lvar(Token* tok){
     new_var->next = locals;
     new_var->name = tok->str;
     new_var->len = tok->len;
-    new_var->size_byte = 16;
+    new_var->size_byte = 8;
     new_var->offset = get_lvar_size_byte() + 8;
     new_var->scope_name = g_current_scope;
     locals = new_var;
@@ -238,23 +238,21 @@ Node* stmt(){
 }
 
 // ENBF type_def = "int" "*"*
-Node* type_def(){
+Type* type_def(){
   if(!consumeByKind(TK_TYPE_INT)){
     return NULL;
   }
-  Node* node = new_node(ND_TYPE, NULL, NULL);
   Type* type = new_type(INT, NULL);
   while(consume("*")){
     type = new_type(PTR, type);
   }
-  node->type = type;
-  return node;
+  return type;
 }
 
 // ENBF lvar_dec = type_def lvar
 Node* lvar_dec(){
-  Node* type = type_def();
-  if(type == NULL){
+  Type* this_type = type_def();
+  if(this_type == NULL){
     return NULL;
   }
   Token* tok = consume_ident();
@@ -269,6 +267,7 @@ Node* lvar_dec(){
   }
   append_lvar(tok);
   var = find_lvar(tok);
+  var->type = this_type;
   Node* node = calloc(1, sizeof(Node));
   node->kind = ND_LVAR_DEC;
   char* node_name = calloc(1, sizeof(tok->len+1));
@@ -277,7 +276,7 @@ Node* lvar_dec(){
   node->name = node_name;
   node->len = tok->len;
   node->offset = var->offset;
-  node->type = type;
+  node->type = var->type;
   return node;
 }
 
@@ -402,7 +401,7 @@ Node* lvar(Token* tok){
   node->name = node_name;
   node->len = tok->len;
   node->offset = var->offset;
-
+  node->type = var->type;;
   return node;
 }
 

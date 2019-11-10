@@ -155,6 +155,11 @@ void gen(Node* node){
 
   switch(node->kind){
   case ND_ADD:
+    if(node->lhs->kind == ND_LVAR && node->lhs->type->ty == PTR){
+      printf("  imul rdi, 8 # multiple by 8 for int addition\n");
+    }else if(node->rhs->kind == ND_LVAR && node->rhs->type->ty == PTR){
+      printf("  imul rax, 8 # multiple by 8 for int addition\n");
+    }
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:

@@ -174,10 +174,10 @@ LVar* find_lvar(Token* tok);
 void append_lvar(Token* tok);
 int get_lvar_size_byte();
 void program();
+Type* type_def();
 
 Node* func_def();
 Node* stmt();
-Node* type_def();
 Node* lvar_dec();
 Node* expr();
 Node* assign();
