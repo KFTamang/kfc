@@ -5,7 +5,7 @@ try(){
     input="$2"
     echo $input
     ./kfc "$input" > tmp.s
-    gcc -o tmp tmp.s hoge.o foo.o
+    gcc -o tmp test_helper.o tmp.s # hoge.o foo.o
     ./tmp
     actual="$?"
 
@@ -352,6 +352,21 @@ int main(){
 }
 "
 try "5" "$src"
+
+# src="
+# int main(){
+#   int *p;
+#   alloc4(&p, 1, 3, 5, 7);
+#   int *q;
+#   q = p + 2;
+#   if(q == 3){
+#     return 4;
+#   }else{
+#     return 8;
+#   }
+# }
+# "
+# try "4" "$src"
 
 echo "test passed"
 
