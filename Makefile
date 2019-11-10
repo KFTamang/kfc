@@ -36,6 +36,6 @@ main_test: $(MAIN_TEST) $(OBJS)
 	./tmp
 
 clean:
-	rm -f kfc *.o *~ tmp*
+	rm -f kfc *.o *~ tmp* main_test symtab_test test test_alloc 
 
 .PHONY: test clean
