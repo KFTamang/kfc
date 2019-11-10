@@ -193,14 +193,18 @@ void gen(Node* node){
 }
 
 void gen_lval(Node* node){
-  if(node->kind != ND_LVAR){
-    printf("%d\n",node->kind);
-    error("left hand side is not a variable");
+  if(node->kind == ND_LVAR){
+    printf("  mov rax, rbp\n");
+    printf("  sub rax, %d\n", node->offset);
+    printf("  push rax\n");
+    return;
   }
-  printf("  mov rax, rbp\n");
-  printf("  sub rax, %d\n", node->offset);
-  printf("  push rax\n");
-
+  if(node->kind == ND_DEREF){
+    gen(node->lhs);
+    return;
+  }
+  printf("%d\n",node->kind);
+  error("ERROR:Left hand side is NOT left value\n");
 }
 
 void gen_node_list(node_list* nl){

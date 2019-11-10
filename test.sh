@@ -338,20 +338,20 @@ int main(){
 "
 try "11" "$src"
 
-# src="
-# int main(){
-#   int x;
-#   int *y;
-#   y = &x;
-#   *y = 3;
-#   if(x == 3){
-#     return 5;
-#   }else{
-#     return 7;
-#   }
-# }
-# "
-# try "5" "$src"
+src="
+int main(){
+  int x;
+  int *y;
+  y = &x;
+  *y = 3;
+  if(x == 3){
+    return 5;
+  }else{
+    return 7;
+  }
+}
+"
+try "5" "$src"
 
 echo "test passed"
 
