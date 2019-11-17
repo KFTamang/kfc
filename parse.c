@@ -22,6 +22,32 @@ Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
   node->kind = kind;
   node->lhs  = lhs;
   node->rhs  = rhs;
+  switch(kind){
+  case ND_NUM:
+	node->type = &g_type_int;
+	break;
+  case ND_ADD:
+  case ND_SUB:
+  case ND_MUL:
+  case ND_DIV:
+  case ND_EQU:
+  case ND_NEQ:
+  case ND_LWT:
+  case ND_LEQ:
+  case ND_ASSIGN:
+	if((lhs->type != NULL && lhs->type->ty == PTR) || 
+	   (rhs->type != NULL && rhs->type->ty == PTR) ){
+	  node->type = &g_type_ptr;
+	}else{
+	  node->type = &g_type_int;
+	}
+	break;
+  case ND_ADDR:
+	node->type = &g_type_ptr;
+	break;
+  default:
+	break;
+  }
   return node;
 }
 
@@ -432,6 +458,7 @@ Node* func(Token* tok){
 //            | "-"  term
 //            | "&"  unary
 //            | "*"  unary
+//            | "sizeof" unary
 Node* unary(){
   if(consume("+")){
     return term();
@@ -444,6 +471,19 @@ Node* unary(){
   }
   if(consume("*")){
     return new_node(ND_DEREF, unary(), NULL);
+  }
+  if(consumeByKind(TK_SIZEOF)){
+	Node* nodesize = unary();
+	if(nodesize->type != NULL){
+	  if(nodesize->type->ty == INT){
+		return new_node_num(8);
+	  }else if(nodesize->type->ty == PTR){
+		return new_node_num(8);
+	  }
+	}else{
+	  error_at(token->str, "Invalid token for sizeof operator\n");
+	  return NULL;
+	}
   }
   return term();
 }

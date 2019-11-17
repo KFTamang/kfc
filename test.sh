@@ -376,6 +376,71 @@ int main(){
 "
 try "7" "$src"
 
+
+src="
+int main(){
+  int *p;
+  alloc4(&p, 1, 3, 5, 7);
+  int *q;
+  q = p + 2*1;
+  return *q;
+}
+"
+try "5" "$src"
+
+src="
+int main(){
+  int *p;
+  alloc4(&p, 1, 3, 5, 7);
+  int *q;
+  q = p + 2/2;
+  return *q;
+}
+"
+try "3" "$src"
+
+src="
+int main(){
+  int x;
+  sizeof(x);
+  return 0;
+}
+"
+try "0" "$src"
+
+src="
+int main(){
+  int x;
+  return sizeof(x);
+}
+"
+try "8" "$src"
+
+src="
+int main(){
+  int x;
+  return sizeof x;
+}
+"
+try "8" "$src"
+
+src="
+int main(){
+  int* x;
+  return sizeof x;
+}
+"
+try "8" "$src"
+
+src="
+int main(){
+  int x;
+  x = 7;
+  return sizeof(x+4);
+}
+"
+try "8" "$src"
+
 echo "test passed"
 
 

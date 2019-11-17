@@ -24,6 +24,7 @@ typedef enum{
   TK_FOR,      // for loop
   TK_EOF,      // end of file
   TK_TYPE_INT, // type int 
+  TK_SIZEOF,   // sizeof operator
 } TokenKind;
 
 typedef struct Token Token;
@@ -138,6 +139,10 @@ struct Type{
   TY ty;
   Type *ptr_to;
 };
+
+// global type struct for integer number
+static Type g_type_int = {INT, NULL};
+static Type g_type_ptr = {PTR, NULL};
 
 // local variable information for function definition
 struct lvar_info{
