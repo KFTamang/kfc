@@ -462,6 +462,71 @@ int main(){
 "
 try "8" "$src"
 
+src="
+int main(){
+  int x[10];
+  return 7;
+}
+"
+try "7" "$src"
+
+src="
+int main(){
+  int x[10];
+  return sizeof(x);
+}
+"
+try "80" "$src"
+
+src="
+int main(){
+  int a[2];
+  *a = 1;
+  *(a + 1) = 2;
+  int *p;
+  p = a;
+  return *p + *(p + 1);
+}
+"
+try "3" "$src"
+
+src="
+int main(){
+  int a[3];
+  *(a + 2) = 4;
+  return *(a + 2);
+}"
+try "4" "$src"
+
+src="
+int main(){
+  int a[3];
+  *a = 1;
+  int x;
+  x = 2;
+  *(a + 2) = 4;
+  return *(a + 2);
+}"
+try "4" "$src"
+
+src="
+int main(){
+  int x[10];
+  *(x + sizeof(x)-1) = 10;
+  return   *(x + sizeof(x)-1);
+}"
+try "10" "$src"
+
+src="
+int main(){
+  int x[10];
+  int y[20];
+  *(x + sizeof(x)-1) = 10;
+  *(y + sizeof(y)-3) = 9;
+  return   *(x + sizeof(x)-1) + *(y + sizeof(y)-3);
+}"
+try "19" "$src"
+
 echo "test passed"
 
 

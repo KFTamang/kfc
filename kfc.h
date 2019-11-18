@@ -133,11 +133,13 @@ struct LVar{
 typedef enum{
   INT,
   PTR,
+  ARRAY,
 }TY;
 
 struct Type{
   TY ty;
   Type *ptr_to;
+  size_t array_size;
 };
 
 // global type struct for integer number
@@ -176,10 +178,12 @@ Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
 Type* new_type(TY ty, Type* type);
 LVar* find_lvar(Token* tok);
-void append_lvar(Token* tok);
+void append_lvar(Token* tok, Type* type);
+size_t get_type_size_byte(Type* type);
 int get_lvar_size_byte();
 void program();
 Type* type_def();
+Type* new_array_type(Type* base, size_t size);
 
 Node* func_def();
 Node* stmt();

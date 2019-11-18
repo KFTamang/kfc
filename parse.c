@@ -78,24 +78,36 @@ LVar* find_lvar(Token* tok){
   return NULL;
 }
 
-void append_lvar(Token* tok){
-  if(locals){
-    LVar* new_var = calloc(1, sizeof(LVar));
-    new_var->next = locals;
-    new_var->name = tok->str;
-    new_var->len = tok->len;
-    new_var->size_byte = 8;
-    new_var->offset = get_lvar_size_byte() + 8;
-    new_var->scope_name = g_current_scope;
-    locals = new_var;
-  }else{
-    locals = calloc(1, sizeof(LVar));
-    locals->next = NULL;
-    locals->name = tok->str;
-    locals->len = tok->len;
-    locals->size_byte = 8;
-    locals->offset = 8;
-    locals->scope_name = g_current_scope;
+void append_lvar(Token* tok, Type* type){
+  LVar* new_var = calloc(1, sizeof(LVar));
+  new_var->next = locals;
+  new_var->name = tok->str;
+  new_var->len = tok->len;
+  new_var->size_byte = get_type_size_byte(type);
+  new_var->offset = get_lvar_size_byte() + 8;
+  // offset for array is one unit element size lower from the total size
+  if(type->ty == ARRAY){ 
+	new_var->offset += get_type_size_byte(type) - get_type_size_byte(type->ptr_to);
+  }
+  new_var->scope_name = g_current_scope;
+  locals = new_var;
+}
+
+size_t get_type_size_byte(Type* type){
+  if(type == NULL){
+	error("Type is not specified\n");
+	return 0;
+  }
+  switch(type->ty){
+  case INT:
+	return 8;
+  case PTR:
+	return 8;
+  case ARRAY:
+	return type->array_size * get_type_size_byte(type->ptr_to);
+  default:
+	error("Type is not supported\n");
+	return 0;
   }
 }
 
@@ -275,7 +287,15 @@ Type* type_def(){
   return type;
 }
 
-// ENBF lvar_dec = type_def lvar
+Type* new_array_type(Type* base, size_t size){
+  Type* new_array = calloc(1, sizeof(Type));
+  new_array->ty = ARRAY;
+  new_array->ptr_to = base;
+  new_array->array_size = size;
+  return new_array;
+}
+
+// ENBF lvar_dec = type_def lvar ("[" num "]")?
 Node* lvar_dec(){
   Type* this_type = type_def();
   if(this_type == NULL){
@@ -291,12 +311,17 @@ Node* lvar_dec(){
     error_at(token->str,"Local variable %s is already defined\n", var->name);
     exit(1);
   }
-  append_lvar(tok);
+  // if array
+  if(consume("[")){
+	this_type = new_array_type(this_type, expect_number());
+	expect("]");
+  }
+  append_lvar(tok, this_type);
   var = find_lvar(tok);
   var->type = this_type;
   Node* node = calloc(1, sizeof(Node));
   node->kind = ND_LVAR_DEC;
-  char* node_name = calloc(1, sizeof(tok->len+1));
+  char* node_name = calloc(1, tok->len+1);
   strncpy(node_name, tok->str, tok->len);
   node_name[tok->len+1] = '\0';
   node->name = node_name;
@@ -413,9 +438,9 @@ Node* ident(){
 
 // ENBF lvar
 Node* lvar(Token* tok){
-  char* node_name = calloc(1, sizeof(tok->len+1));
+  char* node_name = calloc(1, tok->len+1);
   strncpy(node_name, tok->str, tok->len);
-  node_name[tok->len+1] = '\0';
+  node_name[tok->len] = '\0';
   LVar* var = find_lvar(tok);
   if(var == NULL){
     error_at(token->str, "Variable %s is not declared\n", node_name);
@@ -475,11 +500,7 @@ Node* unary(){
   if(consumeByKind(TK_SIZEOF)){
 	Node* nodesize = unary();
 	if(nodesize->type != NULL){
-	  if(nodesize->type->ty == INT){
-		return new_node_num(8);
-	  }else if(nodesize->type->ty == PTR){
-		return new_node_num(8);
-	  }
+	  return new_node_num(get_type_size_byte(nodesize->type));
 	}else{
 	  error_at(token->str, "Invalid token for sizeof operator\n");
 	  return NULL;

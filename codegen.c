@@ -12,6 +12,9 @@ void gen(Node* node){
     return;
   case ND_LVAR:
     gen_lval(node);
+	if(node->type->ty == ARRAY){
+	  return;
+	}
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
     printf("  push rax\n");
@@ -155,17 +158,17 @@ void gen(Node* node){
 
   switch(node->kind){
   case ND_ADD:
-    if(node->lhs->type != NULL && node->lhs->type->ty == PTR){
+    if(node->lhs->type != NULL && (node->lhs->type->ty == PTR || node->lhs->type->ty == ARRAY )){
       printf("  imul rdi, 8 # multiple by 8 for int addition\n");
-    }else if(node->rhs->type != NULL && node->rhs->type->ty == PTR){
+    }else if(node->rhs->type != NULL && (node->rhs->type->ty == PTR || node->rhs->type->ty == ARRAY )){
       printf("  imul rax, 8 # multiple by 8 for int addition\n");
     }
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:
-    if(node->lhs->type != NULL && node->lhs->type->ty == PTR){
+    if(node->lhs->type != NULL && (node->lhs->type->ty == PTR || node->lhs->type->ty == ARRAY )){
       printf("  imul rdi, 8 # multiple by 8 for int addition\n");
-    }else if(node->rhs->type != NULL && node->rhs->type->ty == PTR){
+    }else if(node->rhs->type != NULL && (node->rhs->type->ty == PTR || node->rhs->type->ty == ARRAY )){
       printf("  imul rax, 8 # multiple by 8 for int addition\n");
     }
     printf("  sub rax, rdi\n");
