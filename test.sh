@@ -318,7 +318,7 @@ src="int test(){
   int z;
   x = 3;
   y = 7;
-  z = &x - 8;
+  z = &x - 1;
   return *z;
 }
 
@@ -397,6 +397,27 @@ int main(){
   return *q;
 }
 "
+try "3" "$src"
+
+src="
+int main(){
+  int *p;
+  alloc4(&p, 1, 3, 5, 7);
+  int *q;
+  q = p + 3;
+  q = q - 1;
+  return *q;
+}"
+try "5" "$src"
+
+src="
+int main(){
+  int *p;
+  alloc4(&p, 1, 3, 5, 7);
+  int *q;
+  q = p + 3 - 2;
+  return *q;
+}"
 try "3" "$src"
 
 src="

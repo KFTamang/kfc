@@ -163,6 +163,11 @@ void gen(Node* node){
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:
+    if(node->lhs->type != NULL && node->lhs->type->ty == PTR){
+      printf("  imul rdi, 8 # multiple by 8 for int addition\n");
+    }else if(node->rhs->type != NULL && node->rhs->type->ty == PTR){
+      printf("  imul rax, 8 # multiple by 8 for int addition\n");
+    }
     printf("  sub rax, rdi\n");
     break;
   case ND_MUL:
