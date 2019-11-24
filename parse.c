@@ -410,8 +410,8 @@ Node* mul(){
   }
 }
 
-// ENBF term = ( expr ) | num | ident
-Node* term(){
+// ENBF primary = ( expr ) | num | ident
+Node* primary(){
   if(consume("(")){
     Node* node = expr();
     expect(")");
@@ -479,17 +479,17 @@ Node* func(Token* tok){
   return node;
 }
 
-// ENBF unary = "+"? term
-//            | "-"  term
+// ENBF unary = "+"? primary
+//            | "-"  primary
 //            | "&"  unary
 //            | "*"  unary
 //            | "sizeof" unary
 Node* unary(){
   if(consume("+")){
-    return term();
+    return primary();
   }
   if(consume("-")){
-    return new_node(ND_SUB,new_node_num(0), term());
+    return new_node(ND_SUB,new_node_num(0), primary());
   }
   if(consume("&")){
     return new_node(ND_ADDR, unary(), NULL);
@@ -506,7 +506,7 @@ Node* unary(){
 	  return NULL;
 	}
   }
-  return term();
+  return primary();
 }
 
 // ENBF terminal symbol for number

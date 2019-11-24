@@ -194,7 +194,7 @@ Node* equality();
 Node* relational();
 Node* add();
 Node* mul();
-Node* term();
+Node* primary();
 Node* ident();
 Node* lvar(Token* tok);
 Node* func(Token* tok);
