@@ -424,6 +424,24 @@ Node* primary(){
   return num();
 }
 
+// ENBF postfix = primary
+//              | postfix "[" expr "]"
+Node* postfix(){
+  Node* node = primary();
+  if(consume("[")){
+	Node* expression = expr();
+	if(expression == NULL){
+	  error_at(token->str,"No expression after [\n");
+	}
+	expect("]");
+	// postfix[expression] is parsed as *(postfix+expression)
+	node = new_node(ND_ADD, node, expression);
+	node = new_node(ND_DEREF, node, NULL);
+	return node;
+  }
+  return node; // return primary
+}
+
 // ENBF ident = lvar | func
 Node* ident(){
   Token* tok = consume_ident();
@@ -479,17 +497,17 @@ Node* func(Token* tok){
   return node;
 }
 
-// ENBF unary = "+"? primary
-//            | "-"  primary
+// ENBF unary = "+"? postfix
+//            | "-"  postfix
 //            | "&"  unary
 //            | "*"  unary
 //            | "sizeof" unary
 Node* unary(){
   if(consume("+")){
-    return primary();
+    return postfix();
   }
   if(consume("-")){
-    return new_node(ND_SUB,new_node_num(0), primary());
+    return new_node(ND_SUB,new_node_num(0), postfix());
   }
   if(consume("&")){
     return new_node(ND_ADDR, unary(), NULL);
@@ -506,7 +524,7 @@ Node* unary(){
 	  return NULL;
 	}
   }
-  return primary();
+  return postfix();
 }
 
 // ENBF terminal symbol for number

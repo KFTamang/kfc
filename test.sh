@@ -527,6 +527,15 @@ int main(){
 }"
 try "19" "$src"
 
+src="int main(){ int x[10]; x[9] = 10; return x[9];}"
+try "10" "$src"
+
+src="int main(){ int x[10];int y[2]; x[3]=1; y[x[3]]=7;return y[1];}"
+try "7" "$src"
+
+src="int main(){ int x[10];x[3]=9; return 3[x];}"
+try "9" "$src"
+
 echo "test passed"
 
 
