@@ -7,7 +7,7 @@ int main(int argc, char **argv){
   return 1;
   }
   // initialize local variable chain
-  locals = NULL;
+  g_global_scope = gen_new_scope(NULL, GLOBAL);
 
   // initialize label number
   g_label_num = 0;

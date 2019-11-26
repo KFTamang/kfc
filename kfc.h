@@ -84,9 +84,9 @@ typedef enum{
 
 typedef struct Node Node;
 typedef struct node_list node_list;
-typedef struct lvar_info lvar_info;
 typedef struct funcs funcs;
 typedef struct Type Type;
+typedef struct LVar LVar;
 
 // abstract syntax tree struct
 struct Node {
@@ -104,7 +104,6 @@ struct Node {
   char* name;    // name of function
   int len;       // length of name of function
   node_list* func_args; // arguments of function
-  lvar_info* lv_i; // infomation of local variables in function
   int lvar_size_byte; // total size of local variables in bytes
   Type* type; // type of the variable
 };
@@ -117,7 +116,22 @@ struct node_list{
 node_list* new_node_list(Node* node);
 node_list* append_node_list(node_list* current, Node* data);
 
-typedef struct LVar LVar;
+typedef struct Scope Scope;
+typedef enum {
+  GLOBAL,
+  LOCAL,
+  BLOCK
+}ScopeKind;
+struct Scope{
+  Scope* parent;
+  LVar* lvar;
+  ScopeKind sk;
+};
+// global char for current scope name
+static Scope* g_global_scope;
+static Scope* g_current_scope;
+Scope* gen_new_scope(Scope* parent, ScopeKind sk);
+
 
 // local variable
 struct LVar{
@@ -126,9 +140,13 @@ struct LVar{
   int len;    // length of name
   int offset; // offset from RBP
   int size_byte;    // size of the variable in byte
-  char* scope_name; // name of the scope function
   Type* type; // type
 };
+LVar* find_lvar(Token* tok);
+// a chain of local variables
+LVar* find_var_recursively(Token* tok, Scope* scope);
+LVar* find_lvar_in_scope(Token* tok, Scope* scope);
+LVar* find_var_in_scope(Token* tok, Scope* scope);
 
 typedef enum{
   INT,
@@ -147,13 +165,11 @@ static Type g_type_int = {INT, NULL};
 static Type g_type_ptr = {PTR, NULL};
 
 // local variable information for function definition
-struct lvar_info{
-  LVar* lvar;     // a chain of local variable
-  int total_byte; // total size of local vars in byte
-};
+//struct lvar_info{
+//  LVar* lvar;     // a chain of local variable
+//  int total_byte; // total size of local vars in byte
+//};
 
-// a chain of local variables
-LVar* locals;
 
 // functions
 struct funcs{
@@ -171,16 +187,12 @@ Node* code[100];
 // global number for label
 int g_label_num;
 
-// global char for current scope name
-char* g_current_scope;
-
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
 Type* new_type(TY ty, Type* type);
-LVar* find_lvar(Token* tok);
-void append_lvar(Token* tok, Type* type);
+void append_lvar_to_scope(Token* tok, Type* type, Scope* scope);
 size_t get_type_size_byte(Type* type);
-int get_lvar_size_byte();
+size_t get_lvar_size_byte(Scope* scope);
 void program();
 Type* type_def();
 Type* new_array_type(Type* base, size_t size);
