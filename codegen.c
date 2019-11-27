@@ -10,7 +10,7 @@ void gen(Node* node){
   case ND_NUM:
     printf("  push %d\n", node->val);
     return;
-  case ND_LVAR:
+  case ND_VAR:
     gen_lval(node);
 	if(node->type->ty == ARRAY){
 	  return;
@@ -19,7 +19,7 @@ void gen(Node* node){
     printf("  mov rax, [rax]\n");
     printf("  push rax\n");
     return;
-  case ND_LVAR_DEC:
+  case ND_VAR_DEC:
     printf("  push rax\n");
     return;
   case ND_ASSIGN:
@@ -126,7 +126,7 @@ void gen(Node* node){
     printf("%s:\n", node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %d\n", node->lvar_size_byte);
+    printf("  sub rsp, %d\n", node->var_size_byte);
     if(node->func_args != NULL){
       gen_func_args(node->func_args);
     }
@@ -206,7 +206,7 @@ void gen(Node* node){
 }
 
 void gen_lval(Node* node){
-  if(node->kind == ND_LVAR){
+  if(node->kind == ND_VAR){
     printf("  mov rax, rbp\n");
     printf("  sub rax, %d\n", node->offset);
     printf("  push rax\n");

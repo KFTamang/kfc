@@ -74,12 +74,11 @@ Type* new_type(TY ty, Type* ptr_to){
   return type;
 }
 
-// search for local variable in the scope from var chain
-LVar* find_lvar_in_scope(Token* tok, Scope* scope){
+Var* find_var_in_scope(Token* tok, Scope* scope){
   if(scope==NULL){
 	return NULL;
   }
-  for(LVar* var=scope->lvar; var; var=var->next){
+  for(Var* var=scope->var; var; var=var->next){
     if(var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
       return var;
     }
@@ -88,25 +87,25 @@ LVar* find_lvar_in_scope(Token* tok, Scope* scope){
 }
 
   
-LVar* find_lvar_recursively(Token* tok, Scope* scope){
+Var* find_var_in_function_scope(Token* tok, Scope* scope){
   if(scope==NULL){
 	return NULL;
   }
-  LVar* var = find_lvar_in_scope(tok, scope);
+  Var* var = find_var_in_scope(tok, scope);
   if(var!=NULL){
 	return var;
   }
   if(scope->sk==GLOBAL || scope->parent==NULL){
 	return NULL;
   }
-  return find_lvar_recursively(tok, scope->parent);
+  return find_var_recursively(tok, scope->parent);
 }
 
-LVar* find_var_recursively(Token* tok, Scope* scope){
+Var* find_var_recursively(Token* tok, Scope* scope){
   if(scope==NULL){
 	return NULL;
   }
-  LVar* var = find_lvar_in_scope(tok, scope);
+  Var* var = find_var_in_scope(tok, scope);
   if(var!=NULL){
 	return var;
   }
@@ -116,21 +115,21 @@ LVar* find_var_recursively(Token* tok, Scope* scope){
   return find_var_recursively(tok, scope->parent);
 }
 
-void append_lvar_to_scope(Token* tok, Type* type, Scope* scope){
-  LVar* new_var = calloc(1, sizeof(LVar));
-  new_var->next = scope->lvar;
+void append_var_to_scope(Token* tok, Type* type, Scope* scope){
+  Var* new_var = calloc(1, sizeof(Var));
+  new_var->next = scope->var;
   char* var_name = calloc(1, tok->len+1);
   strncpy(var_name, tok->str, tok->len);
   var_name[tok->len] = '\0';
   new_var->name = var_name;
   new_var->len = tok->len;
   new_var->size_byte = get_type_size_byte(type);
-  new_var->offset = get_lvar_size_byte(g_current_scope) + 8;
+  new_var->offset = get_var_size_byte(g_current_scope) + 8;
   // offset for array is one unit element size lower from the total size
   if(type->ty == ARRAY){ 
 	new_var->offset += get_type_size_byte(type) - get_type_size_byte(type->ptr_to);
   }
-  scope->lvar = new_var;
+  scope->var = new_var;
 }
 
 size_t get_type_size_byte(Type* type){
@@ -151,18 +150,18 @@ size_t get_type_size_byte(Type* type){
   }
 }
 
-size_t get_lvar_size_byte(Scope* scope){
+size_t get_var_size_byte(Scope* scope){
   if(scope==NULL){
 	return 0;
   }
-  int lvar_size = 0;
-  for(LVar* var=scope->lvar; var; var=var->next){
-	lvar_size += var->size_byte;
+  int var_size = 0;
+  for(Var* var=scope->var; var; var=var->next){
+	var_size += var->size_byte;
   }
   if(scope->sk == BLOCK){
-	lvar_size += get_lvar_size_byte(scope->parent);;
+	var_size += get_var_size_byte(scope->parent);;
   }	
-  return lvar_size;
+  return var_size;
 }
 
 // ENBF program = func_def*
@@ -175,7 +174,7 @@ void program(){
   code[i] = NULL;
 }
 
-// ENBF func_def = "int" ident "(" lvar_dec? ")" "{" stmt* "}"
+// ENBF func_def = "int" ident "(" var_dec? ")" "{" stmt* "}"
 Node* func_def(){
   Node* node;
   if(!consumeByKind(TK_TYPE_INT)){
@@ -197,16 +196,16 @@ Node* func_def(){
   if(consume(")")){ // no argument
     node->func_args = NULL;
   }else{ // one argument
-    Node* arg_lvar = lvar_dec();
+    Node* arg_var = var_dec();
     //    Token* arg = consume_ident();
-    if(!arg_lvar){
+    if(!arg_var){
       error_at(token->str, "Argument variables are wrong\n");
     }
-    node->func_args = new_node_list(arg_lvar);
+    node->func_args = new_node_list(arg_var);
     node_list* next = node->func_args;
     while(consume(",")){
-      arg_lvar = lvar_dec();
-      next = append_node_list(next, arg_lvar);
+      arg_var = var_dec();
+      next = append_node_list(next, arg_var);
     }
     expect(")");
   }
@@ -223,7 +222,7 @@ Node* func_def(){
       comp_stmt = append_node_list(comp_stmt, stmt());
     }
   }
-  node->lvar_size_byte = get_lvar_size_byte(g_current_scope);
+  node->var_size_byte = get_var_size_byte(g_current_scope);
   return node;
 }
 
@@ -232,7 +231,7 @@ Node* func_def(){
 //           | "if" "(" expr ")" stmt ("else" stmt)?
 //           | "while" "(" expr ")" stmt
 //           | "for" "(" expr? ";" expr? ";" expr? ")" stmt
-//           | lvar_dec ";"
+//           | var_dec ";"
 Node* stmt(){
   Node* node;
   // if return statement
@@ -308,7 +307,7 @@ Node* stmt(){
     node->end = end;
     node->then = then;
   }else{
-    node = lvar_dec();
+    node = var_dec();
     if(node != NULL){
       expect(";");
       return node;
@@ -339,8 +338,8 @@ Type* new_array_type(Type* base, size_t size){
   return new_array;
 }
 
-// ENBF lvar_dec = type_def lvar ("[" num "]")?
-Node* lvar_dec(){
+// ENBF var_dec = type_def var ("[" num "]")?
+Node* var_dec(){
   Type* this_type = type_def();
   if(this_type == NULL){
     return NULL;
@@ -349,7 +348,7 @@ Node* lvar_dec(){
   if(tok == NULL){
     return NULL;
   }
-  LVar* var = find_lvar_recursively(tok, g_current_scope);
+  Var* var = find_var_in_scope(tok, g_current_scope);
   // if variable is already declared
   if(var != NULL){
     error_at(token->str,"Local variable %s is already defined\n", var->name);
@@ -360,14 +359,14 @@ Node* lvar_dec(){
 	this_type = new_array_type(this_type, expect_number());
 	expect("]");
   }
-  append_lvar_to_scope(tok, this_type, g_current_scope);
-  var = find_lvar_recursively(tok, g_current_scope);
+  append_var_to_scope(tok, this_type, g_current_scope);
+  var = find_var_recursively(tok, g_current_scope);
   var->type = this_type;
   return gen_node_from_var(var);
 }
 
-Node* gen_node_from_var(LVar* var){
-  Node* node = new_node(ND_LVAR_DEC, NULL, NULL);
+Node* gen_node_from_var(Var* var){
+  Node* node = new_node(ND_VAR_DEC, NULL, NULL);
   node->name = var->name;
   node->len = var->len;
   node->offset = var->offset;
@@ -486,31 +485,31 @@ Node* postfix(){
   return node; // return primary
 }
 
-// ENBF ident = lvar | func
+// ENBF ident = var | func
 Node* ident(){
   Token* tok = consume_ident();
   Node* node;
   if(is_symbol("(")){
     node = func(tok);
   }else{ // variable
-    node = lvar(tok);
+    node = var(tok);
   }
   return node;
 }
 
-// ENBF lvar
-Node* lvar(Token* tok){
+// ENBF var
+Node* var(Token* tok){
   char* node_name = calloc(1, tok->len+1);
   strncpy(node_name, tok->str, tok->len);
   node_name[tok->len] = '\0';
-  LVar* var = find_lvar_recursively(tok, g_current_scope);
+  Var* var = find_var_recursively(tok, g_current_scope);
   if(var == NULL){
     error_at(token->str, "Variable %s is not declared\n", node_name);
     exit(1);
   }
 
   Node* node = calloc(1, sizeof(Node));
-  node->kind = ND_LVAR;
+  node->kind = ND_VAR;
   node->name = node_name;
   node->len = tok->len;
   node->offset = var->offset;

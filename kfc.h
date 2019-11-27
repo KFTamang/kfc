@@ -68,7 +68,7 @@ typedef enum{
   ND_LEQ, // <= 7
   ND_NUM, // number 8
   ND_ASSIGN, // assignment 9
-  ND_LVAR, // local variable 10
+  ND_VAR, // local variable 10
   ND_RETURN, // return statement 11
   ND_IF, // if statement 12
   ND_WHILE, // while statement 13
@@ -78,7 +78,7 @@ typedef enum{
   ND_FUNC_DEF, // function definition
   ND_ADDR, // pointer address
   ND_DEREF, // pointer dereference
-  ND_LVAR_DEC, // local variable declaration
+  ND_VAR_DEC, // local variable declaration
   ND_TYPE,  // type
 } NodeKind;
 
@@ -86,7 +86,7 @@ typedef struct Node Node;
 typedef struct node_list node_list;
 typedef struct funcs funcs;
 typedef struct Type Type;
-typedef struct LVar LVar;
+typedef struct Var Var;
 
 // abstract syntax tree struct
 struct Node {
@@ -94,7 +94,7 @@ struct Node {
   Node* lhs;     // pointer to left hand side
   Node* rhs;     // pointer to right hand side
   int val;       // value if kind is ND_NUM
-  int offset;    // offset if kind is ND_LVAR
+  int offset;    // offset if kind is ND_VAR
   Node* cond;    // condition for "if"/"for" statement
   Node* then;    // then-statement for "if" statement
   Node* els;     // else-statement for "if" statement
@@ -104,7 +104,7 @@ struct Node {
   char* name;    // name of function
   int len;       // length of name of function
   node_list* func_args; // arguments of function
-  int lvar_size_byte; // total size of local variables in bytes
+  int var_size_byte; // total size of local variables in bytes
   Type* type; // type of the variable
 };
 
@@ -124,7 +124,7 @@ typedef enum {
 }ScopeKind;
 struct Scope{
   Scope* parent;
-  LVar* lvar;
+  Var* var;
   ScopeKind sk;
 };
 // global char for current scope name
@@ -134,19 +134,19 @@ Scope* gen_new_scope(Scope* parent, ScopeKind sk);
 
 
 // local variable
-struct LVar{
-  LVar* next; // next variable or NULL
+struct Var{
+  Var* next; // next variable or NULL
   char* name; // name of variable
   int len;    // length of name
   int offset; // offset from RBP
   int size_byte;    // size of the variable in byte
   Type* type; // type
 };
-LVar* find_lvar(Token* tok);
+Var* find_var(Token* tok);
 // a chain of local variables
-LVar* find_var_recursively(Token* tok, Scope* scope);
-LVar* find_lvar_in_scope(Token* tok, Scope* scope);
-LVar* find_var_in_scope(Token* tok, Scope* scope);
+Var* find_var_recursively(Token* tok, Scope* scope);
+Var* find_var_in_function_scope(Token* tok, Scope* scope);
+Var* find_var_in_scope(Token* tok, Scope* scope);
 
 typedef enum{
   INT,
@@ -190,17 +190,17 @@ int g_label_num;
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
 Type* new_type(TY ty, Type* type);
-void append_lvar_to_scope(Token* tok, Type* type, Scope* scope);
+void append_var_to_scope(Token* tok, Type* type, Scope* scope);
 size_t get_type_size_byte(Type* type);
-size_t get_lvar_size_byte(Scope* scope);
+size_t get_var_size_byte(Scope* scope);
 void program();
 Type* type_def();
 Type* new_array_type(Type* base, size_t size);
-Node* gen_node_from_var(LVar* var);
+Node* gen_node_from_var(Var* var);
 
 Node* func_def();
 Node* stmt();
-Node* lvar_dec();
+Node* var_dec();
 Node* expr();
 Node* assign();
 Node* equality();
@@ -210,7 +210,7 @@ Node* mul();
 Node* primary();
 Node* postfix();
 Node* ident();
-Node* lvar(Token* tok);
+Node* var(Token* tok);
 Node* func(Token* tok);
 Node* unary();
 Node* num();
