@@ -196,6 +196,7 @@ size_t get_lvar_size_byte(Scope* scope);
 void program();
 Type* type_def();
 Type* new_array_type(Type* base, size_t size);
+Node* gen_node_from_var(LVar* var);
 
 Node* func_def();
 Node* stmt();

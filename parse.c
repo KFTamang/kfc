@@ -119,7 +119,10 @@ LVar* find_var_recursively(Token* tok, Scope* scope){
 void append_lvar_to_scope(Token* tok, Type* type, Scope* scope){
   LVar* new_var = calloc(1, sizeof(LVar));
   new_var->next = scope->lvar;
-  new_var->name = tok->str;
+  char* var_name = calloc(1, tok->len+1);
+  strncpy(var_name, tok->str, tok->len);
+  var_name[tok->len] = '\0';
+  new_var->name = var_name;
   new_var->len = tok->len;
   new_var->size_byte = get_type_size_byte(type);
   new_var->offset = get_lvar_size_byte(g_current_scope) + 8;
@@ -360,13 +363,13 @@ Node* lvar_dec(){
   append_lvar_to_scope(tok, this_type, g_current_scope);
   var = find_lvar_recursively(tok, g_current_scope);
   var->type = this_type;
-  Node* node = calloc(1, sizeof(Node));
-  node->kind = ND_LVAR_DEC;
-  char* node_name = calloc(1, tok->len+1);
-  strncpy(node_name, tok->str, tok->len);
-  node_name[tok->len+1] = '\0';
-  node->name = node_name;
-  node->len = tok->len;
+  return gen_node_from_var(var);
+}
+
+Node* gen_node_from_var(LVar* var){
+  Node* node = new_node(ND_LVAR_DEC, NULL, NULL);
+  node->name = var->name;
+  node->len = var->len;
   node->offset = var->offset;
   node->type = var->type;
   return node;
