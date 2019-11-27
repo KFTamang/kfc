@@ -348,6 +348,10 @@ Node* var_dec(){
   if(tok == NULL){
     return NULL;
   }
+  return new_var_node(this_type, tok);
+}
+
+Node* new_var_node(Type* type, Token* tok){
   Var* var = find_var_in_scope(tok, g_current_scope);
   // if variable is already declared
   if(var != NULL){
@@ -356,12 +360,12 @@ Node* var_dec(){
   }
   // if array
   if(consume("[")){
-	this_type = new_array_type(this_type, expect_number());
+	type = new_array_type(type, expect_number());
 	expect("]");
   }
-  append_var_to_scope(tok, this_type, g_current_scope);
+  append_var_to_scope(tok, type, g_current_scope);
   var = find_var_recursively(tok, g_current_scope);
-  var->type = this_type;
+  var->type = type;
   return gen_node_from_var(var);
 }
 

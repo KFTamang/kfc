@@ -196,7 +196,9 @@ size_t get_var_size_byte(Scope* scope);
 void program();
 Type* type_def();
 Type* new_array_type(Type* base, size_t size);
+Node* new_var_node(Type* type, Token* tok);
 Node* gen_node_from_var(Var* var);
+
 
 Node* func_def();
 Node* stmt();
