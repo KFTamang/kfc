@@ -106,6 +106,7 @@ struct Node {
   node_list* func_args; // arguments of function
   int var_size_byte; // total size of local variables in bytes
   Type* type; // type of the variable
+  int is_global; // flag for global variable
 };
 
 struct node_list{
@@ -128,8 +129,8 @@ struct Scope{
   ScopeKind sk;
 };
 // global char for current scope name
-static Scope* g_global_scope;
-static Scope* g_current_scope;
+//extern Scope* g_global_scope;
+//extern Scope* g_current_scope;
 Scope* gen_new_scope(Scope* parent, ScopeKind sk);
 
 
@@ -141,6 +142,7 @@ struct Var{
   int offset; // offset from RBP
   int size_byte;    // size of the variable in byte
   Type* type; // type
+  int is_global; // flag for global variables
 };
 Var* find_var(Token* tok);
 // a chain of local variables
@@ -200,7 +202,7 @@ Node* new_var_node(Type* type, Token* tok);
 Node* gen_node_from_var(Var* var);
 
 
-Node* func_def();
+Node* global_dec();
 Node* stmt();
 Node* var_dec();
 Node* expr();
@@ -224,6 +226,7 @@ void gen(Node* node);
 void gen_lval(Node* node);
 void gen_node_list(node_list* nl);
 void gen_func_args(node_list* fa);
+void gen_global_var();
 
 // error messager
 void error(char* fmt, ...);

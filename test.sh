@@ -5,7 +5,7 @@ try(){
     input="$2"
     echo $input
     ./kfc "$input" > tmp.s
-    gcc -o tmp test_helper.o tmp.s # hoge.o foo.o
+    gcc -no-pie -o tmp test_helper.o tmp.s # hoge.o foo.o
     ./tmp
     actual="$?"
 
@@ -533,8 +533,21 @@ try "10" "$src"
 src="int main(){ int x[10];int y[2]; x[3]=1; y[x[3]]=7;return y[1];}"
 try "7" "$src"
 
-#src="int main(){ int x[10];x[3]=9; return 3[x];}"
-#try "9" "$src"
+src="int main(){ int x[10];x[3]=9; return 3[x];}"
+try "9" "$src"
+
+src="int global_var;int main(){ global_var = 2;return global_var;}"
+try "2" "$src"
+
+src="int g;int main(){g=2;int local; local = g+4; return local+g;}"
+try "8" "$src"
+
+src="int g;int global_variable_dayo;int main(){g=2;int global_variable_dayo; global_variable_dayo = 9;\
+ return g*global_variable_dayo;}"
+try "18" "$src"
+
+src="int g;int main(){g=2;int g; g = 4; return g;}"
+try "4" "$src"
 
 echo "test passed"
 

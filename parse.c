@@ -1,5 +1,7 @@
 #include "kfc.h"
 
+extern Scope* g_global_scope;
+extern Scope* g_current_scope;
 
 node_list* new_node_list(Node* node){
   node_list* nl = calloc(1, sizeof(node_list));
@@ -125,6 +127,11 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   new_var->len = tok->len;
   new_var->size_byte = get_type_size_byte(type);
   new_var->offset = get_var_size_byte(g_current_scope) + 8;
+  if(scope->sk == GLOBAL){
+    new_var->is_global = 1;
+  }else{
+    new_var->is_global = 0;
+  }
   // offset for array is one unit element size lower from the total size
   if(type->ty == ARRAY){ 
 	new_var->offset += get_type_size_byte(type) - get_type_size_byte(type->ptr_to);
@@ -164,25 +171,33 @@ size_t get_var_size_byte(Scope* scope){
   return var_size;
 }
 
-// ENBF program = func_def*
+// ENBF program = global_dec*
 void program(){
   int i = 0;
   while(!at_eof()){
-    code[i] = func_def();
+    code[i] = global_dec();
     ++i;
   }
   code[i] = NULL;
 }
 
-// ENBF func_def = "int" ident "(" var_dec? ")" "{" stmt* "}"
-Node* func_def(){
-  Node* node;
-  if(!consumeByKind(TK_TYPE_INT)){
-    error_at(token->str, "Function definition must follow type defition");
+// ENBF global_dec = type_def ident "(" lvar_dec? ")" "{" stmt* "}"
+//                 | type_def ident ";"
+Node* global_dec(){
+  Type* this_type = type_def();
+  if(this_type == NULL){
+    return NULL;
   }
   Token* tok = consume_ident();
   if(tok == NULL){
     return NULL;
+  }
+  Node* node;
+  // if global variable declaration
+  if(consume(";")){
+  	g_current_scope = g_global_scope;
+	  node = new_var_node(this_type, tok);
+	  return node;
   }
   // name
   node = new_node(ND_FUNC_DEF, NULL, NULL);
@@ -190,6 +205,8 @@ Node* func_def(){
   strncpy(node_name, tok->str, tok->len);
   node->name = node_name;
   node->len = tok->len;
+  node->type = this_type;
+  node->is_global = 1;
   // arguments
   expect("(");
   g_current_scope = gen_new_scope(g_global_scope, LOCAL);
@@ -375,6 +392,7 @@ Node* gen_node_from_var(Var* var){
   node->len = var->len;
   node->offset = var->offset;
   node->type = var->type;
+  node->is_global = var->is_global;
   return node;
 }
 
@@ -517,7 +535,8 @@ Node* var(Token* tok){
   node->name = node_name;
   node->len = tok->len;
   node->offset = var->offset;
-  node->type = var->type;;
+  node->type = var->type;
+  node->is_global = var->is_global;
   return node;
 }
 

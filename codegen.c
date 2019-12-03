@@ -12,14 +12,17 @@ void gen(Node* node){
     return;
   case ND_VAR:
     gen_lval(node);
-	if(node->type->ty == ARRAY){
-	  return;
-	}
+    if(node->type->ty == ARRAY){
+	    return;
+	  }
     printf("  pop rax\n");
     printf("  mov rax, [rax]\n");
     printf("  push rax\n");
     return;
   case ND_VAR_DEC:
+    if(node->is_global){
+      return;
+    }
     printf("  push rax\n");
     return;
   case ND_ASSIGN:
@@ -207,6 +210,12 @@ void gen(Node* node){
 
 void gen_lval(Node* node){
   if(node->kind == ND_VAR){
+    if(node->is_global){
+      printf("  mov rax, OFFSET FLAT:%s\n", node->name);
+      printf("  push rax\n");
+      return;
+    }
+
     printf("  mov rax, rbp\n");
     printf("  sub rax, %d\n", node->offset);
     printf("  push rax\n");
@@ -243,4 +252,16 @@ void gen_func_args(node_list* fa){
   return;
 }
 
+void gen_global_var(Scope* global_scope){
+  Var* v = global_scope->var;
+  if(v==NULL){
+    printf("#global var empty\n");
+  }
+  while(v!=NULL){
+    printf("%s:\n",v->name);
+    printf("  .zero %d\n",v->size_byte);
+    v = v->next;
+  }
+  return;
+}
 
