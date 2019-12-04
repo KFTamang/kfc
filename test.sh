@@ -549,6 +549,9 @@ try "18" "$src"
 src="int g;int main(){g=2;int g; g = 4; return g;}"
 try "4" "$src"
 
+#src="int main(){char a;a = 128;return a;}"
+#try "128" "$src"
+
 echo "test passed"
 
 

@@ -106,6 +106,15 @@ Token* new_token(TokenKind kind, Token* cur, char* str, int len){
   return tok;
 }
 
+int tokenize_if_keyword_matches(char* p, Token** cur, int i, char* keyword, TokenKind tk){
+  int len = strlen(keyword);
+  if(i==len && strncmp(p, keyword, i)==0){ 
+    *cur = new_token(tk, *cur, p, i);
+    return i;
+  }
+  return 0;
+}
+
 Token* tokenize(char* p){
   Token head;
   head.next = NULL;
@@ -127,8 +136,8 @@ Token* tokenize(char* p){
       continue;
     }
     if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'||
-	*p == '<' || *p == '>' || *p == ';' || *p == '=' || *p == '{' || *p == '}'||
-	*p == ',' || *p == '&' || *p == '[' || *p == ']'){
+      	*p == '<' || *p == '>' || *p == ';' || *p == '=' || *p == '{' || *p == '}'||
+      	*p == ',' || *p == '&' || *p == '[' || *p == ']'){
       cur = new_token(TK_RESERVED, cur, p, 1);
       p++;
       continue;
@@ -141,50 +150,23 @@ Token* tokenize(char* p){
     if (is_alnum(*p)){
       int i = 1;
       while(is_alnum(*(p+i))){
-	++i;
+        ++i;
       }
-      // if "if"
-      if(i==2 && strncmp(p, "if", i)==0){ 
-	cur = new_token(TK_IF, cur, p, i);
-	p += i;
-	continue;
-      }
+      int d = 0;
+      // if "if"pp
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "if", TK_IF)){p += d; continue;}
       // if else
-      if(i==4 && strncmp(p, "else", i)==0){ 
-	cur = new_token(TK_ELSE, cur, p, i);
-	p += i;
-	continue;
-      }
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "else", TK_ELSE)){p += d; continue;}
       // if return
-      if(i==6 && strncmp(p, "return", i)==0){ 
-	cur = new_token(TK_RETURN, cur, p, i);
-	p += i;
-	continue;
-      }
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "return", TK_RETURN)){p += d; continue;}
       // if while
-      if(i==5 && strncmp(p, "while", i)==0){ 
-	cur = new_token(TK_WHILE, cur, p, i);
-	p += i;
-	continue;
-      }
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "while", TK_WHILE)){p += d; continue;}
       // if for
-      if(i==3 && strncmp(p, "for", i)==0){ 
-	cur = new_token(TK_FOR, cur, p, i);
-	p += i;
-	continue;
-      }
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "for", TK_FOR)){p += d; continue;}
       // variable type int
-      if(i==3 && strncmp(p, "int", i)==0){ 
-	cur = new_token(TK_TYPE_INT, cur, p, i);
-	p += i;
-	continue;
-	  }
-      // variable type int
-      if(i==6 && strncmp(p, "sizeof", i)==0){ 
-	cur = new_token(TK_SIZEOF, cur, p, i);
-	p += i;
-	continue;
-      }
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "int", TK_TYPE_INT)){p += d; continue;}
+      // if sizeof
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "sizeof", TK_SIZEOF)){p += d; continue;}
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
