@@ -1,4 +1,7 @@
 *~
 *.o
 tmp*
-9cc
+kfc
+*.dSYM
+main_test
+symtab_test
