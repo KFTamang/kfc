@@ -25,13 +25,21 @@ int is_alnum(char c){
 	  ( c == '_') );
 }
 
-Token* consume_ident(){
+Token* get_and_consume_token(TokenKind tk){
   Token* ret = NULL;
-  if(token->kind == TK_IDENT ){
+  if(token->kind == tk ){
     ret = token;
     token = token->next;
   }
-  return ret;
+  return ret;  
+}
+
+Token* consume_ident(){
+  return get_and_consume_token(TK_IDENT);
+}
+
+Token* consume_string_literal(){
+  return get_and_consume_token(TK_STRING);
 }
 
 void expect(char* op){
@@ -137,9 +145,19 @@ Token* tokenize(char* p){
     }
     if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'||
       	*p == '<' || *p == '>' || *p == ';' || *p == '=' || *p == '{' || *p == '}'||
-      	*p == ',' || *p == '&' || *p == '[' || *p == ']'){
+      	*p == ',' || *p == '&' || *p == '[' || *p == ']' ){
       cur = new_token(TK_RESERVED, cur, p, 1);
       p++;
+      continue;
+    }
+    if(*p == '"'){
+      p++;
+      int i = 0;
+      while(*(p+i) != '"'){
+        i++;
+      }
+      cur = new_token(TK_STRING, cur, p, i);
+      p += i+1;
       continue;
     }
     if (isdigit(*p)){
@@ -163,8 +181,9 @@ Token* tokenize(char* p){
       if(d = tokenize_if_keyword_matches(p, &cur, i, "while", TK_WHILE)){p += d; continue;}
       // if for
       if(d = tokenize_if_keyword_matches(p, &cur, i, "for", TK_FOR)){p += d; continue;}
-      // variable type int
+      // variable type
       if(d = tokenize_if_keyword_matches(p, &cur, i, "int", TK_TYPE_INT)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "char", TK_TYPE_CHAR)){p += d; continue;}
       // if sizeof
       if(d = tokenize_if_keyword_matches(p, &cur, i, "sizeof", TK_SIZEOF)){p += d; continue;}
       // local var

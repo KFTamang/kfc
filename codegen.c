@@ -1,5 +1,56 @@
 #include "kfc.h"
 
+void pointer_operation(Node* node){
+  if(node->lhs->type == NULL && node->rhs->type == NULL){
+    return;
+  }
+  if(node->rhs->type != NULL &&
+    (node->rhs->type->ty == PTR || node->rhs->type->ty == ARRAY) &&
+     node->lhs->type != NULL &&
+    (node->lhs->type->ty == PTR || node->lhs->type->ty == ARRAY) ){
+    error("ERROR:Invalid add/sub operation with two pointer operands\n");
+  }
+  if(node->lhs->type != NULL){
+    switch(node->lhs->type->ty){
+      case PTR:
+        printf("  imul rdi, %d # multiple by size size for int addition\n", get_type_size_byte(node->lhs->type));
+        break;
+      case ARRAY:
+        printf("  imul rdi, %d # multiple by size size for int addition\n", get_type_size_byte(node->lhs->type->ptr_to));
+        break;
+      default: break;
+    }
+  }
+  if(node->rhs->type != NULL){
+    switch(node->rhs->type->ty){
+      case PTR:
+        printf("  imul rax, %d # multiple by size size for int addition\n", get_type_size_byte(node->rhs->type));
+        break;
+      case ARRAY:
+        printf("  imul rax, %d # multiple by size size for int addition\n", get_type_size_byte(node->rhs->type->ptr_to));
+        break;
+      default: break;
+    }
+  }
+}
+
+void move_rax_rdi_per_type(Type* type){
+  switch(type->ty){
+  case INT:
+  case PTR:
+    printf("  mov [rax], rdi # debug1\n");
+    break;
+  case ARRAY:
+    move_rax_rdi_per_type(type->ptr_to);
+  case CHAR:
+    printf("  mov [rax], dil # debug2\n");
+    break;
+  default:
+    printf("  mov [rax], rdi #debug3\n");
+  }
+  return;
+}
+
 // generate stack machine from the sytax tree
 void gen(Node* node){
   int l_label_num = g_label_num;
@@ -16,7 +67,15 @@ void gen(Node* node){
 	    return;
 	  }
     printf("  pop rax\n");
-    printf("  mov rax, [rax]\n");
+    switch(node->type->ty){
+    case INT:
+    case PTR:
+      printf("  mov rax, QWORD PTR [rax]\n");
+      break;
+    case CHAR:
+      printf("  movsx eax, BYTE PTR [rax]\n");
+      break;
+    }
     printf("  push rax\n");
     return;
   case ND_VAR_DEC:
@@ -30,7 +89,12 @@ void gen(Node* node){
     gen(node->rhs);
     printf("  pop rdi\n");
     printf("  pop rax\n");
-    printf("  mov [rax], rdi\n");
+    if(node->lhs->type == NULL){
+      printf("  mov [rax], rdi\n");
+      printf("  push rdi\n");
+      return;      
+    }
+    move_rax_rdi_per_type(node->lhs->type);
     printf("  push rdi\n");
     return;
   case ND_RETURN:
@@ -129,7 +193,7 @@ void gen(Node* node){
     printf("%s:\n", node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %d\n", node->var_size_byte);
+    printf("  sub rsp, %d\n", round_up_to_8(node->var_size_byte+8));
     if(node->func_args != NULL){
       gen_func_args(node->func_args);
     }
@@ -161,19 +225,11 @@ void gen(Node* node){
 
   switch(node->kind){
   case ND_ADD:
-    if(node->lhs->type != NULL && (node->lhs->type->ty == PTR || node->lhs->type->ty == ARRAY )){
-      printf("  imul rdi, 8 # multiple by 8 for int addition\n");
-    }else if(node->rhs->type != NULL && (node->rhs->type->ty == PTR || node->rhs->type->ty == ARRAY )){
-      printf("  imul rax, 8 # multiple by 8 for int addition\n");
-    }
+    pointer_operation(node);
     printf("  add rax, rdi\n");
     break;
   case ND_SUB:
-    if(node->lhs->type != NULL && (node->lhs->type->ty == PTR || node->lhs->type->ty == ARRAY )){
-      printf("  imul rdi, 8 # multiple by 8 for int addition\n");
-    }else if(node->rhs->type != NULL && (node->rhs->type->ty == PTR || node->rhs->type->ty == ARRAY )){
-      printf("  imul rax, 8 # multiple by 8 for int addition\n");
-    }
+    pointer_operation(node);
     printf("  sub rax, rdi\n");
     break;
   case ND_MUL:

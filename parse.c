@@ -32,30 +32,43 @@ Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
   node->lhs  = lhs;
   node->rhs  = rhs;
   switch(kind){
-  case ND_NUM:
-	node->type = &g_type_int;
-	break;
-  case ND_ADD:
-  case ND_SUB:
-  case ND_MUL:
-  case ND_DIV:
-  case ND_EQU:
-  case ND_NEQ:
-  case ND_LWT:
-  case ND_LEQ:
-  case ND_ASSIGN:
-	if((lhs->type != NULL && lhs->type->ty == PTR) || 
-	   (rhs->type != NULL && rhs->type->ty == PTR) ){
-	  node->type = &g_type_ptr;
-	}else{
-	  node->type = &g_type_int;
-	}
-	break;
-  case ND_ADDR:
-	node->type = &g_type_ptr;
-	break;
-  default:
-	break;
+    case ND_NUM:
+    case ND_ADD:
+    case ND_SUB:
+    case ND_MUL:
+    case ND_DIV:
+      if(lhs->type == NULL){
+//        error_at(token->str, "Type for leht hand side is not defined for nodes\n");
+        break;
+      }else if(rhs->type == NULL ){
+//        error_at(token->str, "Type for right hand side is not defined for nodes\n");
+        break;
+      }
+      if((lhs->type->ty == PTR || lhs->type->ty == ARRAY) && (rhs->type->ty == PTR || rhs->type->ty == ARRAY) ){
+        error_at(token->str, "Operation between two pointers/arrays is not allowed\n");
+        break;
+      }
+      if(lhs->type->ty == PTR || lhs->type->ty == ARRAY){
+        node->type = lhs->type;
+        break;
+      } 
+      if(rhs->type->ty == PTR || rhs->type->ty == ARRAY){
+        node->type = rhs->type;
+        break;
+      } 
+      node->type = &g_type_int;
+      break;
+    case ND_EQU:
+    case ND_NEQ:
+    case ND_LWT:
+    case ND_LEQ:
+    case ND_ASSIGN:
+      break;
+    case ND_ADDR:
+      node->type = &g_type_ptr;
+      break;
+    default:
+      break;
   }
   return node;
 }
@@ -65,6 +78,7 @@ Node* new_node_num(int val){
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_NUM;
   node->val  = val;
+  node->type = &g_type_int;
   return node;
 }
 
@@ -134,7 +148,7 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   }
   // offset for array is one unit element size lower from the total size
   if(type->ty == ARRAY){ 
-	new_var->offset += get_type_size_byte(type) - get_type_size_byte(type->ptr_to);
+	  new_var->offset += get_type_size_byte(type) - get_type_size_byte(type->ptr_to);
   }
   scope->var = new_var;
 }
@@ -145,12 +159,10 @@ size_t get_type_size_byte(Type* type){
 	return 0;
   }
   switch(type->ty){
-  case INT:
-	return 8;
-  case PTR:
-	return 8;
-  case ARRAY:
-	return type->array_size * get_type_size_byte(type->ptr_to);
+  case INT:	return 8;
+  case PTR: return 8;
+  case CHAR: return 1;
+  case ARRAY:	return type->array_size * get_type_size_byte(type->ptr_to);
   default:
 	error("Type is not supported\n");
 	return 0;
@@ -337,10 +349,14 @@ Node* stmt(){
 
 // ENBF type_def = "int" "*"*
 Type* type_def(){
-  if(!consumeByKind(TK_TYPE_INT)){
+  Type* type;
+  if(consumeByKind(TK_TYPE_INT)){
+    type = new_type(INT, NULL);
+  }else if(consumeByKind(TK_TYPE_CHAR)){
+    type = new_type(CHAR, NULL);
+  }else{
     return NULL;
   }
-  Type* type = new_type(INT, NULL);
   while(consume("*")){
     type = new_type(PTR, type);
   }
@@ -500,8 +516,9 @@ Node* postfix(){
 	}
 	expect("]");
 	// postfix[expression] is parsed as *(postfix+expression)
-	node = new_node(ND_ADD, node, expression);
-	node = new_node(ND_DEREF, node, NULL);
+  Node*	add_node = new_node(ND_ADD, node, expression);
+	node = new_node(ND_DEREF, add_node, NULL);
+  node->type = add_node->type->ptr_to;
 	return node;
   }
   return node; // return primary
@@ -576,10 +593,15 @@ Node* unary(){
     return new_node(ND_SUB,new_node_num(0), postfix());
   }
   if(consume("&")){
-    return new_node(ND_ADDR, unary(), NULL);
+    Node* node = new_node(ND_ADDR, unary(), NULL);
+    node->type = new_type(PTR, NULL);
+    return node;
   }
   if(consume("*")){
-    return new_node(ND_DEREF, unary(), NULL);
+    Node* una = unary();
+    Node* node = new_node(ND_DEREF, una, NULL);
+    node->type = una->type->ptr_to;
+    return node;
   }
   if(consumeByKind(TK_SIZEOF)){
 	Node* nodesize = unary();

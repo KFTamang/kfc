@@ -36,21 +36,10 @@ func_test(){
     fi
 }
 
-src="int main(){
-  int a;
-  a = 5;
-  return a;
-}"
+src="int main(){int a; a = 5; return a;}"
 try "5" "$src"
 
-src="int main(){
-    int a;
-    a = 5;
-    int b; 
-    b = 9;
-    a = a + 1;
-    return a+b;
-  }"
+src="int main(){ int a; a = 5; int b; b = 9; a = a + 1; return a+b;}"
 try "15" "$src"
 
 src="
@@ -183,18 +172,7 @@ int main(){
 }"
 try "16" "$src"
 
-src="
-int add(int x, int y){
-  return x+y;
-}
-int main(){
-  if(add(5,3)==8){
-    return 7;
-  }else{
-    return 2;
-  }
-}
-"
+src="int add(int x, int y){  return x+y;}int main(){  if(add(5,3)==8){    return 7;  }else{    return 2;  }}"
 try "7" "$src"
 
 fibonacci="
@@ -480,23 +458,44 @@ try "80" "$src"
 
 src="
 int main(){
-  int a[2];
-  *a = 1;
-  *(a + 1) = 2;
-  int *p;
-  p = a;
-  return *p + *(p + 1);
-}
-"
-try "3" "$src"
-
-src="
-int main(){
   int a[3];
   *(a + 2) = 4;
   return *(a + 2);
 }"
 try "4" "$src"
+
+src="
+int main(){
+  int a[2];
+  *a = 1;
+  *(a + 1) = 2;
+  int *p;
+  p = a;
+  return *p;
+}"
+try "1" "$src"
+
+src="
+int main(){
+  int a[2];
+  *a = 1;
+  *(a + 1) = 2;
+  int *p;
+  p = a;
+  return *(p+1);
+}"
+try "2" "$src"
+
+src="
+int main(){
+  int a[2];
+  *a = 1;
+  *(a + 1) = 2;
+  int *p;
+  p = a;
+  return *p + *(p+1);
+}"
+try "3" "$src"
 
 src="
 int main(){
@@ -536,6 +535,9 @@ try "7" "$src"
 src="int main(){ int x[10];x[3]=9; return 3[x];}"
 try "9" "$src"
 
+src="int main(){ int x[10];int i;i=9;x[i]=17; return x[i];}"
+try "17" "$src"
+
 src="int global_var;int main(){ global_var = 2;return global_var;}"
 try "2" "$src"
 
@@ -549,8 +551,20 @@ try "18" "$src"
 src="int g;int main(){g=2;int g; g = 4; return g;}"
 try "4" "$src"
 
-#src="int main(){char a;a = 128;return a;}"
-#try "128" "$src"
+src="int main(){char a;a = 128;return a;}"
+try "128" "$src"
+
+src="int main(){char a[10];a[0]=7;return a[0];}"
+try "7" "$src"
+
+src="int main(){char a[10];a[0]=0;a[1]=1;a[2]=2;a[3]=3;a[4]=4;a[5]=5;a[6]=6;a[7]=7;a[8]=8;a[9]=9;return a[9];}"
+try "9" "$src"
+
+src="int main(){char a[10];int i;i=8;a[i]=i;return a[i];}"
+try "8" "$src"
+
+src="int main(){char a[10];char i;for(i=0;i<9;i=i+1){a[i]=i;}return a[5];}"
+try "5" "$src"
 
 echo "test passed"
 

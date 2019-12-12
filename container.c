@@ -22,3 +22,10 @@ void error_at(char* loc, char* fmt, ...){
   exit(1);
 }
 
+int round_up_to_8(int in){
+  if(in%8==0){
+    return in;
+  }
+  return in-in%8+8;
+}
+

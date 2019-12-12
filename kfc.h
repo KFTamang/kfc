@@ -14,17 +14,18 @@ static const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
 
 // tokenizer
 typedef enum{
-  TK_RESERVED, // symbol
-  TK_IDENT,    // identifier
-  TK_NUM,      // number
-  TK_RETURN,   // return
-  TK_IF,       // if
-  TK_ELSE,     // else
-  TK_WHILE,    // while loop
-  TK_FOR,      // for loop
-  TK_EOF,      // end of file
-  TK_TYPE_INT, // type int 
-  TK_SIZEOF,   // sizeof operator
+  TK_RESERVED,  // symbol
+  TK_IDENT,     // identifier
+  TK_NUM,       // number
+  TK_RETURN,    // return
+  TK_IF,        // if
+  TK_ELSE,      // else
+  TK_WHILE,     // while loop
+  TK_FOR,       // for loop
+  TK_EOF,       // end of file
+  TK_TYPE_INT,  // type int
+  TK_TYPE_CHAR, // type char
+  TK_SIZEOF,    // sizeof operator
 } TokenKind;
 
 typedef struct Token Token;
@@ -152,6 +153,7 @@ Var* find_var_in_scope(Token* tok, Scope* scope);
 
 typedef enum{
   INT,
+  CHAR,
   PTR,
   ARRAY,
 }TY;
@@ -231,4 +233,4 @@ void gen_global_var();
 // error messager
 void error(char* fmt, ...);
 void error_at(char* loc, char* fmt, ...);
-
+int round_up_to_8(int in);
