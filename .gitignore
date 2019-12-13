@@ -5,3 +5,5 @@ kfc
 *.dSYM
 main_test
 symtab_test
+.gdb*
+peda*
