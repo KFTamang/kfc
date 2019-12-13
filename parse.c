@@ -2,6 +2,8 @@
 
 extern Scope* g_global_scope;
 extern Scope* g_current_scope;
+// global vector to contain string literals
+StrLtr* g_string_literal;
 
 node_list* new_node_list(Node* node){
   node_list* nl = calloc(1, sizeof(node_list));
@@ -16,6 +18,26 @@ node_list* append_node_list(node_list* current, Node* data){
   new_nl->next = NULL;
   current->next = new_nl;
   return new_nl;
+}
+
+StrLtr* get_and_append_strltr(char* string){
+  static int num = 0;
+  StrLtr* new = calloc(1, sizeof(StrLtr));
+  new->next = g_string_literal;
+  new->string = string;
+  char* label = calloc(1, strlen(".LCxxx")); // up to 999 string literals
+  sprintf(label, ".LC%d", num);
+  new->label = label;
+  num++;
+  g_string_literal = new;
+  return new;
+}
+
+void print_all_strltrs(){
+  for(StrLtr* strltr=g_string_literal; strltr; strltr=strltr->next){
+    printf("%s:\n", strltr->label);
+    printf("  .string \"%s\"\n", strltr->string);
+  }
 }
 
 Scope* gen_new_scope(Scope* parent, ScopeKind sk){
@@ -491,7 +513,7 @@ Node* mul(){
   }
 }
 
-// ENBF primary = ( expr ) | num | ident
+// ENBF primary = ( expr ) | num | ident | string-literal
 Node* primary(){
   if(consume("(")){
     Node* node = expr();
@@ -500,6 +522,10 @@ Node* primary(){
   }
   if(is_kind(TK_IDENT)){
     Node* node = ident();
+    return node;
+  }
+  if(is_kind(TK_STRING)){
+    Node* node = string_literal();
     return node;
   }
   return num();
@@ -593,8 +619,9 @@ Node* unary(){
     return new_node(ND_SUB,new_node_num(0), postfix());
   }
   if(consume("&")){
-    Node* node = new_node(ND_ADDR, unary(), NULL);
-    node->type = new_type(PTR, NULL);
+    Node* una = unary();
+    Node* node = new_node(ND_ADDR, una, NULL);
+    node->type = new_type(PTR, una->type);
     return node;
   }
   if(consume("*")){
@@ -613,6 +640,23 @@ Node* unary(){
 	}
   }
   return postfix();
+}
+
+// ENBF terminal node string-literal
+// string literal is actually a global variable with char* type
+Node* string_literal(){
+  Token* tok = consume_string_literal();
+  Node* node = new_node(ND_VAR, NULL, NULL);
+  char* string = calloc(1, tok->len+1);
+  strncpy(string, tok->str, tok->len);
+  string[tok->len] = '\0';
+  StrLtr* strltr = get_and_append_strltr(string);
+  node->name = strltr->label;
+  node->len = tok->len;
+  node->is_global = 1;
+  node = new_node(ND_ADDR, node, NULL);
+  node->type = new_type(PTR, new_type(CHAR, NULL));
+  return node;
 }
 
 // ENBF terminal symbol for number

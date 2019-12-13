@@ -26,6 +26,7 @@ typedef enum{
   TK_TYPE_INT,  // type int
   TK_TYPE_CHAR, // type char
   TK_SIZEOF,    // sizeof operator
+  TK_STRING,    // string literal
 } TokenKind;
 
 typedef struct Token Token;
@@ -41,7 +42,9 @@ struct Token{
 bool consume(char* op);
 bool consumeByKind(TokenKind tkind);
 int is_alnum(char c);
+Token* get_and_consume_token(TokenKind tk);
 Token* consume_ident();
+Token* consume_string_literal();
 void expect(char* op);
 void expect_in_future(char* op);
 bool is_symbol(char* op);
@@ -88,6 +91,7 @@ typedef struct node_list node_list;
 typedef struct funcs funcs;
 typedef struct Type Type;
 typedef struct Var Var;
+typedef struct StrLtr StrLtr;
 
 // abstract syntax tree struct
 struct Node {
@@ -117,6 +121,15 @@ struct node_list{
 
 node_list* new_node_list(Node* node);
 node_list* append_node_list(node_list* current, Node* data);
+
+// vactor for string literal appended in parser for later code generation
+struct StrLtr{
+  char* string;
+  char* label;
+  StrLtr* next; 
+};
+StrLtr* get_and_append_strltr(char* string);
+void print_all_strltrs();
 
 typedef struct Scope Scope;
 typedef enum {
@@ -219,6 +232,7 @@ Node* ident();
 Node* var(Token* tok);
 Node* func(Token* tok);
 Node* unary();
+Node* string_literal();
 Node* num();
 
 

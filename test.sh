@@ -278,7 +278,7 @@ try "3" "$src"
 
 src="int test(){
   int x;
-  int y;
+  int* y;
   x = 5;
   y = &x;
   return *y;
@@ -293,7 +293,7 @@ try "5" "$src"
 src="int test(){
   int x;
   int y;
-  int z;
+  int* z;
   x = 3;
   y = 7;
   z = &x - 1;
@@ -565,6 +565,15 @@ try "8" "$src"
 
 src="int main(){char a[10];char i;for(i=0;i<9;i=i+1){a[i]=i;}return a[5];}"
 try "5" "$src"
+
+src="int main(){char* a; a = \"hoge\";return a[0];}"
+try "104" "$src"
+
+src="int main(){char* a; a = \"hoge\";return a[1];}"
+try "111" "$src"
+
+src="int main(){char* a; a = \"hoge\";return a[3];}"
+try "101" "$src"
 
 echo "test passed"
 
