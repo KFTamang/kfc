@@ -575,6 +575,9 @@ try "111" "$src"
 src="int main(){char* a; a = \"hoge\";return a[3];}"
 try "101" "$src"
 
+src="int main(){char* a; a = \"hogefugamogepoyO\";return a[15];}"
+try "79" "$src"
+
 echo "test passed"
 
 
