@@ -26,6 +26,11 @@ int main(int argc, char **argv){
   printf(".bss\n");
   gen_global_var(g_global_scope);
 
+  // print all the string literals in rodata section
+  printf("  .text\n");
+  printf("  .section .rodata\n");
+  print_all_strltrs();
+
   // climbing down the tree and generate code
   printf(".text\n");
   int i = 0;

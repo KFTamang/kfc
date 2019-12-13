@@ -13,10 +13,10 @@ void pointer_operation(Node* node){
   if(node->lhs->type != NULL){
     switch(node->lhs->type->ty){
       case PTR:
-        printf("  imul rdi, %d # multiple by size size for int addition\n", get_type_size_byte(node->lhs->type));
+        printf("  imul rdi, %ld # multiple by size size for int addition\n", get_type_size_byte(node->lhs->type->ptr_to));
         break;
       case ARRAY:
-        printf("  imul rdi, %d # multiple by size size for int addition\n", get_type_size_byte(node->lhs->type->ptr_to));
+        printf("  imul rdi, %ld # multiple by size size for int addition\n", get_type_size_byte(node->lhs->type->ptr_to));
         break;
       default: break;
     }
@@ -24,10 +24,10 @@ void pointer_operation(Node* node){
   if(node->rhs->type != NULL){
     switch(node->rhs->type->ty){
       case PTR:
-        printf("  imul rax, %d # multiple by size size for int addition\n", get_type_size_byte(node->rhs->type));
+        printf("  imul rax, %ld # multiple by size size for int addition\n", get_type_size_byte(node->rhs->type->ptr_to));
         break;
       case ARRAY:
-        printf("  imul rax, %d # multiple by size size for int addition\n", get_type_size_byte(node->rhs->type->ptr_to));
+        printf("  imul rax, %ld # multiple by size size for int addition\n", get_type_size_byte(node->rhs->type->ptr_to));
         break;
       default: break;
     }
@@ -42,6 +42,7 @@ void move_rax_rdi_per_type(Type* type){
     break;
   case ARRAY:
     move_rax_rdi_per_type(type->ptr_to);
+    break;
   case CHAR:
     printf("  mov [rax], dil # debug2\n");
     break;
@@ -49,6 +50,23 @@ void move_rax_rdi_per_type(Type* type){
     printf("  mov [rax], rdi #debug3\n");
   }
   return;
+}
+
+void move_from_pointer_per_type(char* dest, char* src, Type* type){
+  switch(type->ty){
+  case INT:
+  case PTR:
+    printf("  mov %s, QWORD PTR[%s]\n", dest, src);
+    break;
+  case ARRAY:
+    move_from_pointer_per_type(dest, src, type->ptr_to);
+    break;
+  case CHAR:
+    printf("  movsx %s, BYTE PTR[%s]\n", dest, src);
+    break;
+  default:
+    error("This type is not supported yet\n");
+  }
 }
 
 // generate stack machine from the sytax tree
@@ -67,15 +85,7 @@ void gen(Node* node){
 	    return;
 	  }
     printf("  pop rax\n");
-    switch(node->type->ty){
-    case INT:
-    case PTR:
-      printf("  mov rax, QWORD PTR [rax]\n");
-      break;
-    case CHAR:
-      printf("  movsx eax, BYTE PTR [rax]\n");
-      break;
-    }
+    move_from_pointer_per_type("rax","rax",node->type);
     printf("  push rax\n");
     return;
   case ND_VAR_DEC:
@@ -212,7 +222,8 @@ void gen(Node* node){
     printf("  # deref\n");
     gen(node->lhs);
     printf("  pop rax\n");
-    printf("  mov rax, [rax]\n");
+    printf("  #%d\n",node->type->ty);
+    move_from_pointer_per_type("rax", "rax", node->type);
     printf("  push rax\n");
     return;
   }
