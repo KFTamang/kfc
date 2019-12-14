@@ -248,3 +248,6 @@ void gen_global_var();
 void error(char* fmt, ...);
 void error_at(char* loc, char* fmt, ...);
 int round_up_to_8(int in);
+
+// file reader
+char* read_file(char* filename);

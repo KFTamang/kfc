@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 void hoge(){printf("OK\n");}
 
@@ -21,4 +22,9 @@ int alloc4(long** p, int a, int b, int c, int d){
   arr[3] = (long)d;
   *p = arr;
   return 0;
+}
+void print_error(char* format, ...){
+  va_list ap;
+  va_start(ap, format);
+  vfprintf(stderr, format, ap);
 }

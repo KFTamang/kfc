@@ -62,7 +62,7 @@ void move_from_pointer_per_type(char* dest, char* src, Type* type){
     move_from_pointer_per_type(dest, src, type->ptr_to);
     break;
   case CHAR:
-    printf("  movsx %s, BYTE PTR[%s]\n", dest, src);
+    printf("  movzx %s, BYTE PTR[%s]\n", dest, src);
     break;
   default:
     error("This type is not supported yet\n");
