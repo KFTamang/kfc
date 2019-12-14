@@ -76,6 +76,11 @@ int main(){
     assert( 101, test59(),"");
     assert( 79,  test60(),"");
     assert( 9,   test61(),"");
+    // comment test
+    /* block comment */
+    /* comment /*
+    over 
+    lines; */
     print_error("Test passed\n");
     return 0;
 }
