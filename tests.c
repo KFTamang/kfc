@@ -11,7 +11,7 @@ int assert(int expected, int actual, char* code){
 }
 int main(){
     assert( 5 , test2(),"int test2(){int a; a = 5; return a;}");
-    assert( 15 , test3(),"int test3(){ int a; a = 5; int b; b = 9; a = a + 1; return a+b;}");
+    assert( 15 , test3(),"int main(){ int a; a = 5; int b; b = 9; a = a + 1; return a+b;}");
     assert( 9 , test4()," int return_9(){ return 9; } int test4(){ return return_9(); }");
     assert( 7 , test5()," int return_7(){ return 7; } int test5(){ int a; a = return_7(); return a; }");
     assert( 9 , test6()," int return_9(){ return 9; } int test6(){ int a; a = 9; return a; }");
@@ -81,6 +81,9 @@ int main(){
     /* comment /*
     over 
     lines; */
+    assert(11, test62(), "int main(){int a = 11;return a;}");
+    assert(21, test63(), "int main(){int hoge = 7;int poyo = return_3(); return hoge*poyo;}");
+
     print_error("Test passed\n");
     return 0;
 }

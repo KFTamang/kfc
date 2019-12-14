@@ -81,3 +81,5 @@ int test58(){char* a; a = "hoge";return a[1];}
 int test59(){char* a; a = "hoge";return a[3];}
 int test60(){char* a; a = "hogefugamogepoyO";return a[15];}
 int test61(){printf("hogefugamogepoyO\n");return 9;}
+int test62(){int a = 11;return a;}
+int test63(){int hoge = 7;int poyo = return_3(); return hoge*poyo;}

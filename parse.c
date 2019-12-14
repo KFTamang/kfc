@@ -394,6 +394,7 @@ Type* new_array_type(Type* base, size_t size){
 }
 
 // ENBF var_dec = type_def var ("[" num "]")?
+//              | type_def var ("[" num "]")? = expr
 Node* var_dec(){
   Type* this_type = type_def();
   if(this_type == NULL){
@@ -403,7 +404,16 @@ Node* var_dec(){
   if(tok == NULL){
     return NULL;
   }
-  return new_var_node(this_type, tok);
+  Node* node = new_var_node(this_type, tok);
+  if(!consume("=")){
+    return node;
+  }else{ // declaration with initialization
+    // initialization is treated as : 
+    // int x = expr(); -> int x; x = expr();
+    node = var(tok);
+    node = new_node(ND_ASSIGN, node, expr());
+    return node;
+  }
 }
 
 Node* new_var_node(Type* type, Token* tok){
