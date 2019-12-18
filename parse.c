@@ -392,11 +392,21 @@ Type* struct_dec(){
   expect("{");
   Type* type = type_def();
   Token* tok = consume_ident();
+  if(consume("[")){ // array member
+    int array_size = expect_number();
+    type = new_array_type(type, array_size);
+    expect("]");
+  }
   Memlist* head = new_memlist(type, tok);
   expect(";");
   while(!consume("}")){
     type = type_def();
     tok = consume_ident();
+    if(consume("[")){ // array member
+      int array_size = expect_number();
+      type = new_array_type(type, array_size);
+      expect("]");
+    }
     append_memlist(head, new_memlist(type, tok));
     expect(";");
   }

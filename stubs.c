@@ -85,4 +85,6 @@ int test62(){int a = 11;return a;}
 int test63(){int hoge = 7;int poyo = return_3(); return hoge*poyo;}
 int test64(){struct{ int a;int b;char c; char* hoge;} x; return 9;}
 int test65(){struct{ int a;int b;char hoge; char* bbagepoyo;} x; return sizeof(x);}
+int test66(){struct{ int a;int b[10];char hoge; char* bbagepoyo;} x; return sizeof(x);}
+int test67(){struct{ int a; struct{int poyo; char mogera[8];} rec_struct[2];} x; return sizeof(x);}
     
