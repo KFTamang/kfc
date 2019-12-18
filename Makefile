@@ -18,7 +18,7 @@ kfc: $(OBJS) main.o
 #main.o: kfc.h
 #symtegen.o: kfc.h
 
-test: kfc
+test: kfc tests.c stubs.c
 	./test.sh
 
 test_alloc: test_alloc.c test_helper.o

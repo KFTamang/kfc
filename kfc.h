@@ -27,6 +27,7 @@ typedef enum{
   TK_TYPE_CHAR, // type char
   TK_SIZEOF,    // sizeof operator
   TK_STRING,    // string literal
+  TK_STRUCT,    // structure declaration
 } TokenKind;
 
 typedef struct Token Token;
@@ -90,6 +91,7 @@ typedef struct Node Node;
 typedef struct node_list node_list;
 typedef struct funcs funcs;
 typedef struct Type Type;
+typedef struct Memlist Memlist;
 typedef struct Var Var;
 typedef struct StrLtr StrLtr;
 
@@ -169,13 +171,25 @@ typedef enum{
   CHAR,
   PTR,
   ARRAY,
+  STRUCT,
 }TY;
 
 struct Type{
   TY ty;
   Type *ptr_to;
   size_t array_size;
+  Memlist* mem;
 };
+
+struct Memlist{
+  Type* type;
+  char* name;
+  int offset;
+  Memlist* next;
+};
+
+void append_memlist(Memlist* cur, Memlist* new);
+Memlist* new_memlist(Type* type, Token* tok);
 
 // global type struct for integer number
 static Type g_type_int = {INT, NULL};
@@ -212,6 +226,7 @@ size_t get_type_size_byte(Type* type);
 size_t get_var_size_byte(Scope* scope);
 void program();
 Type* type_def();
+Type* struct_dec();
 Type* new_array_type(Type* base, size_t size);
 Node* new_var_node(Type* type, Token* tok);
 Node* gen_node_from_var(Var* var);

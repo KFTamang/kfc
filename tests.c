@@ -83,7 +83,8 @@ int main(){
     lines; */
     assert(11, test62(), "int main(){int a = 11;return a;}");
     assert(21, test63(), "int main(){int hoge = 7;int poyo = return_3(); return hoge*poyo;}");
-
-    print_error("Test passed\n");
+    assert(9,  test64(), "int main(){struct{ int a;int b;} x; return 9;}");
+    assert(25, test65(), " int a;int b;char hoge; char* bbagepoyo;} x; return sizeof(x);");
+     print_error("Test passed\n");
     return 0;
 }

@@ -185,6 +185,7 @@ size_t get_type_size_byte(Type* type){
   case PTR: return 8;
   case CHAR: return 1;
   case ARRAY:	return type->array_size * get_type_size_byte(type->ptr_to);
+  case STRUCT: return type->array_size;
   default:
 	error("Type is not supported\n");
 	return 0;
@@ -369,13 +370,15 @@ Node* stmt(){
   return node;
 }
 
-// ENBF type_def = "int" "*"*
+// ENBF type_def = ("int" | "char" | struct_dec) "*"*
 Type* type_def(){
   Type* type;
   if(consumeByKind(TK_TYPE_INT)){
     type = new_type(INT, NULL);
   }else if(consumeByKind(TK_TYPE_CHAR)){
     type = new_type(CHAR, NULL);
+  }else if(consumeByKind(TK_STRUCT)){
+    type = struct_dec();
   }else{
     return NULL;
   }
@@ -383,6 +386,57 @@ Type* type_def(){
     type = new_type(PTR, type);
   }
   return type;
+}
+
+Type* struct_dec(){
+  expect("{");
+  Type* type = type_def();
+  Token* tok = consume_ident();
+  Memlist* head = new_memlist(type, tok);
+  expect(";");
+  while(!consume("}")){
+    type = type_def();
+    tok = consume_ident();
+    append_memlist(head, new_memlist(type, tok));
+    expect(";");
+  }
+  // assign offsets to each of struct member
+  int offset = 0;
+  for(Memlist* mem = head; mem; mem=mem->next){
+    mem->offset = offset;
+    offset += get_type_size_byte(mem->type);
+  }
+  Type* this_type = new_type(STRUCT, NULL);
+  this_type->mem = head;
+  this_type->array_size = offset;
+  return this_type;
+}
+
+void append_memlist(Memlist* cur, Memlist* new){
+  if(cur == NULL){
+    error("No struct member\n");
+  }
+  if(strcmp(cur->name, new->name) == 0){
+    error_at(token->str, "Struct member '%s' already exists\n", cur->name);
+  }
+  // go to the end of member list
+  while(cur->next != NULL){
+    if(strcmp(cur->name, new->name) == 0){
+      error_at(token->str, "Struct member '%s' already exists\n", cur->name);
+    }
+    cur = cur->next;
+  }
+  cur->next = new;
+}
+
+Memlist* new_memlist(Type* type, Token* tok){
+  Memlist* new = calloc(1,sizeof(Memlist));
+  // extract name from token string
+  new->name = calloc(1, tok->len+1);
+  strncpy(new->name, tok->str, tok->len);
+  new->name[tok->len] = '\0';
+  new->type = type;
+  return new;
 }
 
 Type* new_array_type(Type* base, size_t size){

@@ -83,3 +83,6 @@ int test60(){char* a; a = "hogefugamogepoyO";return a[15];}
 int test61(){printf("hogefugamogepoyO\n");return 9;}
 int test62(){int a = 11;return a;}
 int test63(){int hoge = 7;int poyo = return_3(); return hoge*poyo;}
+int test64(){struct{ int a;int b;char c; char* hoge;} x; return 9;}
+int test65(){struct{ int a;int b;char hoge; char* bbagepoyo;} x; return sizeof(x);}
+    
