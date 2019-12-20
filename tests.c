@@ -5,7 +5,9 @@ int assert(int expected, int actual, char* code){
     }else{
         print_error("Test failed\n%s\n", code);
         print_error("expected : %d but got %d\n", expected, actual);
+        printf("int main(){\n");
         printf("%s\n",code);
+        printf("return 0;\n}\n");
         exit(1);
     }
 }
@@ -87,6 +89,9 @@ int main(){
     assert(25, test65(), "struct{int a;int b;char hoge; char* bbagepoyo;} x; return sizeof(x);");
     assert(97, test66(), "struct{int a;int b[10];char hoge; char* bbagepoyo;} x; return sizeof(x);");
     assert(40, test67(), "struct{int a; struct{int poyo; char mogera[8];} rec_struct[2];} x; return sizeof(x);");
-     print_error("Test passed\n");
+    assert(4,  test68(), "struct{int a;} x; x.a = 4; return x.a;");
+    assert(13, test69(), "struct{ int a; int b;} x; x.a = 4; x.b = 9; return x.a+x.b;");
+    assert(13, test70(), "struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+x[1].b;");
+    print_error("Test passed\n");
     return 0;
 }

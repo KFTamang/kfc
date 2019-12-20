@@ -82,3 +82,9 @@ char* read_file(char* filename){
     return buf;
 }
 
+char* get_name_from_token(Token* tok){
+  char* node_name = calloc(1, tok->len+1);
+  strncpy(node_name, tok->str, tok->len);
+  node_name[tok->len] = '\0';
+  return node_name;
+}

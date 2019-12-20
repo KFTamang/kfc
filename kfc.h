@@ -85,6 +85,7 @@ typedef enum{
   ND_DEREF, // pointer dereference
   ND_VAR_DEC, // local variable declaration
   ND_TYPE,  // type
+  ND_STRUCT_MEM, // struct member
 } NodeKind;
 
 typedef struct Node Node;
@@ -114,6 +115,7 @@ struct Node {
   int var_size_byte; // total size of local variables in bytes
   Type* type; // type of the variable
   int is_global; // flag for global variable
+  Memlist* member; // struct member 
 };
 
 struct node_list{
@@ -190,6 +192,7 @@ struct Memlist{
 
 void append_memlist(Memlist* cur, Memlist* new);
 Memlist* new_memlist(Type* type, Token* tok);
+Memlist* find_member(Type* struct_type, char* name);
 
 // global type struct for integer number
 static Type g_type_int = {INT, NULL};
@@ -243,6 +246,7 @@ Node* add();
 Node* mul();
 Node* primary();
 Node* postfix();
+Node* struct_mem(Node* node);
 Node* ident();
 Node* var(Token* tok);
 Node* func(Token* tok);
@@ -266,3 +270,4 @@ int round_up_to_8(int in);
 
 // file reader
 char* read_file(char* filename);
+char* get_name_from_token(Token* tok);

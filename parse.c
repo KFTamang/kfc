@@ -162,15 +162,11 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   new_var->name = var_name;
   new_var->len = tok->len;
   new_var->size_byte = get_type_size_byte(type);
-  new_var->offset = get_var_size_byte(g_current_scope) + 8;
+  new_var->offset = get_var_size_byte(g_current_scope) + get_type_size_byte(type);
   if(scope->sk == GLOBAL){
     new_var->is_global = 1;
   }else{
     new_var->is_global = 0;
-  }
-  // offset for array is one unit element size lower from the total size
-  if(type->ty == ARRAY){ 
-	  new_var->offset += get_type_size_byte(type) - get_type_size_byte(type->ptr_to);
   }
   scope->var = new_var;
 }
@@ -180,14 +176,19 @@ size_t get_type_size_byte(Type* type){
 	error("Type is not specified\n");
 	return 0;
   }
+  int size = 0;
   switch(type->ty){
   case INT:	return 8;
   case PTR: return 8;
   case CHAR: return 1;
   case ARRAY:	return type->array_size * get_type_size_byte(type->ptr_to);
-  case STRUCT: return type->array_size;
+  case STRUCT:
+    for(Memlist* mem=type->mem; mem; mem=mem->next){
+      size += get_type_size_byte(mem->type);
+    }
+    return size;
   default:
-	error("Type is not supported\n");
+	error_at(token->str, "Type is not supported\n");
 	return 0;
   }
 }
@@ -607,21 +608,50 @@ Node* primary(){
 
 // ENBF postfix = primary
 //              | postfix "[" expr "]"
+//              | postfix "." ident
 Node* postfix(){
   Node* node = primary();
-  if(consume("[")){
-	Node* expression = expr();
-	if(expression == NULL){
-	  error_at(token->str,"No expression after [\n");
-	}
-	expect("]");
-	// postfix[expression] is parsed as *(postfix+expression)
-  Node*	add_node = new_node(ND_ADD, node, expression);
-	node = new_node(ND_DEREF, add_node, NULL);
-  node->type = add_node->type->ptr_to;
-	return node;
+  while(1){
+    if(consume("[")){
+      Node* expression = expr();
+      if(expression == NULL){
+        error_at(token->str,"No expression after [\n");
+      }
+      expect("]");
+      // postfix[expression] is parsed as *(postfix+expression)
+      Node*	add_node = new_node(ND_ADD, node, expression);
+      node = new_node(ND_DEREF, add_node, NULL);
+      node->type = add_node->type->ptr_to;
+    }else if(consume(".")){
+      node = struct_mem(node);
+    }else{
+      return node;
+    }
   }
-  return node; // return primary
+}
+
+Node* struct_mem(Node* node){
+  Token* tok = consume_ident();
+  if(tok == NULL){
+    error_at(token->str, "No member name after . operator\n");
+  }
+  Type* struct_type = node->type;
+  Memlist* memlist = find_member(struct_type, get_name_from_token(tok));
+  Node* member = new_node(ND_STRUCT_MEM, node, NULL);
+  member->member = memlist;
+  return member;
+}
+
+Memlist* find_member(Type* struct_type, char* name){
+  if(struct_type->ty != STRUCT){
+    error_at(token->str, "Variable is not struct\n");
+  }
+  for(Memlist* mem=struct_type->mem; mem; mem=mem->next){
+    if(strcmp(mem->name, name) == 0){
+      return mem;
+    }
+  }
+  error_at(token->str, "No such struct member as %s", name);
 }
 
 // ENBF ident = var | func

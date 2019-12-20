@@ -203,7 +203,11 @@ void gen(Node* node){
     printf("%s:\n", node->name);
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
+    // fill local var region with 0xdeadbeef for debug
     printf("  sub rsp, %d\n", round_up_to_8(node->var_size_byte+8));
+    for(int i=0;i<round_up_to_8(node->var_size_byte)/8; i++){
+      printf("  movq [rbp-%d], 0xdead\n",i*8+8);
+    }
     if(node->func_args != NULL){
       gen_func_args(node->func_args);
     }
@@ -224,6 +228,12 @@ void gen(Node* node){
     printf("  pop rax\n");
     printf("  #%d\n",node->type->ty);
     move_from_pointer_per_type("rax", "rax", node->type);
+    printf("  push rax\n");
+    return;
+  case ND_STRUCT_MEM:
+    gen_lval(node);
+    printf("  pop rax\n");
+    move_from_pointer_per_type("rax", "rax", node->member->type);
     printf("  push rax\n");
     return;
   }
@@ -290,6 +300,13 @@ void gen_lval(Node* node){
   }
   if(node->kind == ND_DEREF){
     gen(node->lhs);
+    return;
+  }
+  if(node->kind == ND_STRUCT_MEM){
+    gen_lval(node->lhs);
+    printf("  pop rax\n");
+    printf("  add rax, %d\n", node->member->offset);
+    printf("  push rax\n");
     return;
   }
   printf("%d\n",node->kind);

@@ -80,11 +80,13 @@ int test57(){char* a; a = "hoge";return a[0];}
 int test58(){char* a; a = "hoge";return a[1];}
 int test59(){char* a; a = "hoge";return a[3];}
 int test60(){char* a; a = "hogefugamogepoyO";return a[15];}
-int test61(){printf("hogefugamogepoyO\n");return 9;}
+int test61(){print_error("hogefugamogepoyO\n");return 9;}
 int test62(){int a = 11;return a;}
 int test63(){int hoge = 7;int poyo = return_3(); return hoge*poyo;}
 int test64(){struct{ int a;int b;char c; char* hoge;} x; return 9;}
 int test65(){struct{ int a;int b;char hoge; char* bbagepoyo;} x; return sizeof(x);}
 int test66(){struct{ int a;int b[10];char hoge; char* bbagepoyo;} x; return sizeof(x);}
 int test67(){struct{ int a; struct{int poyo; char mogera[8];} rec_struct[2];} x; return sizeof(x);}
-    
+int test68(){struct{ int a;} x; x.a = 4; return x.a;}
+int test69(){struct{ int a; int b;} x; x.a = 4; x.b = 9; return x.a+x.b;}
+int test70(){struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+x[1].b;}
