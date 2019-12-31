@@ -301,7 +301,7 @@ Node* stmt(){
     }else{
       comp_stmt->data = stmt();
       while(!consume("}")){
-	comp_stmt = append_node_list(comp_stmt, stmt());
+	      comp_stmt = append_node_list(comp_stmt, stmt());
       }
     }
   }else if(consumeByKind(TK_IF)){ // "if" statement

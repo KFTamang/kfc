@@ -90,3 +90,4 @@ int test67(){struct{ int a; struct{int poyo; char mogera[8];} rec_struct[2];} x;
 int test68(){struct{ int a;} x; x.a = 4; return x.a;}
 int test69(){struct{ int a; int b;} x; x.a = 4; x.b = 9; return x.a+x.b;}
 int test70(){struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+x[1].b;}
+int test71(){int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;}

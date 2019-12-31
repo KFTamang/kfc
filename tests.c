@@ -92,6 +92,7 @@ int main(){
     assert(4,  test68(), "struct{int a;} x; x.a = 4; return x.a;");
     assert(13, test69(), "struct{ int a; int b;} x; x.a = 4; x.b = 9; return x.a+x.b;");
     assert(13, test70(), "struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+x[1].b;");
+    assert(38, test71(), "int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;");
     print_error("Test passed\n");
     return 0;
 }

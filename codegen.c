@@ -131,6 +131,7 @@ void gen(Node* node){
       gen(node->els); // code for "else" statement i.e. B
       printf(".Lendif%d:\n", l_label_num);
     }
+    printf("  push rax\n");
     return;
   case ND_WHILE: // while(A) B
     g_label_num++;
