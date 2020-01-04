@@ -94,7 +94,7 @@ bool is_next_kind(TokenKind tkind){
 
 int expect_number(){
   if(token->kind != TK_NUM){
-    error_at(token->str, "Not a number");
+    error_at(token->str, "Not a number\n");
   }
   int val = token->val;
   token = token->next;
