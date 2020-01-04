@@ -86,6 +86,7 @@ typedef enum{
   ND_VAR_DEC, // local variable declaration
   ND_TYPE,  // type
   ND_STRUCT_MEM, // struct member
+  ND_EMPTY, // empty node
 } NodeKind;
 
 typedef struct Node Node;
@@ -136,6 +137,7 @@ StrLtr* get_and_append_strltr(char* string);
 void print_all_strltrs();
 
 typedef struct Scope Scope;
+typedef struct Tag Tag;
 typedef enum {
   GLOBAL,
   LOCAL,
@@ -144,6 +146,7 @@ typedef enum {
 struct Scope{
   Scope* parent;
   Var* var;
+  Tag* tag;
   ScopeKind sk;
 };
 // global char for current scope name
@@ -167,6 +170,17 @@ Var* find_var(Token* tok);
 Var* find_var_recursively(Token* tok, Scope* scope);
 Var* find_var_in_function_scope(Token* tok, Scope* scope);
 Var* find_var_in_scope(Token* tok, Scope* scope);
+
+struct Tag{
+  Tag* next;
+  char* name;
+  int len;
+  Type* type;
+  int is_global;
+};
+Tag* find_tag_recursively(Token* tok, Scope* scope);
+Tag* find_tag_in_function_scope(Token* tok, Scope* scope);
+Tag* find_tag_in_scope(Token* tok, Scope* scope);
 
 typedef enum{
   INT,

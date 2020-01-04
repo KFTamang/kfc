@@ -171,6 +171,63 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   scope->var = new_var;
 }
 
+Tag* find_tag_in_scope(Token* tok, Scope* scope){
+  if(scope==NULL){
+  	return NULL;
+  }
+  for(Tag* tag=scope->tag; tag; tag=tag->next){
+    if(tag->len == tok->len && !memcmp(tok->str, tag->name, tag->len)){
+      return tag;
+    }
+  }
+  return NULL;
+}
+
+Tag* find_tag_in_function_scope(Token* tok, Scope* scope){
+  if(scope==NULL){
+  	return NULL;
+  }
+  Tag* tag = find_tag_in_scope(tok, scope);
+  if(tag!=NULL){
+	  return tag;
+  }
+  if(scope->sk==GLOBAL || scope->parent==NULL){
+  	return NULL;
+  }
+  return find_tag_recursively(tok, scope->parent);
+}
+
+Tag* find_tag_recursively(Token* tok, Scope* scope){
+  if(scope==NULL){
+  	return NULL;
+  }
+  Tag* tag = find_tag_in_scope(tok, scope);
+  if(tag!=NULL){
+  	return tag;
+  }
+  if(scope->parent==NULL){
+  	return NULL;
+  }
+  return find_tag_recursively(tok, scope->parent);
+}
+
+void append_tag_to_scope(Token* tok, Type* type, Scope* scope){
+  Tag* new_tag = calloc(1, sizeof(Tag));
+  new_tag->next = scope->tag;
+  char* tag_name = calloc(1, tok->len+1);
+  strncpy(tag_name, tok->str, tok->len);
+  tag_name[tok->len] = '\0';
+  new_tag->type = type;
+  new_tag->name = tag_name;
+  new_tag->len = tok->len;
+  if(scope->sk == GLOBAL){
+    new_tag->is_global = 1;
+  }else{
+    new_tag->is_global = 0;
+  }
+  scope->tag = new_tag;
+}
+
 size_t get_type_size_byte(Type* type){
   if(type == NULL){
 	error("Type is not specified\n");
@@ -390,7 +447,18 @@ Type* type_def(){
 }
 
 Type* struct_dec(){
-  expect("{");
+  Token* tag_name = consume_ident();
+  if(tag_name != NULL){
+    Tag* tag = find_tag_in_function_scope(tag_name, g_current_scope);
+    // if variable is already declared
+    if(tag != NULL){
+      return tag->type;
+    }else if(!consume("{")){
+      error_at(token->str, "No such struct declared as %s\n", tag_name->str);
+    }
+  }else{
+    expect("{");
+  }
   Type* type = type_def();
   Token* tok = consume_ident();
   if(consume("[")){ // array member
@@ -420,6 +488,9 @@ Type* struct_dec(){
   Type* this_type = new_type(STRUCT, NULL);
   this_type->mem = head;
   this_type->array_size = offset;
+  if(tag_name != NULL){
+    append_tag_to_scope(tag_name, this_type, g_current_scope);
+  }
   return this_type;
 }
 
@@ -460,6 +531,7 @@ Type* new_array_type(Type* base, size_t size){
 
 // ENBF var_dec = type_def var ("[" num "]")?
 //              | type_def var ("[" num "]")? = expr
+//              | type_def
 Node* var_dec(){
   Type* this_type = type_def();
   if(this_type == NULL){
@@ -467,7 +539,7 @@ Node* var_dec(){
   }
   Token* tok = consume_ident();
   if(tok == NULL){
-    return NULL;
+    return new_node(ND_EMPTY, NULL, NULL);
   }
   Node* node = new_var_node(this_type, tok);
   if(!consume("=")){
@@ -639,6 +711,7 @@ Node* struct_mem(Node* node){
   Memlist* memlist = find_member(struct_type, get_name_from_token(tok));
   Node* member = new_node(ND_STRUCT_MEM, node, NULL);
   member->member = memlist;
+  member->type = memlist->type;
   return member;
 }
 

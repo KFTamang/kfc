@@ -93,6 +93,15 @@ int main(){
     assert(13, test69(), "struct{ int a; int b;} x; x.a = 4; x.b = 9; return x.a+x.b;");
     assert(13, test70(), "struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+x[1].b;");
     assert(38, test71(), "int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;");
+    // struct with name
+    assert(9, test72(), "struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;");
+    assert(34, test73(), "struct humi{int fuga; char tero;}; struct humi humi_imp2; humi_imp2.tero = 11; humi_imp2.fuga = 23; return humi_imp2.tero+humi_imp2.fuga;");
+    // struct hoyo{int arr[4];char* str;};
+    // // typedef
+    // typedef struct humi HUMI;
+    // typedef struct test{int hoge;}TEST;
+    // struct test poyo;
+    // struct test foo;
     print_error("Test passed\n");
     return 0;
 }

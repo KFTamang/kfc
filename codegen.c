@@ -237,6 +237,9 @@ void gen(Node* node){
     move_from_pointer_per_type("rax", "rax", node->member->type);
     printf("  push rax\n");
     return;
+  case ND_EMPTY:
+    printf("  push rax\n");
+    return;
   }
     
   gen(node->lhs);
