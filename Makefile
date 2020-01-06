@@ -38,4 +38,9 @@ main_test: $(MAIN_TEST) $(OBJS)
 clean:
 	rm -f kfc *.o *~ tmp* main_test symtab_test test test_alloc 
 
-.PHONY: test clean
+ref:
+	gcc test_helper.o stubs.c tests.c -o tmp
+	./tmp
+	echo $?
+
+.PHONY: test clean ref
