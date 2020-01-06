@@ -93,3 +93,4 @@ int test70(){struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+
 int test71(){int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;}
 int test72(){struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;}
 int test73(){struct humi{int fuga; char tero;}; struct humi humi_imp2; humi_imp2.tero = 11; humi_imp2.fuga = 23; return humi_imp2.tero+humi_imp2.fuga;}
+int test74(){struct list{int value; struct values{int val1;int value2;};}; return sizeof (struct list);}

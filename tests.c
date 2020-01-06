@@ -96,6 +96,7 @@ int main(){
     // struct with name
     assert(9, test72(), "struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;");
     assert(34, test73(), "struct humi{int fuga; char tero;}; struct humi humi_imp2; humi_imp2.tero = 11; humi_imp2.fuga = 23; return humi_imp2.tero+humi_imp2.fuga;");
+    assert(8, test74(), "struct list{int value; struct values{int val1;int value2;};}; struct list_imp; return sizeof(struct list);");
     // struct hoyo{int arr[4];char* str;};
     // // typedef
     // typedef struct humi HUMI;

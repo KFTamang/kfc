@@ -471,6 +471,10 @@ Type* struct_dec(){
   while(!consume("}")){
     type = type_def();
     tok = consume_ident();
+    if(tok == NULL){ // if declaration is incomplete
+      expect(";");
+      continue; // skip appending to the member list
+    }
     if(consume("[")){ // array member
       int array_size = expect_number();
       type = new_array_type(type, array_size);
@@ -787,7 +791,7 @@ Node* func(Token* tok){
 //            | "-"  postfix
 //            | "&"  unary
 //            | "*"  unary
-//            | "sizeof" unary
+//            | "sizeof" (unary | type_def | "(" type_def ")" )
 Node* unary(){
   if(consume("+")){
     return postfix();
@@ -808,13 +812,28 @@ Node* unary(){
     return node;
   }
   if(consumeByKind(TK_SIZEOF)){
-	Node* nodesize = unary();
-	if(nodesize->type != NULL){
-	  return new_node_num(get_type_size_byte(nodesize->type));
-	}else{
-	  error_at(token->str, "Invalid token for sizeof operator\n");
-	  return NULL;
-	}
+    Token* sp = save_snapshot();
+    int use_parenth = 0;
+    if(consume("(")){
+      use_parenth = 1;
+    }
+    Type* nodetype = type_def();
+    Node* nodesize;
+    if(nodetype == NULL){
+      revert_snapshot(sp);
+      nodesize = unary();
+      nodetype = nodesize->type;
+    }else{
+      if(use_parenth){
+        expect(")");
+      }
+    }
+    if(nodetype != NULL){
+      return new_node_num(get_type_size_byte(nodetype));
+    }else{
+      error_at(token->str, "Invalid token for sizeof operator\n");
+      return NULL;
+    }
   }
   return postfix();
 }
@@ -838,5 +857,17 @@ Node* string_literal(){
 
 // ENBF terminal symbol for number
 Node* num(){
-  return new_node_num(expect_number());
+  if(is_kind(TK_NUM)){
+    return new_node_num(expect_number());
+  }else{
+    return NULL;
+  }
+}
+
+Token* save_snapshot(){
+  return token;
+}
+
+void revert_snapshot(Token* sp){
+  token = sp;
 }

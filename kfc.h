@@ -57,6 +57,9 @@ bool at_eof();
 Token* new_token(TokenKind kind, Token* cur, char* str, int len);
 Token* tokenize(char* p);
 
+Token* save_snapshot();
+void revert_snapshot(Token* sp);
+
 // curent token in interest
 Token* token;
 char* user_input;
