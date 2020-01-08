@@ -180,10 +180,14 @@ struct Tag{
   int len;
   Type* type;
   int is_global;
+  int is_complete;
 };
 Tag* find_tag_recursively(Token* tok, Scope* scope);
 Tag* find_tag_in_function_scope(Token* tok, Scope* scope);
 Tag* find_tag_in_scope(Token* tok, Scope* scope);
+Memlist* get_member_list();
+int get_member_size(Memlist* head);
+void append_incomplete_tag_to_scope(Token* tok, Scope* scope);
 
 typedef enum{
   INT,

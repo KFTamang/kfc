@@ -94,3 +94,32 @@ int test71(){int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;}
 int test72(){struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;}
 int test73(){struct humi{int fuga; char tero;}; struct humi humi_imp2; humi_imp2.tero = 11; humi_imp2.fuga = 23; return humi_imp2.tero+humi_imp2.fuga;}
 int test74(){struct list{int value; struct values{int val1;int value2;};}; return sizeof (struct list);}
+int test75(){
+    struct linked_list;
+    struct linked_list{
+        int val;
+    };
+    struct linked_list head;
+    head.val = 8;
+    return head.val;
+}
+int test76(){
+    struct linked_list{
+        int val;
+        struct linked_list* next;
+    }; 
+    struct linked_list head;
+    struct linked_list tail;
+    head.val = 2;
+    head.next = &tail;
+    tail.val = 3;
+    return head.val+tail.val;
+}
+int test77(){
+    struct test * hoge;
+    struct test{char* string;};
+    struct test obj;
+    hoge = &obj;
+    (*hoge).string = 8;
+    return (*hoge).string;
+}

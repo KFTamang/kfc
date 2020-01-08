@@ -220,6 +220,25 @@ void append_tag_to_scope(Token* tok, Type* type, Scope* scope){
   new_tag->type = type;
   new_tag->name = tag_name;
   new_tag->len = tok->len;
+  new_tag->is_complete = 1;
+  if(scope->sk == GLOBAL){
+    new_tag->is_global = 1;
+  }else{
+    new_tag->is_global = 0;
+  }
+  scope->tag = new_tag;
+}
+
+void append_incomplete_tag_to_scope(Token* tok, Scope* scope){
+  Tag* new_tag = calloc(1, sizeof(Tag));
+  new_tag->next = scope->tag;
+  char* tag_name = calloc(1, tok->len+1);
+  strncpy(tag_name, tok->str, tok->len);
+  tag_name[tok->len] = '\0';
+  new_tag->type = new_type(STRUCT, NULL);
+  new_tag->name = tag_name;
+  new_tag->len = tok->len;
+  new_tag->is_complete = 0;
   if(scope->sk == GLOBAL){
     new_tag->is_global = 1;
   }else{
@@ -449,16 +468,62 @@ Type* type_def(){
 Type* struct_dec(){
   Token* tag_name = consume_ident();
   if(tag_name != NULL){
+    // struct with tag name
     Tag* tag = find_tag_in_function_scope(tag_name, g_current_scope);
-    // if variable is already declared
     if(tag != NULL){
+      // if struct tag is already declared
+      if(tag->is_complete){
+        // if complete
+        if(consume("{")){
+          error_at(token->str, "Struct %s is already declared\n", tag_name->str);
+        }
+        return tag->type;
+      }else{
+        // if incomplete
+        if(consume("{")){
+          tag->type->mem = get_member_list();
+          tag->type->array_size = get_member_size(tag->type->mem);
+          tag->is_complete = 1;
+        }else{
+          if(!is_symbol("*")){
+            error_at(token->str, "Struct declaration is incomplete\n");
+          }
+        }
+      }
       return tag->type;
-    }else if(!consume("{")){
-      error_at(token->str, "No such struct declared as %s\n", tag_name->str);
+    }else{
+      // if tag name is not previously declared
+      append_incomplete_tag_to_scope(tag_name, g_current_scope);
+      tag = find_tag_in_function_scope(tag_name, g_current_scope);
+      if(consume("{")){
+        tag->type->mem = get_member_list();
+        tag->type->array_size = get_member_size(tag->type->mem);
+        tag->is_complete = 1;
+        return tag->type;
+      }else{
+        if(is_symbol(";")){
+          return tag->type;
+        }else if(!is_symbol("*")){
+          error_at(token->str, "Only pointer is allowed for incomplete struct type\n");
+        }
+        return tag->type;
+      }
+      // error_at(token->str, "No such struct declared as %s\n", tag_name->str);
     }
   }else{
+    // struct without tag name
     expect("{");
   }
+  Type* this_type = new_type(STRUCT, NULL);
+  this_type->mem = get_member_list();
+  this_type->array_size = get_member_size(this_type->mem);
+  if(tag_name != NULL){
+    append_tag_to_scope(tag_name, this_type, g_current_scope);
+  }
+  return this_type;
+}
+
+Memlist* get_member_list(){
   Type* type = type_def();
   Token* tok = consume_ident();
   if(consume("[")){ // array member
@@ -489,13 +554,16 @@ Type* struct_dec(){
     mem->offset = offset;
     offset += get_type_size_byte(mem->type);
   }
-  Type* this_type = new_type(STRUCT, NULL);
-  this_type->mem = head;
-  this_type->array_size = offset;
-  if(tag_name != NULL){
-    append_tag_to_scope(tag_name, this_type, g_current_scope);
+  return head;
+}
+
+int get_member_size(Memlist* head){
+  int offset = 0;
+  for(Memlist* mem = head; mem; mem=mem->next){
+    mem->offset = offset;
+    offset += get_type_size_byte(mem->type);
   }
-  return this_type;
+  return offset;
 }
 
 void append_memlist(Memlist* cur, Memlist* new){
