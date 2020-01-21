@@ -43,4 +43,9 @@ ref:
 	./tmp
 	echo $?
 
-.PHONY: test clean ref
+test_tmp:kfc
+	./kfc tmp.c > tmp.s
+	gcc -no-pie tmp.s -o tmp
+	./tmp
+
+.PHONY: test clean ref test_tmp
