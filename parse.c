@@ -760,6 +760,7 @@ Node* primary(){
 // ENBF postfix = primary
 //              | postfix "[" expr "]"
 //              | postfix "." ident
+//              | postfix "->" ident
 Node* postfix(){
   Node* node = primary();
   while(1){
@@ -775,6 +776,11 @@ Node* postfix(){
       node->type = add_node->type->ptr_to;
     }else if(consume(".")){
       node = struct_mem(node);
+    }else if(consume("->")){
+      // postfix->ident is parsed as (*postfix).ident
+      node = deref(node);
+      node = struct_mem(node);
+      return node;
     }else{
       return node;
     }

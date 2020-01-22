@@ -145,3 +145,11 @@ int test78(){
     list3.next = 0;
     return sum_list(&list0);
 }
+int test79(){
+    struct humi {int poyo; int arr;int* pointer;} fuga;
+    struct humi * wao = &fuga;
+    wao->poyo = 9;
+    wao->arr = 7;
+    wao->pointer = &wao;
+    return wao->poyo + wao->arr;
+}

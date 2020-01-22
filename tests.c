@@ -101,6 +101,12 @@ int main(){
     assert(5,  test76(), "struct linked_list{int val; struct linked_list* next;}; struct linked_list head; struct linked_list tail;head.val=2;head.next = &tail;tail.val = 3;return head.val+tail.val;");
     assert(8,  test77(), "struct test * hoge;struct test{char* string;};(*hoge).string = 8;return (*hoge).string;");
     assert(7,  test78(), "struct g_list list0;struct g_list list1;struct g_list list2;struct g_list list3;list0.hoge = 0;list1.hoge = 1;list2.hoge = 2;list3.hoge = 4;list0.next = &list1;list1.next = &list2;list2.next = &list3;list3.next = 0;return sum_list(&list0);");
+    assert(16, test79(), "    struct humi {int poyo; int arr;int* pointer;} fuga;\
+    struct humi * wao = &fuga;\
+    wao->poyo = 9;\
+    wao->arr = 7;\
+    wao->pointer = &wao;\
+    return wao->poyo + wao->arr;");
     // struct hoyo{int arr[4];char* str;};
     // // typedef
     // typedef struct humi HUMI;
