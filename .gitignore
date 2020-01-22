@@ -3,8 +3,13 @@
 tmp*
 kfc
 *.dSYM
+test.c
 main_test
 symtab_test
 .gdb*
 peda*
 example/*.s
+example/tictoctoe
+.vscode/*
+a.out
+.DS_Store
