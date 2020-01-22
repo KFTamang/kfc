@@ -94,13 +94,13 @@ int main(){
     assert(13, test70(), "struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+x[1].b;");
     assert(38, test71(), "int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;");
     // struct with name
-    assert(9, test72(), "struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;");
+    assert(9,  test72(), "struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;");
     assert(34, test73(), "struct humi{int fuga; char tero;}; struct humi humi_imp2; humi_imp2.tero = 11; humi_imp2.fuga = 23; return humi_imp2.tero+humi_imp2.fuga;");
-    assert(8, test74(), "struct list{int value; struct values{int val1;int value2;};}; struct list_imp; return sizeof(struct list);");
-    assert(8, test75(), "struct linked_list; struct linked_list{int val;};struct linked_list head; head.val = 8; return head.val;");
-    assert(5, test76(), "struct linked_list{int val; struct linked_list* next;}; struct linked_list head; struct linked_list tail;head.val=2;head.next = &tail;tail.val = 3;return head.val+tail.val;");
-    assert(8, test77(), "struct test * hoge;struct test{char* string;};(*hoge).string = 8;return (*hoge).string;");
-    assert(7, test78(), "struct g_list list0;struct g_list list1;struct g_list list2;struct g_list list3;list0.hoge = 0;list1.hoge = 1;list2.hoge = 2;list3.hoge = 4;list0.next = &list1;list1.next = &list2;list2.next = &list3;list3.next = 0;return sum_list(&list0);");
+    assert(8,  test74(), "struct list{int value; struct values{int val1;int value2;};}; struct list_imp; return sizeof(struct list);");
+    assert(8,  test75(), "struct linked_list; struct linked_list{int val;};struct linked_list head; head.val = 8; return head.val;");
+    assert(5,  test76(), "struct linked_list{int val; struct linked_list* next;}; struct linked_list head; struct linked_list tail;head.val=2;head.next = &tail;tail.val = 3;return head.val+tail.val;");
+    assert(8,  test77(), "struct test * hoge;struct test{char* string;};(*hoge).string = 8;return (*hoge).string;");
+    assert(7,  test78(), "struct g_list list0;struct g_list list1;struct g_list list2;struct g_list list3;list0.hoge = 0;list1.hoge = 1;list2.hoge = 2;list3.hoge = 4;list0.next = &list1;list1.next = &list2;list2.next = &list3;list3.next = 0;return sum_list(&list0);");
     // struct hoyo{int arr[4];char* str;};
     // // typedef
     // typedef struct humi HUMI;

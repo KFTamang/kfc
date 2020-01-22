@@ -273,6 +273,8 @@ Node* ident();
 Node* var(Token* tok);
 Node* func(Token* tok);
 Node* unary();
+Node* ref(Node* una);
+Node* deref(Node* una);
 Node* string_literal();
 Node* num();
 

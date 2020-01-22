@@ -875,16 +875,10 @@ Node* unary(){
     return new_node(ND_SUB,new_node_num(0), postfix());
   }
   if(consume("&")){
-    Node* una = unary();
-    Node* node = new_node(ND_ADDR, una, NULL);
-    node->type = new_type(PTR, una->type);
-    return node;
+    return ref(unary());
   }
   if(consume("*")){
-    Node* una = unary();
-    Node* node = new_node(ND_DEREF, una, NULL);
-    node->type = una->type->ptr_to;
-    return node;
+    return deref(unary());
   }
   if(consumeByKind(TK_SIZEOF)){
     Token* sp = save_snapshot();
@@ -911,6 +905,18 @@ Node* unary(){
     }
   }
   return postfix();
+}
+
+Node* ref(Node* una){
+    Node* node = new_node(ND_ADDR, una, NULL);
+    node->type = new_type(PTR, una->type);
+    return node;
+}
+
+Node* deref(Node* una){
+    Node* node = new_node(ND_DEREF, una, NULL);
+    node->type = una->type->ptr_to;
+    return node;
 }
 
 // ENBF terminal node string-literal
