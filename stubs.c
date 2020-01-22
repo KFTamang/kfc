@@ -93,7 +93,7 @@ int test70(){struct{ int a; int b;} x[2]; x[0].a = 4; x[1].b = 9; return x[0].a+
 int test71(){int i=0;while(i<10000){i=i+1; if(i==100){return 38;}}return 25;}
 int test72(){struct humi{int fuga; char tero;} humi_imp; struct humi hoge;hoge.fuga = 9;return hoge.fuga;}
 int test73(){struct humi{int fuga; char tero;}; struct humi humi_imp2; humi_imp2.tero = 11; humi_imp2.fuga = 23; return humi_imp2.tero+humi_imp2.fuga;}
-int test74(){struct list{int value; struct values{int val1;int value2;};}; return sizeof (struct list);}
+int test74(){struct list_hoge{int value; struct values{int val1;int value2;};}; return sizeof (struct list_hoge);}
 int test75(){
     struct linked_list;
     struct linked_list{
@@ -122,4 +122,26 @@ int test77(){
     hoge = &obj;
     (*hoge).string = 8;
     return (*hoge).string;
+}
+struct g_list{int hoge; struct g_list* next;};
+int sum_list(struct g_list* hoge){
+    if((*hoge).next == 0){
+        return (*hoge).hoge;
+    }
+    return (*hoge).hoge + sum_list((*hoge).next);
+}
+int test78(){
+    struct g_list list0;
+    struct g_list list1;
+    struct g_list list2;
+    struct g_list list3;
+    list0.hoge = 0;
+    list1.hoge = 1;
+    list2.hoge = 2;
+    list3.hoge = 4;
+    list0.next = &list1;
+    list1.next = &list2;
+    list2.next = &list3;
+    list3.next = 0;
+    return sum_list(&list0);
 }

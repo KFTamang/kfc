@@ -156,7 +156,8 @@ struct Scope{
 //extern Scope* g_global_scope;
 //extern Scope* g_current_scope;
 Scope* gen_new_scope(Scope* parent, ScopeKind sk);
-
+void enter_new_scope();
+void exit_current_scope();
 
 // local variable
 struct Var{
@@ -237,7 +238,7 @@ funcs* find_funcs(Token* tok);
 funcs* functions;
 
 // global array for program nodes
-Node* code[100];
+Node* code[10000];
 
 // global number for label
 int g_label_num;

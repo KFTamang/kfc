@@ -40,6 +40,14 @@ void print_all_strltrs(){
   }
 }
 
+void enter_new_scope(){
+  g_current_scope = gen_new_scope(g_global_scope, LOCAL);
+}
+
+void exit_current_scope(){
+  g_current_scope = g_current_scope->parent;
+}
+
 Scope* gen_new_scope(Scope* parent, ScopeKind sk){
   Scope* scope = calloc(1, sizeof(Scope));
   scope->parent = parent;
@@ -295,15 +303,13 @@ void program(){
 
 // ENBF global_dec = type_def ident "(" lvar_dec? ")" "{" stmt* "}"
 //                 | type_def ident ";"
+//                 | type_def ";"
 Node* global_dec(){
   Type* this_type = type_def();
   if(this_type == NULL){
     return NULL;
   }
   Token* tok = consume_ident();
-  if(tok == NULL){
-    return NULL;
-  }
   Node* node;
   // if global variable declaration
   if(consume(";")){
@@ -321,7 +327,7 @@ Node* global_dec(){
   node->is_global = 1;
   // arguments
   expect("(");
-  g_current_scope = gen_new_scope(g_global_scope, LOCAL);
+  enter_new_scope();
   if(consume(")")){ // no argument
     node->func_args = NULL;
   }else{ // one argument
@@ -352,6 +358,7 @@ Node* global_dec(){
     }
   }
   node->var_size_byte = get_var_size_byte(g_current_scope);
+  exit_current_scope();
   return node;
 }
 
@@ -469,7 +476,7 @@ Type* struct_dec(){
   Token* tag_name = consume_ident();
   if(tag_name != NULL){
     // struct with tag name
-    Tag* tag = find_tag_in_function_scope(tag_name, g_current_scope);
+    Tag* tag = find_tag_recursively(tag_name, g_current_scope);
     if(tag != NULL){
       // if struct tag is already declared
       if(tag->is_complete){
@@ -610,9 +617,6 @@ Node* var_dec(){
     return NULL;
   }
   Token* tok = consume_ident();
-  if(tok == NULL){
-    return new_node(ND_EMPTY, NULL, NULL);
-  }
   Node* node = new_var_node(this_type, tok);
   if(!consume("=")){
     return node;
@@ -626,6 +630,9 @@ Node* var_dec(){
 }
 
 Node* new_var_node(Type* type, Token* tok){
+  if(tok == NULL){
+    return new_node(ND_EMPTY, NULL, NULL);
+  }
   Var* var = find_var_in_scope(tok, g_current_scope);
   // if variable is already declared
   if(var != NULL){
@@ -796,7 +803,7 @@ Memlist* find_member(Type* struct_type, char* name){
       return mem;
     }
   }
-  error_at(token->str, "No such struct member as %s", name);
+  error_at(token->str, "No such member as '%s' in struct\n", name);
 }
 
 // ENBF ident = var | func
