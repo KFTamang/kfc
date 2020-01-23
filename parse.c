@@ -169,6 +169,7 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   var_name[tok->len] = '\0';
   new_var->name = var_name;
   new_var->len = tok->len;
+  new_var->type = type;
   new_var->size_byte = get_type_size_byte(type);
   new_var->offset = get_var_size_byte(g_current_scope) + get_type_size_byte(type);
   if(scope->sk == GLOBAL){
@@ -176,6 +177,7 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   }else{
     new_var->is_global = 0;
   }
+  new_var->kind = VK_VAR;
   scope->var = new_var;
 }
 
@@ -271,6 +273,7 @@ size_t get_type_size_byte(Type* type){
       size += get_type_size_byte(mem->type);
     }
     return size;
+  case ENUM: return 8;
   default:
 	error_at(token->str, "Type is not supported\n");
 	return 0;
@@ -454,7 +457,7 @@ Node* stmt(){
   return node;
 }
 
-// ENBF type_def = ("int" | "char" | struct_dec) "*"*
+// ENBF type_def = ("int" | "char" | struct_dec | enum_dec) "*"*
 Type* type_def(){
   Type* type;
   if(consumeByKind(TK_TYPE_INT)){
@@ -463,6 +466,8 @@ Type* type_def(){
     type = new_type(CHAR, NULL);
   }else if(consumeByKind(TK_STRUCT)){
     type = struct_dec();
+  }else if(consumeByKind(TK_ENUM)){
+    type = enum_dec();
   }else{
     return NULL;
   }
@@ -598,6 +603,46 @@ Memlist* new_memlist(Type* type, Token* tok){
   new->name[tok->len] = '\0';
   new->type = type;
   return new;
+}
+
+Type* enum_dec(){
+  expect("{");
+  int i = 0;
+  while(!consume("}")){
+    Token* tok = consume_ident();
+    append_enum(tok, i);
+    i++;
+    consume(",");
+  }
+  return new_type(ENUM, NULL);
+}
+
+void append_enum(Token* tok, int num){
+  Var* var = find_var_in_scope(tok, g_current_scope);
+  if(var){
+    error_at(token->str, "Variable '%s' is already declared\n", get_name_from_token(tok));
+  }
+  append_enum_to_scope(tok, num, g_current_scope);
+}
+
+void append_enum_to_scope(Token* tok, int num, Scope* scope){
+  Var* new_var = calloc(1, sizeof(Var));
+  new_var->next = scope->var;
+  char* var_name = calloc(1, tok->len+1);
+  strncpy(var_name, tok->str, tok->len);
+  var_name[tok->len] = '\0';
+  new_var->name = var_name;
+  new_var->len = tok->len;
+  new_var->type = new_type(ENUM, NULL);
+  new_var->kind = VK_ENUM;
+  new_var->size_byte = 8;
+  new_var->offset = num;
+  if(scope->sk == GLOBAL){
+    new_var->is_global = 1;
+  }else{
+    new_var->is_global = 0;
+  }
+  scope->var = new_var;
 }
 
 Type* new_array_type(Type* base, size_t size){
@@ -833,6 +878,11 @@ Node* var(Token* tok){
   if(var == NULL){
     error_at(token->str, "Variable %s is not declared\n", node_name);
     exit(1);
+  }
+
+  // if identifier is enum element, return integer associated with it
+  if(var->kind == VK_ENUM){
+    return new_node_num(var->offset);
   }
 
   Node* node = calloc(1, sizeof(Node));

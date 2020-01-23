@@ -153,3 +153,16 @@ int test79(){
     wao->pointer = &wao;
     return wao->poyo + wao->arr;
 }
+int test80(){
+    enum {NUM1, NUM2, NUM3};
+    return 7;
+}
+int test81(){
+    enum {NUM1, NUM2, NUM3};
+    return NUM1+NUM2+NUM3;
+}
+int test82(){
+    enum {HOGE, FUGA, POYO} enum_test;
+    enum_test = FUGA;
+    return enum_test;
+}

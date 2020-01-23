@@ -28,6 +28,7 @@ typedef enum{
   TK_SIZEOF,    // sizeof operator
   TK_STRING,    // string literal
   TK_STRUCT,    // structure declaration
+  TK_ENUM,      // enumaration
 } TokenKind;
 
 typedef struct Token Token;
@@ -159,6 +160,11 @@ Scope* gen_new_scope(Scope* parent, ScopeKind sk);
 void enter_new_scope();
 void exit_current_scope();
 
+typedef enum{
+  VK_VAR,
+  VK_ENUM,
+}VarKind;
+
 // local variable
 struct Var{
   Var* next; // next variable or NULL
@@ -168,6 +174,7 @@ struct Var{
   int size_byte;    // size of the variable in byte
   Type* type; // type
   int is_global; // flag for global variables
+  VarKind kind; // kind : variable, enum
 };
 Var* find_var(Token* tok);
 // a chain of local variables
@@ -196,6 +203,7 @@ typedef enum{
   PTR,
   ARRAY,
   STRUCT,
+  ENUM,
 }TY;
 
 struct Type{
@@ -215,6 +223,9 @@ struct Memlist{
 void append_memlist(Memlist* cur, Memlist* new);
 Memlist* new_memlist(Type* type, Token* tok);
 Memlist* find_member(Type* struct_type, char* name);
+
+void append_enum(Token* tok, int num);
+void append_enum_to_scope(Token* tok, int num, Scope* scope);
 
 // global type struct for integer number
 static Type g_type_int = {INT, NULL};
@@ -252,6 +263,7 @@ size_t get_var_size_byte(Scope* scope);
 void program();
 Type* type_def();
 Type* struct_dec();
+Type* enum_dec();
 Type* new_array_type(Type* base, size_t size);
 Node* new_var_node(Type* type, Token* tok);
 Node* gen_node_from_var(Var* var);
