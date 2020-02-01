@@ -261,7 +261,7 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope);
 size_t get_type_size_byte(Type* type);
 size_t get_var_size_byte(Scope* scope);
 void program();
-Type* type_def();
+Type* type_dec();
 Type* struct_dec();
 Type* enum_dec();
 Type* new_array_type(Type* base, size_t size);

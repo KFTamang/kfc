@@ -304,11 +304,11 @@ void program(){
   code[i] = NULL;
 }
 
-// ENBF global_dec = type_def ident "(" lvar_dec? ")" "{" stmt* "}"
-//                 | type_def ident ";"
-//                 | type_def ";"
+// ENBF global_dec = type_dec ident "(" lvar_dec? ")" "{" stmt* "}"
+//                 | type_dec ident ";"
+//                 | type_dec ";"
 Node* global_dec(){
-  Type* this_type = type_def();
+  Type* this_type = type_dec();
   if(this_type == NULL){
     return NULL;
   }
@@ -457,8 +457,8 @@ Node* stmt(){
   return node;
 }
 
-// ENBF type_def = ("int" | "char" | struct_dec | enum_dec) "*"*
-Type* type_def(){
+// ENBF type_dec = ("int" | "char" | struct_dec | enum_dec) "*"*
+Type* type_dec(){
   Type* type;
   if(consumeByKind(TK_TYPE_INT)){
     type = new_type(INT, NULL);
@@ -536,7 +536,7 @@ Type* struct_dec(){
 }
 
 Memlist* get_member_list(){
-  Type* type = type_def();
+  Type* type = type_dec();
   Token* tok = consume_ident();
   if(consume("[")){ // array member
     int array_size = expect_number();
@@ -546,7 +546,7 @@ Memlist* get_member_list(){
   Memlist* head = new_memlist(type, tok);
   expect(";");
   while(!consume("}")){
-    type = type_def();
+    type = type_dec();
     tok = consume_ident();
     if(tok == NULL){ // if declaration is incomplete
       expect(";");
@@ -653,11 +653,11 @@ Type* new_array_type(Type* base, size_t size){
   return new_array;
 }
 
-// ENBF var_dec = type_def var ("[" num "]")?
-//              | type_def var ("[" num "]")? = expr
-//              | type_def
+// ENBF var_dec = type_dec var ("[" num "]")?
+//              | type_dec var ("[" num "]")? = expr
+//              | type_dec
 Node* var_dec(){
-  Type* this_type = type_def();
+  Type* this_type = type_dec();
   if(this_type == NULL){
     return NULL;
   }
@@ -922,7 +922,7 @@ Node* func(Token* tok){
 //            | "-"  postfix
 //            | "&"  unary
 //            | "*"  unary
-//            | "sizeof" (unary | type_def | "(" type_def ")" )
+//            | "sizeof" (unary | type_dec | "(" type_dec ")" )
 Node* unary(){
   if(consume("+")){
     return postfix();
@@ -942,7 +942,7 @@ Node* unary(){
     if(consume("(")){
       use_parenth = 1;
     }
-    Type* nodetype = type_def();
+    Type* nodetype = type_dec();
     Node* nodesize;
     if(nodetype == NULL){
       revert_snapshot(sp);
