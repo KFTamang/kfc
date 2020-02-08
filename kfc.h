@@ -29,6 +29,7 @@ typedef enum{
   TK_STRING,    // string literal
   TK_STRUCT,    // structure declaration
   TK_ENUM,      // enumaration
+  TK_TYPEDEF,   // typedef
 } TokenKind;
 
 typedef struct Token Token;
@@ -163,6 +164,7 @@ void exit_current_scope();
 typedef enum{
   VK_VAR,
   VK_ENUM,
+  VK_TYPE,
 }VarKind;
 
 // local variable
@@ -262,6 +264,7 @@ size_t get_type_size_byte(Type* type);
 size_t get_var_size_byte(Scope* scope);
 void program();
 Type* type_dec();
+void type_def();
 Type* struct_dec();
 Type* enum_dec();
 Type* new_array_type(Type* base, size_t size);

@@ -204,6 +204,7 @@ Token* tokenize(char* p){
       if(d = tokenize_if_keyword_matches(p, &cur, i, "struct", TK_STRUCT)){p += d; continue;}
       // struct declaration
       if(d = tokenize_if_keyword_matches(p, &cur, i, "enum", TK_ENUM)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "typedef", TK_TYPEDEF)){p += d; continue;}
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;

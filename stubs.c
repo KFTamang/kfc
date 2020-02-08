@@ -166,3 +166,14 @@ int test82(){
     enum_test = FUGA;
     return enum_test;
 }
+int test83(){
+    typedef int my_INT;
+    my_INT hoge = 9;
+    return hoge;
+}
+int test84(){
+    typedef struct{int hoge;char poyo;} my_struct;
+    my_struct hoge;
+    hoge.hoge = 7;
+    return hoge.hoge;
+}

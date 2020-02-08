@@ -114,6 +114,11 @@ int main(){
     assert(1, test82(), "    enum {HOGE, FUGA, POYO} enum_test;\
     enum_test = FUGA;\
     return 1;");
+    assert(9, test83(), "typedef int INT; INT hoge = 9; return hoge;");
+    assert(7, test84(), "typedef struct{int hoge;char poyo;} my_struct;\
+    my_struct hoge;\
+    hoge.hoge = 7;\
+    return hoge.hoge;");
     // struct hoyo{int arr[4];char* str;};
     // // typedef
     // typedef struct humi HUMI;

@@ -181,6 +181,26 @@ void append_var_to_scope(Token* tok, Type* type, Scope* scope){
   scope->var = new_var;
 }
 
+void append_type_to_scope(Token* tok, Type* type, Scope* scope){
+  Var* new_var = calloc(1, sizeof(Var));
+  new_var->next = scope->var;
+  char* var_name = calloc(1, tok->len+1);
+  strncpy(var_name, tok->str, tok->len);
+  var_name[tok->len] = '\0';
+  new_var->name = var_name;
+  new_var->len = tok->len;
+  new_var->type = type;
+  new_var->size_byte = get_type_size_byte(type);
+  new_var->offset = get_var_size_byte(g_current_scope) + get_type_size_byte(type);
+  if(scope->sk == GLOBAL){
+    new_var->is_global = 1;
+  }else{
+    new_var->is_global = 0;
+  }
+  new_var->kind = VK_TYPE;
+  scope->var = new_var;
+}
+
 Tag* find_tag_in_scope(Token* tok, Scope* scope){
   if(scope==NULL){
   	return NULL;
@@ -371,6 +391,7 @@ Node* global_dec(){
 //           | "while" "(" expr ")" stmt
 //           | "for" "(" expr? ";" expr? ";" expr? ")" stmt
 //           | var_dec ";"
+//           | type_def ";"
 Node* stmt(){
   Node* node;
   // if return statement
@@ -445,6 +466,10 @@ Node* stmt(){
     node->cond = cond;
     node->end = end;
     node->then = then;
+  }else if(consumeByKind(TK_TYPEDEF)){
+      type_def();
+      expect(";");
+      return new_node(ND_EMPTY, NULL, NULL);
   }else{
     node = var_dec();
     if(node != NULL){
@@ -469,7 +494,19 @@ Type* type_dec(){
   }else if(consumeByKind(TK_ENUM)){
     type = enum_dec();
   }else{
-    return NULL;
+    Token* sn = save_snapshot();
+    Token* tok = consume_ident();
+    if(tok != NULL){
+      Var* v_type = find_var_recursively(tok, g_current_scope);
+      if(v_type == NULL || v_type->kind != VK_TYPE){
+        revert_snapshot(sn);
+        return NULL;
+      }
+      type = v_type->type;
+    }else{
+      revert_snapshot(sn);
+      return NULL;
+    }
   }
   while(consume("*")){
     type = new_type(PTR, type);
@@ -651,6 +688,16 @@ Type* new_array_type(Type* base, size_t size){
   new_array->ptr_to = base;
   new_array->array_size = size;
   return new_array;
+}
+
+void type_def(){
+  Type* type = type_dec();
+  Token* tok = consume_ident();
+  Var* var = find_var_recursively(tok, g_current_scope);
+  if(var != NULL){
+    error_at(token->str, "ERROR: Typedef '%s' is already used\n", get_name_from_token(tok));
+  }
+  append_type_to_scope(tok, type, g_current_scope);
 }
 
 // ENBF var_dec = type_dec var ("[" num "]")?
