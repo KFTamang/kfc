@@ -331,6 +331,7 @@ void program(){
 Node* global_dec(){
   if(consumeByKind(TK_TYPEDEF)){
     type_def();
+    expect(";");
     return new_node(ND_EMPTY, NULL, NULL);
   }
   Type* this_type = type_dec();
