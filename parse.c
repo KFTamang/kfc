@@ -327,7 +327,12 @@ void program(){
 // ENBF global_dec = type_dec ident "(" lvar_dec? ")" "{" stmt* "}"
 //                 | type_dec ident ";"
 //                 | type_dec ";"
+//                 | type_def ";"
 Node* global_dec(){
+  if(consumeByKind(TK_TYPEDEF)){
+    type_def();
+    return new_node(ND_EMPTY, NULL, NULL);
+  }
   Type* this_type = type_dec();
   if(this_type == NULL){
     return NULL;
@@ -693,6 +698,9 @@ Type* new_array_type(Type* base, size_t size){
 void type_def(){
   Type* type = type_dec();
   Token* tok = consume_ident();
+  if(tok == NULL){
+    error_at(token->str, "ERROR: no new type name specified\n");
+  }
   Var* var = find_var_recursively(tok, g_current_scope);
   if(var != NULL){
     error_at(token->str, "ERROR: Typedef '%s' is already used\n", get_name_from_token(tok));

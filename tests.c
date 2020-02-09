@@ -119,7 +119,7 @@ int main(){
     my_struct hoge;\
     hoge.hoge = 7;\
     return hoge.hoge;");
-    // struct hoyo{int arr[4];char* str;};
+    typedef struct hoyo{int arr[4];char* str;} struct_test_hoyo;
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;
