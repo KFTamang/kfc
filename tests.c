@@ -139,6 +139,7 @@ int main(){
     assert(1,  test91(), "return !0;");
     assert(0,  test92(), "return !1;");
     assert(7,  test93(), "if(!(2==2)){return 9;}else{return 7;}");
+    print_error("\"escape sequence test\" \\back slash\\ \n");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

@@ -170,6 +170,9 @@ Token* tokenize(char* p){
       p++;
       int i = 0;
       while(*(p+i) != '"'){
+        if(*(p+i)== '\\' && *(p+i+1)== '"'){
+          i+=2;
+        }
         i++;
       }
       cur = new_token(TK_STRING, cur, p, i);
