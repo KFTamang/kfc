@@ -137,7 +137,8 @@ Token* tokenize(char* p){
       p++;
       continue;
     }
-    if(strncmp(p,"//",2) == 0){
+    if(strncmp(p,"//",2) == 0 ||
+       strncmp(p,"#", 1) == 0){ // for now ignore preprocessor directives
       while(*p != '\n'){
         p++;
       }
