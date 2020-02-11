@@ -93,8 +93,9 @@ typedef enum{
   ND_TYPE,  // type
   ND_STRUCT_MEM, // struct member
   ND_EMPTY, // empty node
-  ND_AND,  // logaical expression AND
-  ND_OR,  // logaical expression OR
+  ND_AND,  // logical expression AND
+  ND_OR,  // logical expression OR
+  ND_NOT, // unary operator NOT
 } NodeKind;
 
 typedef struct Node Node;

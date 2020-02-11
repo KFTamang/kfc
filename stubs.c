@@ -203,3 +203,16 @@ int test90(){
         return 11;
     }
 }
+int test91(){
+    return !0;
+}
+int test92(){
+    return !1;
+}
+int test93(){
+    if(!(2==2)){
+        return 9;
+    }else{
+        return 7;
+    }
+}

@@ -994,6 +994,7 @@ Node* func(Token* tok){
 
 // ENBF unary = "+"? postfix
 //            | "-"  postfix
+//            | "!"  postfix
 //            | "&"  unary
 //            | "*"  unary
 //            | "sizeof" (unary | type_dec | "(" type_dec ")" )
@@ -1003,6 +1004,9 @@ Node* unary(){
   }
   if(consume("-")){
     return new_node(ND_SUB,new_node_num(0), postfix());
+  }
+  if(consume("!")){
+    return new_node(ND_NOT, postfix(), NULL);
   }
   if(consume("&")){
     return ref(unary());

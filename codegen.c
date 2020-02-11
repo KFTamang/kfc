@@ -245,6 +245,14 @@ void gen(Node* node){
   case ND_EMPTY:
     printf("  push rax\n");
     return;
+  case ND_NOT:
+    gen(node->lhs);
+    printf("  pop rax\n");
+    printf("  cmp rax, 0\n");
+    printf("  sete al\n");
+    printf("  movzb rax, al\n");
+    printf("  push rax\n");
+    return;
   }
     
   gen(node->lhs);

@@ -136,6 +136,9 @@ int main(){
     assert(1 , test88(), "return (1+3!=4)||(2*1!=3);");
     assert(0 , test89(), "return (1+3!=4)||(2*1>3);");
     assert(11, test90(), "if(5<2 || 2/2!=1){return 9;}else{return 11;}");
+    assert(1,  test91(), "return !0;");
+    assert(0,  test92(), "return !1;");
+    assert(7,  test93(), "if(!(2==2)){return 9;}else{return 7;}");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;
