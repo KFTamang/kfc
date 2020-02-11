@@ -292,6 +292,9 @@ void gen(Node* node){
   case ND_AND:
     printf("  and rax, rdi\n");
     break;
+  case ND_OR:
+    printf("  or rax, rdi\n");
+    break;
   }
   printf("  push rax\n");
 

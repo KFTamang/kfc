@@ -94,6 +94,7 @@ typedef enum{
   ND_STRUCT_MEM, // struct member
   ND_EMPTY, // empty node
   ND_AND,  // logaical expression AND
+  ND_OR,  // logaical expression OR
 } NodeKind;
 
 typedef struct Node Node;

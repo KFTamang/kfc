@@ -190,3 +190,16 @@ int test87(){
         return 11;
     }
 }
+int test88(){
+    return (1+3!=4)||(2*1!=3);
+}
+int test89(){
+    return (1+3!=4)||(2*1>3);
+}
+int test90(){
+    if(5<2 || 2/2!=1){
+        return 9;
+    }else{
+        return 11;
+    }
+}
