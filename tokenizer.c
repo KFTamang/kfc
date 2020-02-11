@@ -184,6 +184,17 @@ Token* tokenize(char* p){
       cur->val = strtol(p, &p, 10);
       continue;
     }
+    if(*p == 39){ // 39 is ascii code for single quote
+      p++;
+      cur = new_token(TK_NUM, cur, p, 1);
+      cur->val = *p;
+      p++;
+      if(*p != 39){
+        error("Character literal should end with \'\n");
+      }
+      p++;
+      continue;
+    }
     if (is_alnum(*p)){
       int i = 1;
       while(is_alnum(*(p+i))){
