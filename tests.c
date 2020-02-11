@@ -24,7 +24,8 @@ int switch_test(int x){
         case 0:return 0;
         case 1:return 1;
         case 2:return 2;
-        case 120: return 57;
+        case 120: print_error("switch multi stmts\n"); x=2; return 57+x;
+        case 99:return 99;
     }
 }
 
@@ -162,7 +163,8 @@ int main(){
     assert(0,  switch_test(0), "switch case test 0\n");
     assert(1,  switch_test(1), "switch case test 1\n");
     assert(2,  switch_test(2), "switch case test 2\n");
-    assert(57, switch_test(120), "switch case test 3\n");
+    assert(59, switch_test(120), "switch case test 3\n");
+    assert(99, switch_test(99),  "switch case test 4\n");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

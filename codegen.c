@@ -389,7 +389,7 @@ void switch_case(Node* node){
   l_label_num = g_label_num;
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
     printf("  .Lswitchcase%d:\n", l_label_num);
-    gen(sw->node);
+    gen_node_list(sw->nl);
     l_label_num++;
   }
   printf("  .Lswitchcase%d:\n", l_label_num);

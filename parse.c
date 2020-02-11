@@ -20,21 +20,21 @@ node_list* append_node_list(node_list* current, Node* data){
   return new_nl;
 }
 
-Switch_list* new_switch_node_list(int case_num, Node* node){
+Switch_list* new_switch_node_list(int case_num, node_list* nl){
   Switch_list* sl = calloc(1, sizeof(Switch_list));
   sl->next = NULL;
   sl->case_num = case_num;
-  sl->node = node;
+  sl->nl = nl;
   return sl;
 }
 
-void append_switch_node_list(int case_num, Switch_list* sw_l, Node* node){
+void append_switch_node_list(int case_num, Switch_list* sw_l, node_list* nl){
   if(sw_l == NULL){
     error_at(token->str, "Switch-case node list is blank\n");
   }
   Switch_list* new_sw = calloc(1, sizeof(Switch_list));
   new_sw->case_num = case_num;
-  new_sw->node = node;
+  new_sw->nl = nl;
 
   Switch_list* sw = sw_l;
   while(sw->next){
@@ -512,11 +512,19 @@ Node* stmt(){
     }
     int case_num = expect_number();
     expect(":");
-    node->sw_l = new_switch_node_list(case_num, stmt());
+    node_list* nl = new_node_list(stmt());
+    node->sw_l = new_switch_node_list(case_num, nl);
+    while(!is_kind(TK_CASE) && !is_symbol("}")){
+      nl = append_node_list(nl, stmt());
+    }
     while(consumeByKind(TK_CASE)){
       int case_num = expect_number();
       expect(":");
-      append_switch_node_list(case_num, node->sw_l, stmt());
+      nl = new_node_list(stmt());
+      append_switch_node_list(case_num, node->sw_l, nl);
+      while(!is_kind(TK_CASE) && !is_symbol("}")){
+        nl = append_node_list(nl, stmt());
+      }      
     }
     expect("}");
     return node;

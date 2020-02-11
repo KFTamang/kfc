@@ -142,12 +142,12 @@ node_list* new_node_list(Node* node);
 node_list* append_node_list(node_list* current, Node* data);
 
 struct Switch_list{
-  Node* node;
+  node_list* nl;
   int case_num;
   Switch_list* next;
 };
-Switch_list* new_switch_node_list(int case_num, Node* node);
-void append_switch_node_list(int case_num, Switch_list* sw_l, Node* node);
+Switch_list* new_switch_node_list(int case_num, node_list* nl);
+void append_switch_node_list(int case_num, Switch_list* sw_l, node_list* nl);
 
 // vactor for string literal appended in parser for later code generation
 struct StrLtr{
