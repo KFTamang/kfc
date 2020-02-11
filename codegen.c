@@ -253,6 +253,9 @@ void gen(Node* node){
     printf("  movzb rax, al\n");
     printf("  push rax\n");
     return;
+  case ND_SWITCH:
+    switch_case(node);
+    return;
   }
     
   gen(node->lhs);
@@ -372,3 +375,22 @@ void gen_global_var(Scope* global_scope){
   return;
 }
 
+void switch_case(Node* node){
+  gen_lval(node->lhs);
+  printf("  pop rax\n");
+  printf("  mov rax, [rax]\n");
+  int l_label_num = g_label_num;
+  for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
+    printf("  cmp rax, %d\n", sw->case_num);
+    printf("  je .Lswitchcase%d\n", l_label_num);
+    l_label_num++;
+  }
+  printf("  jmp .Lswitchcase%d\n", l_label_num);
+  l_label_num = g_label_num;
+  for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
+    printf("  .Lswitchcase%d:\n", l_label_num);
+    gen(sw->node);
+    l_label_num++;
+  }
+  printf("  .Lswitchcase%d:\n", l_label_num);
+}

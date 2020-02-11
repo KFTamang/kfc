@@ -31,6 +31,8 @@ typedef enum{
   TK_STRUCT,    // structure declaration
   TK_ENUM,      // enumaration
   TK_TYPEDEF,   // typedef
+  TK_SWITCH,    // switch
+  TK_CASE,      // case
 } TokenKind;
 
 typedef struct Token Token;
@@ -96,6 +98,7 @@ typedef enum{
   ND_AND,  // logical expression AND
   ND_OR,  // logical expression OR
   ND_NOT, // unary operator NOT
+  ND_SWITCH, // switch case
 } NodeKind;
 
 typedef struct Node Node;
@@ -105,6 +108,7 @@ typedef struct Type Type;
 typedef struct Memlist Memlist;
 typedef struct Var Var;
 typedef struct StrLtr StrLtr;
+typedef struct Switch_list Switch_list;
 
 // abstract syntax tree struct
 struct Node {
@@ -126,6 +130,7 @@ struct Node {
   Type* type; // type of the variable
   int is_global; // flag for global variable
   Memlist* member; // struct member 
+  Switch_list* sw_l; // switch-case sentence
 };
 
 struct node_list{
@@ -135,6 +140,14 @@ struct node_list{
 
 node_list* new_node_list(Node* node);
 node_list* append_node_list(node_list* current, Node* data);
+
+struct Switch_list{
+  Node* node;
+  int case_num;
+  Switch_list* next;
+};
+Switch_list* new_switch_node_list(int case_num, Node* node);
+void append_switch_node_list(int case_num, Switch_list* sw_l, Node* node);
 
 // vactor for string literal appended in parser for later code generation
 struct StrLtr{
@@ -307,6 +320,7 @@ void gen_lval(Node* node);
 void gen_node_list(node_list* nl);
 void gen_func_args(node_list* fa);
 void gen_global_var();
+void switch_case(Node* node);
 
 // error messager
 void error(char* fmt, ...);

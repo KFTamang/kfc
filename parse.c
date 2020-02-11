@@ -20,6 +20,29 @@ node_list* append_node_list(node_list* current, Node* data){
   return new_nl;
 }
 
+Switch_list* new_switch_node_list(int case_num, Node* node){
+  Switch_list* sl = calloc(1, sizeof(Switch_list));
+  sl->next = NULL;
+  sl->case_num = case_num;
+  sl->node = node;
+  return sl;
+}
+
+void append_switch_node_list(int case_num, Switch_list* sw_l, Node* node){
+  if(sw_l == NULL){
+    error_at(token->str, "Switch-case node list is blank\n");
+  }
+  Switch_list* new_sw = calloc(1, sizeof(Switch_list));
+  new_sw->case_num = case_num;
+  new_sw->node = node;
+
+  Switch_list* sw = sw_l;
+  while(sw->next){
+    sw = sw->next;
+  }
+  sw->next = new_sw;  
+}
+
 StrLtr* get_and_append_strltr(char* string){
   static int num = 0;
   StrLtr* new = calloc(1, sizeof(StrLtr));
@@ -399,6 +422,7 @@ Node* global_dec(){
 //           | "for" "(" expr? ";" expr? ";" expr? ")" stmt
 //           | var_dec ";"
 //           | type_def ";"
+//           | "switch" "(" expr "){" ( "case" num ":" stmt )* "}"
 Node* stmt(){
   Node* node;
   // if return statement
@@ -477,6 +501,25 @@ Node* stmt(){
       type_def();
       expect(";");
       return new_node(ND_EMPTY, NULL, NULL);
+  }else if(consumeByKind(TK_SWITCH)){
+    expect("(");
+    node = expr();
+    node = new_node(ND_SWITCH, node, NULL);
+    expect(")");
+    expect("{");
+    if(!consumeByKind(TK_CASE)){
+      error_at(token->str, "Switch sentence should contain at least one case\n");
+    }
+    int case_num = expect_number();
+    expect(":");
+    node->sw_l = new_switch_node_list(case_num, stmt());
+    while(consumeByKind(TK_CASE)){
+      int case_num = expect_number();
+      expect(":");
+      append_switch_node_list(case_num, node->sw_l, stmt());
+    }
+    expect("}");
+    return node;
   }else{
     node = var_dec();
     if(node != NULL){

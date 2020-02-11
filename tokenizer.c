@@ -161,7 +161,8 @@ Token* tokenize(char* p){
     }
     if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')'||
       	*p == '<' || *p == '>' || *p == ';' || *p == '=' || *p == '{' || *p == '}'||
-      	*p == ',' || *p == '&' || *p == '[' || *p == ']' || *p == '.' || *p == '!'){
+      	*p == ',' || *p == '&' || *p == '[' || *p == ']' || *p == '.' || *p == '!'||
+        *p == ':'){
       cur = new_token(TK_RESERVED, cur, p, 1);
       p++;
       continue;
@@ -237,6 +238,8 @@ Token* tokenize(char* p){
       // struct declaration
       if(d = tokenize_if_keyword_matches(p, &cur, i, "enum", TK_ENUM)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "typedef", TK_TYPEDEF)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "switch", TK_SWITCH)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "case", TK_CASE)){p += d; continue;}
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;

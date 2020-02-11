@@ -19,6 +19,15 @@ void void_test(){
     print_error("void test\n");
 }
 
+int switch_test(int x){
+    switch(x){
+        case 0:return 0;
+        case 1:return 1;
+        case 2:return 2;
+        case 120: return 57;
+    }
+}
+
 int main(){
     assert( 5 , test2(),"int test2(){int a; a = 5; return a;}");
     assert( 15 , test3(),"int main(){ int a; a = 5; int b; b = 9; a = a + 1; return a+b;}");
@@ -150,6 +159,10 @@ int main(){
     assert(10, '\n', "new line\n");
     assert(9,  '\t', "vertical tab\n");
     assert(13, '\r', "carriage return\n");
+    assert(0,  switch_test(0), "switch case test 0\n");
+    assert(1,  switch_test(1), "switch case test 1\n");
+    assert(2,  switch_test(2), "switch case test 2\n");
+    assert(57, switch_test(120), "switch case test 3\n");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;
