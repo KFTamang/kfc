@@ -187,10 +187,25 @@ Token* tokenize(char* p){
     if(*p == 39){ // 39 is ascii code for single quote
       p++;
       cur = new_token(TK_NUM, cur, p, 1);
-      cur->val = *p;
+      if(*p=='\\'){ // escape sequence
+        p++;
+        switch(*p){
+          case '\\': cur->val = '\\';break;
+          case '\'': cur->val = '\'';break;
+          case '\"': cur->val = '\"';break;
+          case 'b' : cur->val = '\b';break;
+          case 'n' : cur->val = '\n';break;
+          case 'r' : cur->val = '\r';break;
+          case 't' : cur->val = '\t';break;
+          case '0' : cur->val = '\0';break;
+          default:error_at(cur->str, "Character literal should end with \'\n");
+        }
+      }else{
+        cur->val = *p;
+      }
       p++;
       if(*p != 39){
-        error("Character literal should end with \'\n");
+        error_at(cur->str, "Character literal should end with \'\n");
       }
       p++;
       continue;

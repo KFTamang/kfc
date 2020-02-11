@@ -139,9 +139,17 @@ int main(){
     assert(1,  test91(), "return !0;");
     assert(0,  test92(), "return !1;");
     assert(7,  test93(), "if(!(2==2)){return 9;}else{return 7;}");
+    // escape sequences
     print_error("\"escape sequence test\" \\back slash\\ \n");
     assert(64, '@', "\'@\'");
     assert(97+65, 'a'+'A', "\'a\'+\'A\'");
+    assert(92, '\\', "escaped char literals\n");
+    assert(39, '\'', "single quote\n");
+    assert(34, '\"', "double quote\n");
+    assert(0,  '\0', "null characeter\n");
+    assert(10, '\n', "new line\n");
+    assert(9,  '\t', "vertical tab\n");
+    assert(13, '\r', "carriage return\n");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;
