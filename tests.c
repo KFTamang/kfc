@@ -15,6 +15,10 @@ int assert(int expected, int actual, char* code){
 typedef struct hoy{int arr[4];char* str;} struct_test_hoy;
 typedef enum{SUN, MON, TUE, WED, THU, FRI, SAT,} weeks;
 
+void void_test(){
+    print_error("void test\n");
+}
+
 int main(){
     assert( 5 , test2(),"int test2(){int a; a = 5; return a;}");
     assert( 15 , test3(),"int main(){ int a; a = 5; int b; b = 9; a = a + 1; return a+b;}");
@@ -125,6 +129,7 @@ int main(){
     return hoge.hoge;");
     typedef struct hoyo{int arr[4];char* str;} struct_test_hoyo;
     assert(21, SUN+MON+TUE+WED+THU+FRI+SAT, "");
+    void_test();
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

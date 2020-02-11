@@ -64,6 +64,8 @@ void move_from_pointer_per_type(char* dest, char* src, Type* type){
   case CHAR:
     printf("  movzx %s, BYTE PTR[%s]\n", dest, src);
     break;
+  case VOID:
+    break;
   case ENUM:
     move_from_pointer_per_type(dest, src, new_type(INT, NULL));
     break;

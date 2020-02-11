@@ -287,6 +287,7 @@ size_t get_type_size_byte(Type* type){
   case INT:	return 8;
   case PTR: return 8;
   case CHAR: return 1;
+  case VOID: return 0;
   case ARRAY:	return type->array_size * get_type_size_byte(type->ptr_to);
   case STRUCT:
     for(Memlist* mem=type->mem; mem; mem=mem->next){
@@ -495,6 +496,8 @@ Type* type_dec(){
     type = new_type(INT, NULL);
   }else if(consumeByKind(TK_TYPE_CHAR)){
     type = new_type(CHAR, NULL);
+  }else if(consumeByKind(TK_TYPE_VOID)){
+    type = new_type(VOID, NULL);
   }else if(consumeByKind(TK_STRUCT)){
     type = struct_dec();
   }else if(consumeByKind(TK_ENUM)){

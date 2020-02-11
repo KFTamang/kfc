@@ -25,6 +25,7 @@ typedef enum{
   TK_EOF,       // end of file
   TK_TYPE_INT,  // type int
   TK_TYPE_CHAR, // type char
+  TK_TYPE_VOID, // type void
   TK_SIZEOF,    // sizeof operator
   TK_STRING,    // string literal
   TK_STRUCT,    // structure declaration
@@ -202,6 +203,7 @@ void append_incomplete_tag_to_scope(Token* tok, Scope* scope);
 typedef enum{
   INT,
   CHAR,
+  VOID,
   PTR,
   ARRAY,
   STRUCT,

@@ -198,6 +198,7 @@ Token* tokenize(char* p){
       // variable type
       if(d = tokenize_if_keyword_matches(p, &cur, i, "int", TK_TYPE_INT)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "char", TK_TYPE_CHAR)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "void", TK_TYPE_VOID)){p += d; continue;}
       // if sizeof
       if(d = tokenize_if_keyword_matches(p, &cur, i, "sizeof", TK_SIZEOF)){p += d; continue;}
       // struct declaration
