@@ -93,6 +93,7 @@ typedef enum{
   ND_TYPE,  // type
   ND_STRUCT_MEM, // struct member
   ND_EMPTY, // empty node
+  ND_AND,  // logaical expression AND
 } NodeKind;
 
 typedef struct Node Node;
@@ -279,6 +280,7 @@ Node* stmt();
 Node* var_dec();
 Node* expr();
 Node* assign();
+Node* logical();
 Node* equality();
 Node* relational();
 Node* add();

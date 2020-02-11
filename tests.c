@@ -130,6 +130,9 @@ int main(){
     typedef struct hoyo{int arr[4];char* str;} struct_test_hoyo;
     assert(21, SUN+MON+TUE+WED+THU+FRI+SAT, "");
     void_test();
+    assert(1, test85(), "return (1+3==4)&&(2*1!=3);");
+    assert(0, test86(), "return (1+3==4)&&(2*1==3);");
+    assert(9 , test87(), "if(5>2 && 2/2==1){return 9;}else{return 11;}");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

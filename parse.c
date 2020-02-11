@@ -769,13 +769,26 @@ Node* expr(){
   return assign();
 }
 
-// ENBF assign = equality ("=" assign)?
+// ENBF assign = logical ("=" assign)?
 Node* assign(){
-  Node* node = equality();
+  Node* node = logical();
   if (consume("=")){
     node = new_node(ND_ASSIGN, node, assign());
   }
   return node;
+}
+
+// ENBF logical = equality ( "&&" equality ) *
+Node* logical(){
+  Node* node = equality();
+
+  for(;;){
+    if(consume("&&")){
+      node = new_node(ND_AND, node, equality());
+    }else{
+      return node;
+    }
+  }
 }
 
 // ENBF equality = relational ( "==" relational | "!=" relatinal ) *

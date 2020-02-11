@@ -289,6 +289,9 @@ void gen(Node* node){
     printf("  setle al\n");
     printf("  movzb rax, al\n");
     break;
+  case ND_AND:
+    printf("  and rax, rdi\n");
+    break;
   }
   printf("  push rax\n");
 

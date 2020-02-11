@@ -177,3 +177,16 @@ int test84(){
     hoge.hoge = 7;
     return hoge.hoge;
 }
+int test85(){
+    return (1+3==4)&&(2*1!=3);
+}
+int test86(){
+    return (1+3==4)&&(2*1==3);
+}
+int test87(){
+    if(5>2 && 2/2==1){
+        return 9;
+    }else{
+        return 11;
+    }
+}
