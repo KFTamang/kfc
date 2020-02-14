@@ -45,20 +45,20 @@ struct Token{
   int len;        // length of token
 };
 
-bool consume(char* op);
-bool consumeByKind(TokenKind tkind);
+int consume(char* op);
+int consumeByKind(TokenKind tkind);
 int is_alnum(char c);
 Token* get_and_consume_token(TokenKind tk);
 Token* consume_ident();
 Token* consume_string_literal();
 void expect(char* op);
 void expect_in_future(char* op);
-bool is_symbol(char* op);
-bool is_kind(TokenKind tkind);
-bool is_next_symbol(char* op);
-bool is_next_kind(TokenKind tkind);
+int is_symbol(char* op);
+int is_kind(TokenKind tkind);
+int is_next_symbol(char* op);
+int is_next_kind(TokenKind tkind);
 int expect_number();
-bool at_eof();
+int at_eof();
 Token* new_token(TokenKind kind, Token* cur, char* str, int len);
 Token* tokenize(char* p);
 

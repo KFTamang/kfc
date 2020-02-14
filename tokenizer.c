@@ -1,6 +1,6 @@
 #include "kfc.h"
 
-bool consume(char* op){
+int consume(char* op){
   if(token->kind != TK_RESERVED ||
      strlen(op) != token->len   ||
      memcmp(token->str, op, token->len) ){
@@ -10,7 +10,7 @@ bool consume(char* op){
   return true;
 }
 
-bool consumeByKind(TokenKind tkind){
+int consumeByKind(TokenKind tkind){
   if(token->kind == tkind){
     token = token->next;
     return true;
@@ -60,7 +60,7 @@ void expect_in_future(char* op){
   token->next = token->next->next;
 }
 
-bool is_symbol(char* op){
+int is_symbol(char* op){
   if(token->kind != TK_RESERVED ||
      strlen(op) != token->len   ||
      memcmp(token->str, op, token->len)){
@@ -69,14 +69,14 @@ bool is_symbol(char* op){
   return true;
 }
 
-bool is_kind(TokenKind tkind){
+int is_kind(TokenKind tkind){
   if(token->kind != tkind){
     return false;
   }
   return true;
 }
 
-bool is_next_symbol(char* op){
+int is_next_symbol(char* op){
   if(token->next->kind != TK_RESERVED ||
      strlen(op) != token->next->len   ||
      memcmp(token->next->str, op, token->next->len)){
@@ -85,7 +85,7 @@ bool is_next_symbol(char* op){
   return true;
 }
 
-bool is_next_kind(TokenKind tkind){
+int is_next_kind(TokenKind tkind){
   if(token->next->kind != tkind){
     return false;
   }
@@ -101,7 +101,7 @@ int expect_number(){
   return val;
 }
 
-bool at_eof(){
+int at_eof(){
   return token->kind == TK_EOF;
 }
 
