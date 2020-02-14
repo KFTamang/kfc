@@ -48,4 +48,7 @@ test_tmp:kfc
 	gcc -no-pie tmp.s -o tmp
 	./tmp
 
+selfhost:kfc
+	./selfhost
+
 .PHONY: test clean ref test_tmp

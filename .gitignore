@@ -13,3 +13,4 @@ example/tictoctoe
 .vscode/*
 a.out
 .DS_Store
+sh_*
