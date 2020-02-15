@@ -1,4 +1,4 @@
-#include "kfc.h"
+#include "parse.h"
 
 extern Scope* g_global_scope;
 extern Scope* g_current_scope;
