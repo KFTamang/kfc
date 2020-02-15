@@ -5,6 +5,19 @@ int main(int argc, char **argv){
     fprintf(stderr, "wrong number of arguments\n");
   return 1;
   }
+
+  // initialize constants
+  VAR_NAME_SIZE = 512;
+  MAX_ARG_NUM = 6;
+  ARG_REG[0] = "rdi";
+  ARG_REG[1] = "rsi";
+  ARG_REG[2] = "rdx";
+  ARG_REG[3] = "rcx";
+  ARG_REG[4] = "r8";
+  ARG_REG[5] = "r9";
+  MAX_SYMBOL_NUM = 65535; // 16bit for now
+
+
   // initialize scope
   initialize_global_scope();
   initialize_current_scope();

@@ -6,11 +6,11 @@
 #include <string.h>
 #include <math.h>
 
-static const int VAR_NAME_SIZE = 512;
-static const int MAX_ARG_NUM = 6;
-static const char* ARG_REG[] = {"rdi","rsi","rdx","rcx","r8","r9"};
+int VAR_NAME_SIZE;
+int MAX_ARG_NUM;
+char* ARG_REG[6];
 //static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
-#define MAX_SYMBOL_NUM  (65535) // 16bit for now
+int MAX_SYMBOL_NUM; // 16bit for now
 
 // tokenizer
 typedef enum{
