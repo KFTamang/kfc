@@ -360,7 +360,7 @@ Node* global_dec(){
   }
   Type* this_type = type_dec();
   if(this_type == NULL){
-    return NULL;
+    error_at(token->str, "Unsupported syntax\n");
   }
   Token* tok = consume_ident();
   Node* node;
