@@ -16,7 +16,7 @@ codegen.o:codegen.h
 kfc: $(OBJS) main.o
 	$(CC) -o kfc $(MAIN) $(OBJS) $(CFLAGS)
 
-#$(OBJS): kfc.h
+$(OBJS): kfc.h
 #main.o: kfc.h
 #symtegen.o: kfc.h
 
