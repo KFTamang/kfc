@@ -311,7 +311,7 @@ void append_incomplete_tag_to_scope(Token* tok, Scope* scope){
   scope->tag = new_tag;
 }
 
-size_t get_type_size_byte(Type* type){
+int get_type_size_byte(Type* type){
   if(type == NULL){
 	error("Type is not specified\n");
 	return 0;
@@ -335,7 +335,7 @@ size_t get_type_size_byte(Type* type){
   }
 }
 
-size_t get_var_size_byte(Scope* scope){
+int get_var_size_byte(Scope* scope){
   if(scope==NULL){
 	return 0;
   }
@@ -760,7 +760,7 @@ void append_enum_to_scope(Token* tok, int num, Scope* scope){
   scope->var = new_var;
 }
 
-Type* new_array_type(Type* base, size_t size){
+Type* new_array_type(Type* base, int size){
   Type* new_array = calloc(1, sizeof(Type));
   new_array->ty = ARRAY;
   new_array->ptr_to = base;

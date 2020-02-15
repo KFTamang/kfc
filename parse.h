@@ -48,12 +48,12 @@ void append_enum_to_scope(Token* tok, int num, Scope* scope);
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);
 Node* new_node_num(int val);
 void append_var_to_scope(Token* tok, Type* type, Scope* scope);
-size_t get_var_size_byte(Scope* scope);
+int get_var_size_byte(Scope* scope);
 Type* type_dec();
 void type_def();
 Type* struct_dec();
 Type* enum_dec();
-Type* new_array_type(Type* base, size_t size);
+Type* new_array_type(Type* base, int size);
 Node* new_var_node(Type* type, Token* tok);
 Node* gen_node_from_var(Var* var);
 

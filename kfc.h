@@ -206,7 +206,7 @@ typedef enum{
 struct Type{
   TY ty;
   Type *ptr_to;
-  size_t array_size;
+  int array_size;
   Memlist* mem;
 };
 
@@ -240,7 +240,7 @@ Scope* get_global_scope();
 void program();
 void print_all_strltrs();
 Scope* gen_new_scope(Scope* parent, ScopeKind sk);
-size_t get_type_size_byte(Type* type);
+int get_type_size_byte(Type* type);
 Type* new_type(TY ty, Type* type);
 
 
