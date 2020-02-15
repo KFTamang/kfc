@@ -389,7 +389,7 @@ Node* global_dec(){
     expect(";");
 	  return node;
   }
-  // name
+  // function
   node = new_node(ND_FUNC_DEF, NULL, NULL);
   char* node_name = calloc(1, tok->len+1);
   strncpy(node_name, tok->str, tok->len);
@@ -397,8 +397,8 @@ Node* global_dec(){
   node->len = tok->len;
   node->type = this_type;
   node->is_global = 1;
-  // arguments
   expect("(");
+  // arguments
   enter_new_scope();
   if(consume(")")){ // no argument
     node->func_args = NULL;
@@ -416,8 +416,13 @@ Node* global_dec(){
     }
     expect(")");
   }
-  // statements
+  // if prototype declaration
+  if(consume(";")){
+    return new_node(ND_EMPTY, NULL, NULL); // ignore for now
+  }
+  //function definition
   expect("{");
+  // statements
   node_list* comp_stmt = calloc(1, sizeof(node_list));
   node->comp_stmt = comp_stmt;
   comp_stmt->next = NULL;

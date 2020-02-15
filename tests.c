@@ -16,6 +16,9 @@ typedef struct hoy{int arr[4];char* str;} struct_test_hoy;
 typedef enum{SUN, MON, TUE, WED, THU, FRI, SAT,} weeks;
 // global array
 int array[10];
+// prototype declaration
+int prototype();
+char* prototype1(int hoge);
 
 void void_test(){
     print_error("void test\n");
