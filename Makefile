@@ -11,6 +11,7 @@ OBJS=$(SRCS:%.c=%.o)
 .c.o: kfc.h
 	$(CC) -c $< $(CFLAGS)
 parse.o:parse.h
+codegen.o:codegen.h
 
 kfc: $(OBJS) main.o
 	$(CC) -o kfc $(MAIN) $(OBJS) $(CFLAGS)

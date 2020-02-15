@@ -242,13 +242,8 @@ Type* new_type(TY ty, Type* type);
 
 
 // code generator
-void tree_print(Node* node, int i);
 void gen(Node* node);
-void gen_lval(Node* node);
-void gen_node_list(node_list* nl);
-void gen_func_args(node_list* fa);
 void gen_global_var();
-void switch_case(Node* node);
 
 // error messager
 void error(char* fmt, ...);

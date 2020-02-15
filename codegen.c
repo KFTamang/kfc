@@ -1,4 +1,4 @@
-#include "kfc.h"
+#include "codegen.h"
 
 void pointer_operation(Node* node){
   if(node->lhs->type == NULL && node->rhs->type == NULL){
