@@ -39,8 +39,6 @@ void append_enum(Token* tok, int num);
 void append_enum_to_scope(Token* tok, int num, Scope* scope);
 
 // global type struct for integer number
-Type g_type_int = {INT, NULL};
-Type g_type_ptr = {PTR, NULL};
 
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs);

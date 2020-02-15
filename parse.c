@@ -109,7 +109,7 @@ Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
         node->type = rhs->type;
         break;
       } 
-      node->type = &g_type_int;
+      node->type = new_type(INT, NULL);
       break;
     case ND_EQU:
     case ND_NEQ:
@@ -118,7 +118,7 @@ Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
     case ND_ASSIGN:
       break;
     case ND_ADDR:
-      node->type = &g_type_ptr;
+      node->type = new_type(PTR, NULL);
       break;
     default:
       break;
@@ -131,7 +131,7 @@ Node* new_node_num(int val){
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_NUM;
   node->val  = val;
-  node->type = &g_type_int;
+  node->type = new_type(INT, NULL);
   return node;
 }
 
