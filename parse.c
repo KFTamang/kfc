@@ -629,14 +629,8 @@ Type* struct_dec(){
         tag->is_complete = 1;
         return tag->type;
       }else{
-        if(is_symbol(";")){
-          return tag->type;
-        }else if(!is_symbol("*")){
-          error_at(token->str, "Only pointer is allowed for incomplete struct type\n");
-        }
         return tag->type;
       }
-      // error_at(token->str, "No such struct declared as %s\n", tag_name->str);
     }
   }else{
     // struct without tag name
