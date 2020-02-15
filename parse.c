@@ -380,6 +380,14 @@ Node* global_dec(){
   	g_current_scope = g_global_scope;
 	  node = new_var_node(this_type, tok);
 	  return node;
+  }else if(consume("[")){
+    int array_size = expect_number();
+    this_type = new_array_type(this_type, array_size);
+  	g_current_scope = g_global_scope;
+	  node = new_var_node(this_type, tok);
+    expect("]");
+    expect(";");
+	  return node;
   }
   // name
   node = new_node(ND_FUNC_DEF, NULL, NULL);

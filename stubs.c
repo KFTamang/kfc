@@ -216,3 +216,11 @@ int test93(){
         return 7;
     }
 }
+int array[10];
+int global_array_test(){
+    int i=0;
+    for(i=0;i<10;i=i+1){
+        array[i] = i;
+    }
+    return array[9];
+}

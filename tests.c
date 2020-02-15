@@ -14,6 +14,8 @@ int assert(int expected, int actual, char* code){
 // global typedef
 typedef struct hoy{int arr[4];char* str;} struct_test_hoy;
 typedef enum{SUN, MON, TUE, WED, THU, FRI, SAT,} weeks;
+// global array
+int array[10];
 
 void void_test(){
     print_error("void test\n");
@@ -165,6 +167,7 @@ int main(){
     assert(2,  switch_test(2), "switch case test 2\n");
     assert(59, switch_test(120), "switch case test 3\n");
     assert(99, switch_test(99),  "switch case test 4\n");
+    assert(9,  global_array_test(), "int i=0;for(i=0;i<10;i=i+1){array[i]=i;};return array[9];");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;
