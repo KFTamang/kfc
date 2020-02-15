@@ -234,6 +234,9 @@ Node* code[10000];
 int g_label_num;
 
 // parse function used in main()
+void initialize_global_scope();
+void initialize_current_scope();
+Scope* get_global_scope();
 void program();
 void print_all_strltrs();
 Scope* gen_new_scope(Scope* parent, ScopeKind sk);

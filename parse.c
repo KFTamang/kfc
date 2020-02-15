@@ -1,7 +1,6 @@
 #include "parse.h"
 
-extern Scope* g_global_scope;
-extern Scope* g_current_scope;
+
 // global vector to contain string literals
 StrLtr* g_string_literal;
 
@@ -61,6 +60,18 @@ void print_all_strltrs(){
     printf("%s:\n", strltr->label);
     printf("  .string \"%s\"\n", strltr->string);
   }
+}
+
+void initialize_global_scope(){
+  g_global_scope = gen_new_scope(NULL, GLOBAL);
+}
+
+void initialize_current_scope(){
+  g_current_scope = g_global_scope;
+}
+
+Scope* get_global_scope(){
+  return g_global_scope;
 }
 
 void enter_new_scope(){

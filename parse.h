@@ -12,6 +12,10 @@ void append_switch_node_list(int case_num, Switch_list* sw_l, node_list* nl);
 StrLtr* get_and_append_strltr(char* string);
 
 // scope
+Scope* g_global_scope;
+Scope* g_current_scope;
+Scope* get_current_scope();
+// void set_current_scope(Scope* scope);
 void enter_new_scope();
 void exit_current_scope();
 
