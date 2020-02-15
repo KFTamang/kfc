@@ -51,6 +51,6 @@ test_tmp:kfc
 	./tmp
 
 selfhost:kfc
-	./selfhost
+	./selfhost.sh
 
 .PHONY: test clean ref test_tmp
