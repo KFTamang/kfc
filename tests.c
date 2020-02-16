@@ -171,6 +171,7 @@ int main(){
     assert(59, switch_test(120), "switch case test 3\n");
     assert(99, switch_test(99),  "switch case test 4\n");
     assert(9,  global_array_test(), "int i=0;for(i=0;i<10;i=i+1){array[i]=i;};return array[9];");
+    assert(0,  NULL, "NULL");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

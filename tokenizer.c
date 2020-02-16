@@ -240,6 +240,8 @@ Token* tokenize(char* p){
       if(d = tokenize_if_keyword_matches(p, &cur, i, "typedef", TK_TYPEDEF)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "switch", TK_SWITCH)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "case", TK_CASE)){p += d; continue;}
+      // NULL pointer
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "NULL", TK_NUM)){p += d; cur->val = 0; continue;}
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
