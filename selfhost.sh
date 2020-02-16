@@ -7,6 +7,7 @@ tmp=sh_${src/.c/_1.c}
 asm=sh_${src/.c/_1.s}
 obj=sh_${src/.c/_1.o}
 cat kfc.h ${src} > ${tmp}
+sed -i 's/, \.\.\.//g' ${tmp}
 ./kfc ${tmp} > ${asm}
 gcc ${asm} -o ${obj}
 done
