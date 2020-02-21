@@ -3,6 +3,8 @@
 
 // global vector to contain string literals
 StrLtr* g_string_literal;
+// global variable for string literal counter
+int g_num;
 
 node_list* new_node_list(Node* node){
   node_list* nl = calloc(1, sizeof(node_list));
@@ -43,14 +45,13 @@ void append_switch_node_list(int case_num, Switch_list* sw_l, node_list* nl){
 }
 
 StrLtr* get_and_append_strltr(char* string){
-  static int num = 0;
   StrLtr* new = calloc(1, sizeof(StrLtr));
   new->next = g_string_literal;
   new->string = string;
   char* label = calloc(1, strlen(".LCxxx")); // up to 999 string literals
-  sprintf(label, ".LC%d", num);
+  sprintf(label, ".LC%d", g_num);
   new->label = label;
-  num++;
+  g_num++;
   g_string_literal = new;
   return new;
 }
