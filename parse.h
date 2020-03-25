@@ -70,6 +70,7 @@ Node* add();
 Node* mul();
 Node* primary();
 Node* postfix();
+Node* prefix();
 Node* struct_mem(Node* node);
 Node* ident();
 Node* var(Token* tok);

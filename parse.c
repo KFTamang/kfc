@@ -946,12 +946,12 @@ Node* primary(){
   return num();
 }
 
-// ENBF postfix = primary
+// ENBF postfix = prefix
 //              | postfix "[" expr "]"
 //              | postfix "." ident
 //              | postfix "->" ident
 Node* postfix(){
-  Node* node = primary();
+  Node* node = prefix();
   while(1){
     if(consume("[")){
       Node* expression = expr();
@@ -999,6 +999,21 @@ Memlist* find_member(Type* struct_type, char* name){
     }
   }
   error_at(token->str, "No such member as '%s' in struct\n", name);
+}
+
+// ENBF prefix = primary
+//             | "++" primary
+Node* prefix(){
+  Node* node;
+  if(consume("++")){
+    node = primary();
+    // ++prefix is parsed as prefix = prefix + 1
+    Node*	add_node = new_node(ND_ADD, node, new_node_num(1));
+    node = new_node(ND_ASSIGN, node, add_node);
+  }else{
+    node = primary();
+  }
+  return node;
 }
 
 // ENBF ident = var | func

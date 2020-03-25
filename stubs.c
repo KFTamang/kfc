@@ -224,3 +224,20 @@ int global_array_test(){
     }
     return array[9];
 }
+int test94(){
+    int i = 1;
+    ++i;
+    return i;
+}
+int test95(){
+    int i = 1;
+    ++i;
+    ++i;
+    return i;
+}
+int test96(){
+    int i = 3;
+    int o = 7;
+    o = ++i;
+    return o;
+}
