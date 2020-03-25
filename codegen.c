@@ -120,7 +120,7 @@ void gen(Node* node){
     printf("  ret\n");
     return;
   case ND_IF: // if(A) B;
-    g_label_num++;
+    ++g_label_num;
     gen(node->cond); // code for conditional expression i.e. A
     printf("  pop rax\n");
     printf("  cmp rax, 0\n");
@@ -139,7 +139,7 @@ void gen(Node* node){
     printf("  push rax\n");
     return;
   case ND_WHILE: // while(A) B
-    g_label_num++;
+    ++g_label_num;
     printf(".Lbeginwhile%d:\n", l_label_num);
     gen(node->cond); // code for conditional expression i.e. A
     printf("  pop rax\n");
@@ -150,7 +150,7 @@ void gen(Node* node){
     printf(".Lendwhile%d:\n", l_label_num);
     return;
   case ND_FOR: // for(A;B;C)D
-    g_label_num++;
+    ++g_label_num;
     if(node->init != NULL){
       gen(node->init); // A
     }
@@ -174,12 +174,12 @@ void gen(Node* node){
     gen_node_list(node->comp_stmt);
     return;
   case ND_FUNC:
-    g_label_num++;
+    ++g_label_num;
     while(node->func_args && (arg_num < MAX_ARG_NUM) ){
       printf("  #evaluate argument %d\n", arg_num+1);
       gen(node->func_args->data);
       node->func_args = node->func_args->next;
-      arg_num++;
+      ++arg_num;
     }
     for(int i=arg_num-1;i>=0;--i){
       printf("  pop %s #argument %d\n", ARG_REG[i], i+1);
@@ -211,7 +211,7 @@ void gen(Node* node){
     printf("  mov rbp, rsp\n");
     // fill local var region with 0xdeadbeef for debug
     printf("  sub rsp, %d\n", round_up_to_8(node->var_size_byte+8));
-    for(int i=0;i<round_up_to_8(node->var_size_byte)/8; i++){
+    for(int i=0;i<round_up_to_8(node->var_size_byte)/8; ++i){
       printf("  movq [rbp-%d], 0xdead\n",i*8+8);
     }
     if(node->func_args != NULL){
@@ -356,7 +356,7 @@ void gen_func_args(node_list* fa){
   int i = 0;
   while(fa != NULL){
     printf("  mov [rbp-%d], %s\n", fa->data->offset, ARG_REG[i]);
-    i++;
+    ++i;
     fa = fa->next;
   }
   return;
@@ -383,14 +383,14 @@ void switch_case(Node* node){
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
     printf("  cmp rax, %d\n", sw->case_num);
     printf("  je .Lswitchcase%d\n", l_label_num);
-    l_label_num++;
+    ++l_label_num;
   }
   printf("  jmp .Lswitchcase%d\n", l_label_num);
   l_label_num = g_label_num;
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
     printf("  .Lswitchcase%d:\n", l_label_num);
     gen_node_list(sw->nl);
-    l_label_num++;
+    ++l_label_num;
   }
   printf("  .Lswitchcase%d:\n", l_label_num);
 }

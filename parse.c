@@ -51,7 +51,7 @@ StrLtr* get_and_append_strltr(char* string){
   char* label = calloc(1, strlen(".LCxxx")); // up to 999 string literals
   sprintf(label, ".LC%d", g_num);
   new->label = label;
-  g_num++;
+  ++g_num;
   g_string_literal = new;
   return new;
 }

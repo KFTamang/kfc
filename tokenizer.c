@@ -130,23 +130,23 @@ Token* tokenize(char* p){
 
   while(*p){
     if (isspace(*p)){
-      p++;
+      ++p;
       continue;
     }
     if(*p == '\n'){
-      p++;
+      ++p;
       continue;
     }
     if(strncmp(p,"//",2) == 0 ||
        strncmp(p,"#", 1) == 0){ // for now ignore preprocessor directives
       while(*p != '\n'){
-        p++;
+        ++p;
       }
       continue;
     }
     if(strncmp(p,"/*",2) == 0){
       while(strncmp(p,"*/",2) != 0){
-        p++;
+        ++p;
       }
       p+=2;
       continue;
@@ -164,17 +164,17 @@ Token* tokenize(char* p){
       	*p == ',' || *p == '&' || *p == '[' || *p == ']' || *p == '.' || *p == '!'||
         *p == ':'){
       cur = new_token(TK_RESERVED, cur, p, 1);
-      p++;
+      ++p;
       continue;
     }
     if(*p == '"'){
-      p++;
+      ++p;
       int i = 0;
       while(*(p+i) != '"'){
         if(*(p+i)== '\\' && *(p+i+1)== '"'){
           i+=2;
         }
-        i++;
+        ++i;
       }
       cur = new_token(TK_STRING, cur, p, i);
       p += i+1;
@@ -186,10 +186,10 @@ Token* tokenize(char* p){
       continue;
     }
     if(*p == 39){ // 39 is ascii code for single quote
-      p++;
+      ++p;
       cur = new_token(TK_NUM, cur, p, 1);
       if(*p=='\\'){ // escape sequence
-        p++;
+        ++p;
         switch(*p){
           case '\\': cur->val = '\\';break;
           case '\'': cur->val = '\'';break;
@@ -204,11 +204,11 @@ Token* tokenize(char* p){
       }else{
         cur->val = *p;
       }
-      p++;
+      ++p;
       if(*p != 39){
         error_at(cur->str, "Character literal should end with \'\n");
       }
-      p++;
+      ++p;
       continue;
     }
     if (is_alnum(*p)){
