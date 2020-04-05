@@ -241,3 +241,10 @@ int test96(){
     o = ++i;
     return o;
 }
+int test97(){
+    int j = 0;
+    for(int i=0;i<10;++i){
+        ++j;
+    }
+    return j;
+}

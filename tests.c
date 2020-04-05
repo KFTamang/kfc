@@ -175,6 +175,7 @@ int main(){
     assert(2,  test94(),"int i = 1;++i;return i;");
     assert(3,  test95(),"int i = 1;++i;++i;return i;");
     assert(4,  test96(),"int i = 3;int o = 7;o = ++i;return o;");
+    assert(10,  test97(),"int j=0;for(int i=0;i<10;++i){++j;}return j;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

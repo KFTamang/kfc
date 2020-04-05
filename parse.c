@@ -76,7 +76,7 @@ Scope* get_global_scope(){
 }
 
 void enter_new_scope(){
-  g_current_scope = gen_new_scope(g_global_scope, LOCAL);
+  g_current_scope = gen_new_scope(g_current_scope, LOCAL);
 }
 
 void exit_current_scope(){
@@ -490,6 +490,7 @@ Node* stmt(){
     node->cond = cond;
     node->then = then;
   }else if(consumeByKind(TK_FOR)){ // for loop
+    enter_new_scope();
     expect("(");
     Node* init;
     Node* cond;
@@ -497,8 +498,15 @@ Node* stmt(){
     //    if(is_next_symbol(";")){ // empty initialize section
     if(consume(";")){
       init = NULL;
-    }else{ // initialize section
-      init = expr();
+    }else{
+      // initialize section
+      // This section contains either nothing or expression or variable declaration
+      Node* var_dec_node = var_dec();
+      if(var_dec_node == NULL){
+        init = expr();
+      }else{
+        init = var_dec_node;
+      }
       expect(";");      
     }
     //    if(is_next_symbol(";")){ // empty condition section
@@ -522,6 +530,7 @@ Node* stmt(){
     node->cond = cond;
     node->end = end;
     node->then = then;
+    exit_current_scope();
   }else if(consumeByKind(TK_TYPEDEF)){
       type_def();
       expect(";");
