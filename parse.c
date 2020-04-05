@@ -56,6 +56,23 @@ StrLtr* get_and_append_strltr(char* string){
   return new;
 }
 
+int consume_constant(){
+  if(is_kind(TK_NUM)){
+    return expect_number();
+  }
+  if(is_kind(TK_IDENT)){
+    Token* tok = consume_ident();
+    Var* var = find_var_recursively(tok, g_current_scope);
+    if(var == NULL){
+      error_at(token->str, "Expected constant value\n");
+    } 
+    if(var->kind == VK_ENUM){
+      return var->offset;
+    }
+    error_at(token->str, "Only enum element is allowed\n");
+  }
+}
+
 void print_all_strltrs(){
   for(StrLtr* strltr=g_string_literal; strltr; strltr=strltr->next){
     printf("%s:\n", strltr->label);
@@ -544,7 +561,7 @@ Node* stmt(){
     if(!consumeByKind(TK_CASE)){
       error_at(token->str, "Switch sentence should contain at least one case\n");
     }
-    int case_num = expect_number();
+    int case_num = consume_constant();
     expect(":");
     node_list* nl = new_node_list(stmt());
     node->sw_l = new_switch_node_list(case_num, nl);
@@ -552,7 +569,7 @@ Node* stmt(){
       nl = append_node_list(nl, stmt());
     }
     while(consumeByKind(TK_CASE)){
-      int case_num = expect_number();
+      int case_num = consume_constant();
       expect(":");
       nl = new_node_list(stmt());
       append_switch_node_list(case_num, node->sw_l, nl);

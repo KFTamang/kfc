@@ -7,6 +7,7 @@ node_list* append_node_list(node_list* current, Node* data);
 // switch-case sentence
 Switch_list* new_switch_node_list(int case_num, node_list* nl);
 void append_switch_node_list(int case_num, Switch_list* sw_l, node_list* nl);
+int consume_constant();
 
 // string literal
 StrLtr* get_and_append_strltr(char* string);

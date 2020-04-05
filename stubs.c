@@ -248,3 +248,13 @@ int test97(){
     }
     return j;
 }
+int test98(){
+    enum {HOGE, FUGA, POYO} enum_test;
+    enum_test = FUGA;
+    switch(enum_test){
+        case HOGE: return 9;
+        case FUGA: return 7;
+        case POYO: return 5;
+    }
+    return 7;
+}
