@@ -586,7 +586,11 @@ Node* stmt(){
       return node;
     }
     node = expr();
-    expect(";");
+    if(node != NULL){
+      expect(";");
+    }else{
+      return new_node(ND_EMPTY, NULL, NULL);
+    }
   }
   return node;
 }
