@@ -258,3 +258,17 @@ int test98(){
     }
     return 7;
 }
+
+int test99(){
+    int hoge = 1;
+    int ret = 9;
+    switch (hoge){
+    case 0:
+        ret = 1;
+    case 1:
+        ret = 2;
+    case 2:
+        ret = 3;
+    }
+    return ret;
+}

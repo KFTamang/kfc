@@ -393,4 +393,5 @@ void switch_case(Node* node){
     ++l_label_num;
   }
   printf("  .Lswitchcase%d:\n", l_label_num);
+  g_label_num = l_label_num + 1;
 }
