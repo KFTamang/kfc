@@ -1,5 +1,19 @@
 #include "codegen.h"
 
+void enterNewLoop(LoopType new_loop_type, int new_label_number){
+  BreakMarker* new = calloc(sizeof(BreakMarker),1);
+  new->type = new_loop_type;
+  new->label_number = new_label_number;
+  new->prev_marker = bm;
+  bm = new;
+}
+
+void exitLoop(){
+  bm->label_number = bm->prev_marker->label_number;
+  bm->type = bm->prev_marker->type;
+  bm = bm->prev_marker;
+}
+
 void pointer_operation(Node* node){
   if(node->lhs->type == NULL && node->rhs->type == NULL){
     return;
@@ -256,6 +270,14 @@ void gen(Node* node){
   case ND_SWITCH:
     switch_case(node);
     return;
+  case ND_BREAK:
+    if(bm->type == LT_NONE){
+      error("Break sentence is used outside loop block\n");
+    }
+    if(bm->type == LT_SWITCH){
+      printf("  jmp .Lendswitch%d\n",bm->label_number);
+      return;
+    }
   }
     
   gen(node->lhs);
@@ -380,6 +402,7 @@ void switch_case(Node* node){
   printf("  pop rax\n");
   printf("  mov rax, [rax]\n");
   int l_label_num = g_label_num;
+  enterNewLoop(LT_SWITCH, g_label_num);
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
     printf("  cmp rax, %d\n", sw->case_num);
     printf("  je .Lswitchcase%d\n", l_label_num);
@@ -393,5 +416,7 @@ void switch_case(Node* node){
     ++l_label_num;
   }
   printf("  .Lswitchcase%d:\n", l_label_num);
+  printf("  .Lendswitch%d:\n", g_label_num);
+  exitLoop();
   g_label_num = l_label_num + 1;
 }

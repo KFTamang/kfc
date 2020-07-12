@@ -465,6 +465,7 @@ Node* global_dec(){
 //           | var_dec ";"
 //           | type_def ";"
 //           | "switch" "(" expr "){" ( "case" num ":" stmt )* "}"
+//           | "break" ";"
 Node* stmt(){
   Node* node;
   // if return statement
@@ -579,6 +580,9 @@ Node* stmt(){
     }
     expect("}");
     return node;
+  }else if(consumeByKind(TK_BREAK)){
+    expect(";");
+    return new_node(ND_BREAK, NULL, NULL);
   }else{
     node = var_dec();
     if(node != NULL){

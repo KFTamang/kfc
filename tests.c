@@ -178,6 +178,8 @@ int main(){
     assert(10, test97(),"int j=0;for(int i=0;i<10;++i){++j;}return j;");
     assert(7,  test98(),"enum {HOGE, FUGA, POYO} enum_test;enum_test=FUGA;switch(enum_test){case HOGE: return 9;case FUGA: return 7;case POYO: return 5;}return 7;");
     assert(3,  test99(),"int hoge = 1;int ret = 9;switch (hoge){case 0:ret = 1;case 1:ret = 2;case 2:ret = 3;}return ret;");
+    assert(2,  test100(),"int hoge = 1;int ret = 9;switch (hoge){case 0:ret = 1;break;case 1:ret = 2;break;case 2:ret = 3;break;}return ret;");
+    assert(3,  test101(),"int hoge = 1;int ret = 9;switch (hoge){case 0:ret = 1;case 1:ret = 2;case 2:ret = 3;break;}return ret;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

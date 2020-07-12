@@ -41,6 +41,9 @@ int main(int argc, char **argv){
   printf("  .section .rodata\n");
   print_all_strltrs();
 
+  // create root marker of loop
+  enterNewLoop(LT_NONE, 0);
+  
   // climbing down the tree and generate code
   printf(".text\n");
   int i = 0;

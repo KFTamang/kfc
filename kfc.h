@@ -33,6 +33,7 @@ typedef enum{
   TK_TYPEDEF,   // typedef
   TK_SWITCH,    // switch
   TK_CASE,      // case
+  TK_BREAK,     // break
 } TokenKind;
 
 typedef struct Token Token;
@@ -99,6 +100,7 @@ typedef enum{
   ND_OR,  // logical expression OR
   ND_NOT, // unary operator NOT
   ND_SWITCH, // switch case
+  ND_BREAK,  // break
 } NodeKind;
 
 typedef struct Node Node;
@@ -247,6 +249,23 @@ Type* new_type(TY ty, Type* type);
 // code generator
 void gen(Node* node);
 void gen_global_var();
+// marker of loop type for break statement
+typedef enum{
+  LT_NONE,
+  LT_SWITCH
+}LoopType;
+
+typedef struct BreakMarker BreakMarker;
+
+struct BreakMarker{
+  LoopType type;
+  int label_number;
+  BreakMarker* prev_marker;
+};
+
+BreakMarker* bm;
+void enterNewLoop(LoopType new_loop_type, int new_label_number);
+void exitLoop();
 
 // error messager
 void error(char* fmt, ...);
