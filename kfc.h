@@ -252,7 +252,8 @@ void gen_global_var();
 // marker of loop type for break statement
 typedef enum{
   LT_NONE,
-  LT_SWITCH
+  LT_SWITCH,
+  LT_FOR
 }LoopType;
 
 typedef struct BreakMarker BreakMarker;

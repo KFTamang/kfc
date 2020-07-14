@@ -180,6 +180,7 @@ int main(){
     assert(3,  test99(),"int hoge = 1;int ret = 9;switch (hoge){case 0:ret = 1;case 1:ret = 2;case 2:ret = 3;}return ret;");
     assert(2,  test100(),"int hoge = 1;int ret = 9;switch (hoge){case 0:ret = 1;break;case 1:ret = 2;break;case 2:ret = 3;break;}return ret;");
     assert(3,  test101(),"int hoge = 1;int ret = 9;switch (hoge){case 0:ret = 1;case 1:ret = 2;case 2:ret = 3;break;}return ret;");
+    assert(5,  test102(),"int i = 0;for(i=0;i<10;++i){if(i==3){break;}}return i;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

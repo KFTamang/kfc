@@ -165,6 +165,7 @@ void gen(Node* node){
     return;
   case ND_FOR: // for(A;B;C)D
     ++g_label_num;
+    enterNewLoop(LT_FOR, l_label_num);
     if(node->init != NULL){
       gen(node->init); // A
     }
@@ -183,6 +184,7 @@ void gen(Node* node){
     }
     printf("  jmp .Lbeginfor%d\n", l_label_num); 
     printf(".Lendfor%d:\n",l_label_num);
+    exitLoop();
     return;
   case ND_BLOCK:
     gen_node_list(node->comp_stmt);
@@ -278,6 +280,11 @@ void gen(Node* node){
       printf("  jmp .Lendswitch%d\n",bm->label_number);
       return;
     }
+    if(bm->type == LT_FOR){
+      printf("  jmp .Lendfor%d\n", bm->label_number);
+      return;
+    }
+    error("ERROR: break control should not reach here!\n");
   }
     
   gen(node->lhs);

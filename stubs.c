@@ -304,3 +304,13 @@ int test101(){
     }
     return ret;
 }
+
+int test102(){
+    int i = 0;
+    for(i=0;i<10;++i){
+        if(i==5){
+            break;
+        }
+    }
+    return i;
+}
