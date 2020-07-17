@@ -1004,7 +1004,6 @@ Node* postfix(){
       // postfix->ident is parsed as (*postfix).ident
       node = deref(node);
       node = struct_mem(node);
-      return node;
     }else{
       return node;
     }
