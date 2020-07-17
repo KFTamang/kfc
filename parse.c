@@ -436,6 +436,7 @@ Node* global_dec(){
   }
   // if prototype declaration
   if(consume(";")){
+    exit_current_scope();
     return new_node(ND_EMPTY, NULL, NULL); // ignore for now
   }
   //function definition
