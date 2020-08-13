@@ -34,6 +34,7 @@ typedef enum{
   TK_SWITCH,    // switch
   TK_CASE,      // case
   TK_BREAK,     // break
+  TK_DEFAULT,   // default
 } TokenKind;
 
 typedef struct Token Token;
@@ -101,6 +102,7 @@ typedef enum{
   ND_NOT, // unary operator NOT
   ND_SWITCH, // switch case
   ND_BREAK,  // break
+  ND_DEFAULT, // default in switch-case
 } NodeKind;
 
 typedef struct Node Node;
@@ -144,6 +146,7 @@ struct node_list{
 struct Switch_list{
   node_list* nl;
   int case_num;
+  int is_default;
   Switch_list* next;
 };
 

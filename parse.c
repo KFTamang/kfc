@@ -21,20 +21,25 @@ node_list* append_node_list(node_list* current, Node* data){
   return new_nl;
 }
 
-Switch_list* new_switch_node_list(int case_num, node_list* nl){
+Switch_list* new_switch_node_list(int is_defalut, int case_num, node_list* nl){
   Switch_list* sl = calloc(1, sizeof(Switch_list));
   sl->next = NULL;
+  sl->is_default = is_defalut;
   sl->case_num = case_num;
   sl->nl = nl;
   return sl;
 }
 
-void append_switch_node_list(int case_num, Switch_list* sw_l, node_list* nl){
+void append_switch_node_list(int is_default, int case_num, Switch_list* sw_l, node_list* nl){
   if(sw_l == NULL){
     error_at(token->str, "Switch-case node list is blank\n");
   }
   Switch_list* new_sw = calloc(1, sizeof(Switch_list));
-  new_sw->case_num = case_num;
+  if(is_default){
+    new_sw->is_default = 1;
+  }else{
+    new_sw->case_num = case_num;
+  }
   new_sw->nl = nl;
 
   Switch_list* sw = sw_l;
@@ -566,18 +571,27 @@ Node* stmt(){
     int case_num = consume_constant();
     expect(":");
     node_list* nl = new_node_list(stmt());
-    node->sw_l = new_switch_node_list(case_num, nl);
+    node->sw_l = new_switch_node_list(0, case_num, nl);
     while(!is_kind(TK_CASE) && !is_symbol("}")){
       nl = append_node_list(nl, stmt());
     }
-    while(consumeByKind(TK_CASE)){
-      int case_num = consume_constant();
-      expect(":");
-      nl = new_node_list(stmt());
-      append_switch_node_list(case_num, node->sw_l, nl);
-      while(!is_kind(TK_CASE) && !is_symbol("}")){
-        nl = append_node_list(nl, stmt());
-      }      
+    while(is_kind(TK_CASE) || is_kind(TK_DEFAULT)){
+      if(consumeByKind(TK_CASE)){
+        int case_num = consume_constant();
+        expect(":");
+        nl = new_node_list(stmt());
+        append_switch_node_list(0, case_num, node->sw_l, nl);
+        while(!is_kind(TK_CASE) && !is_symbol("}") && !is_kind(TK_DEFAULT)){
+          nl = append_node_list(nl, stmt());
+        }      
+      }else if(consumeByKind(TK_DEFAULT)){
+        expect(":");
+        nl = new_node_list(stmt());
+        append_switch_node_list(1, 0, node->sw_l, nl);
+        while(!is_kind(TK_CASE) && !is_symbol("}")){
+          nl = append_node_list(nl, stmt());
+        }   
+      }
     }
     expect("}");
     return node;

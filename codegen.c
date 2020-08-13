@@ -409,8 +409,17 @@ void switch_case(Node* node){
   printf("  pop rax\n");
   printf("  mov rax, [rax]\n");
   int l_label_num = g_label_num;
+  // local variables for default case
+  node_list* default_node_list = NULL;
   enterNewLoop(LT_SWITCH, g_label_num);
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
+    if(sw->is_default){
+      if(default_node_list){
+        error("Multiple defalut case in switch-case block\n");
+      }
+      default_node_list = sw->nl;
+      break;
+    }
     printf("  cmp rax, %d\n", sw->case_num);
     printf("  je .Lswitchcase%d\n", l_label_num);
     ++l_label_num;
@@ -418,11 +427,17 @@ void switch_case(Node* node){
   printf("  jmp .Lswitchcase%d\n", l_label_num);
   l_label_num = g_label_num;
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
+    if(sw->is_default){
+      break;
+    }
     printf("  .Lswitchcase%d:\n", l_label_num);
     gen_node_list(sw->nl);
     ++l_label_num;
   }
   printf("  .Lswitchcase%d:\n", l_label_num);
+  if(default_node_list){
+    gen_node_list(default_node_list);
+  }
   printf("  .Lendswitch%d:\n", g_label_num);
   exitLoop();
   g_label_num = l_label_num + 1;

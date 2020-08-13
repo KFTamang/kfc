@@ -314,3 +314,20 @@ int test102(){
     }
     return i;
 }
+
+int test103(){
+    int hoge = 13;
+    int ret = 9;
+    switch (hoge){
+    case 0:
+        ret = 1;
+    case 1:
+        ret = 2;
+    case 2:
+        ret = 3;
+        break;
+    default:
+        ret = 123;
+    }
+    return ret;
+}
