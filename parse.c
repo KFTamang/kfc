@@ -479,6 +479,7 @@ Node* stmt(){
     node = new_node(ND_RETURN, expr(), NULL);
     expect(";");
   }else if(consume("{")){ // compound statement (block) {}
+    enter_new_scope();
     node = new_node(ND_BLOCK, NULL, NULL);
     node_list* comp_stmt = calloc(1, sizeof(node_list));
     node->comp_stmt = comp_stmt;
@@ -491,6 +492,7 @@ Node* stmt(){
 	      comp_stmt = append_node_list(comp_stmt, stmt());
       }
     }
+    exit_current_scope();
   }else if(consumeByKind(TK_IF)){ // "if" statement
     expect("(");
     Node* cond = expr();
