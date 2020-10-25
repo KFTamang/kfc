@@ -367,7 +367,7 @@ int get_var_size_byte(Scope* scope){
 	var_size += var->size_byte;
   }
   if(scope->sk == BLOCK){
-	var_size += get_var_size_byte(scope->parent);;
+	var_size += get_var_size_byte(scope->parent);
   }	
   return var_size;
 }
@@ -888,11 +888,15 @@ Node* expr(){
   return assign();
 }
 
-// ENBF assign = logical ("=" assign)?
+// ENBF assign = logical ( ( "=" | "+=" ) assign)?
 Node* assign(){
   Node* node = logical();
   if (consume("=")){
     node = new_node(ND_ASSIGN, node, assign());
+  }else if(consume("+=")){
+    Node* logi = node;
+    node = new_node(ND_ADD, logi, assign());
+    node = new_node(ND_ASSIGN, logi, node);
   }
   return node;
 }

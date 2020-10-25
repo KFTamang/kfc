@@ -331,3 +331,9 @@ int test103(){
     }
     return ret;
 }
+
+int test104(){
+    int hoge = 11;
+    hoge += 2;
+    return hoge;
+}
