@@ -782,7 +782,7 @@ Type* enum_dec(){
   while(!consume("}")){
     Token* tok = consume_ident();
     append_enum(tok, i);
-    i++;
+    ++i;
     consume(",");
   }
   return new_type(ENUM, NULL);
