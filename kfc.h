@@ -258,7 +258,8 @@ void gen_global_var();
 typedef enum{
   LT_NONE,
   LT_SWITCH,
-  LT_FOR
+  LT_FOR,
+  LT_WHILE
 }LoopType;
 
 typedef struct BreakMarker BreakMarker;

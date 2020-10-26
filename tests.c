@@ -184,6 +184,8 @@ int main(){
     assert(123,test103(),"int hoge = 13;int ret = 9;switch (hoge){case 0:ret = 1;case 1:ret = 2;case 2:ret = 3;break;default:ret=123;}return ret;");
     assert(13 ,test104(),"int hoge = 11;hoge += 2;return hoge;");
     assert(10 ,test105(),"int i = 3;for(;i<10;++i){continue;}return i;");
+    assert(14 ,test106(),"int i = 0;while(i<14){continue;return i;}return i;");
+    assert(7  ,test107(),"int i = 7;while(i<14){break;return i;}return i;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

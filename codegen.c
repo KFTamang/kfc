@@ -154,6 +154,7 @@ void gen(Node* node){
     return;
   case ND_WHILE: // while(A) B
     ++g_label_num;
+    enterNewLoop(LT_WHILE, l_label_num);
     printf(".Lbeginwhile%d:\n", l_label_num);
     gen(node->cond); // code for conditional expression i.e. A
     printf("  pop rax\n");
@@ -162,6 +163,7 @@ void gen(Node* node){
     gen(node->then); // code 
     printf("  jmp .Lbeginwhile%d\n", l_label_num); 
     printf(".Lendwhile%d:\n", l_label_num);
+    exitLoop();
     return;
   case ND_FOR: // for(A;B;C)D
     ++g_label_num;
@@ -285,6 +287,10 @@ void gen(Node* node){
       printf("  jmp .Lendfor%d\n", bm->label_number);
       return;
     }
+    if(bm->type == LT_WHILE){
+      printf("  jmp .Lendwhile%d\n", bm->label_number);
+      return;      
+    }
     error("ERROR: break control should not reach here!\n");
   case ND_CONTINUE:
     if(bm->type == LT_NONE){
@@ -297,6 +303,10 @@ void gen(Node* node){
     if(bm->type == LT_FOR){
       printf("  jmp .Lloopendfor%d\n", bm->label_number);
       return;
+    }
+    if(bm->type == LT_WHILE){
+      printf("  jmp .Lbeginwhile%d\n", bm->label_number);
+      return;      
     }
     error("ERROR: Continue control should not reach here!\n");
   }

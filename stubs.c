@@ -345,3 +345,22 @@ int test105(){
     }
     return i;
 }
+
+int test106(){
+    int i = 0;
+    while(i<14){
+        ++i;
+        continue;
+        return i;
+    }
+    return i;
+}
+
+int test107(){
+    int i = 7;
+    while(i<14){
+        break;
+        return i;
+    }
+    return i;
+}
