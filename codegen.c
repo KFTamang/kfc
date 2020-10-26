@@ -179,6 +179,7 @@ void gen(Node* node){
     printf("  cmp rax, 0\n");
     printf("  je .Lendfor%d\n", l_label_num);
     gen(node->then); // D
+    printf(".Lloopendfor%d:\n", l_label_num);
     if(node->end != NULL){
       gen(node->end); // C
     }
@@ -285,6 +286,19 @@ void gen(Node* node){
       return;
     }
     error("ERROR: break control should not reach here!\n");
+  case ND_CONTINUE:
+    if(bm->type == LT_NONE){
+      error("Continue sentence is used outside loop block\n");
+    }
+    if(bm->type == LT_SWITCH){
+      printf("  jmp .Lendswitch%d\n",bm->label_number);
+      return;
+    }
+    if(bm->type == LT_FOR){
+      printf("  jmp .Lloopendfor%d\n", bm->label_number);
+      return;
+    }
+    error("ERROR: Continue control should not reach here!\n");
   }
     
   gen(node->lhs);

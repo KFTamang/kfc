@@ -183,6 +183,7 @@ int main(){
     assert(5,  test102(),"int i = 0;for(i=0;i<10;++i){if(i==3){break;}}return i;");
     assert(123,test103(),"int hoge = 13;int ret = 9;switch (hoge){case 0:ret = 1;case 1:ret = 2;case 2:ret = 3;break;default:ret=123;}return ret;");
     assert(13 ,test104(),"int hoge = 11;hoge += 2;return hoge;");
+    assert(10 ,test105(),"int i = 3;for(;i<10;++i){continue;}return i;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

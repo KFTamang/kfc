@@ -35,6 +35,7 @@ typedef enum{
   TK_CASE,      // case
   TK_BREAK,     // break
   TK_DEFAULT,   // default
+  TK_CONTINUE,  // continue
 } TokenKind;
 
 typedef struct Token Token;
@@ -103,6 +104,7 @@ typedef enum{
   ND_SWITCH, // switch case
   ND_BREAK,  // break
   ND_DEFAULT, // default in switch-case
+  ND_CONTINUE, // continue
 } NodeKind;
 
 typedef struct Node Node;

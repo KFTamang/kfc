@@ -243,6 +243,7 @@ Token* tokenize(char* p){
       if(d = tokenize_if_keyword_matches(p, &cur, i, "case", TK_CASE)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "break", TK_BREAK)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "default", TK_DEFAULT)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "continue", TK_CONTINUE)){p += d; continue;}
       // NULL pointer
       if(d = tokenize_if_keyword_matches(p, &cur, i, "NULL", TK_NUM)){p += d; cur->val = 0; continue;}
       // local var

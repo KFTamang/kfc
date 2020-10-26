@@ -337,3 +337,11 @@ int test104(){
     hoge += 2;
     return hoge;
 }
+
+int test105(){
+    int i = 3;
+    for(;i<10;++i){
+        continue;
+    }
+    return i;
+}
