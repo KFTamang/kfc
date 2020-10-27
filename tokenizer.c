@@ -246,6 +246,9 @@ Token* tokenize(char* p){
       if(d = tokenize_if_keyword_matches(p, &cur, i, "continue", TK_CONTINUE)){p += d; continue;}
       // NULL pointer
       if(d = tokenize_if_keyword_matches(p, &cur, i, "NULL", TK_NUM)){p += d; cur->val = 0; continue;}
+      // boolian
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "true", TK_NUM)){p += d; cur->val = 1; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "false", TK_NUM)){p += d; cur->val = 0; continue;}
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
