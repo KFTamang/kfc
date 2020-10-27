@@ -364,3 +364,12 @@ int test107(){
     }
     return i;
 }
+
+int test108(){
+    return 9%2;
+}
+
+int test109(){
+    int i = 32;
+    return i%13;
+}

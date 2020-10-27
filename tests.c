@@ -186,6 +186,8 @@ int main(){
     assert(10 ,test105(),"int i = 3;for(;i<10;++i){continue;}return i;");
     assert(14 ,test106(),"int i = 0;while(i<14){continue;return i;}return i;");
     assert(7  ,test107(),"int i = 7;while(i<14){break;return i;}return i;");
+    assert(1  ,test108(),"return 9%2;");
+    assert(6  ,test109(),"int i = 32;return i%13;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

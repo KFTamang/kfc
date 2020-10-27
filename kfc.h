@@ -105,6 +105,7 @@ typedef enum{
   ND_BREAK,  // break
   ND_DEFAULT, // default in switch-case
   ND_CONTINUE, // continue
+  ND_MOD, // modulo operation
 } NodeKind;
 
 typedef struct Node Node;
