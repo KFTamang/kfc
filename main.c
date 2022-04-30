@@ -1,5 +1,24 @@
 #include "kfc.h"
 
+int VAR_NAME_SIZE;
+int MAX_ARG_NUM;
+char* ARG_REG[6];
+//static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
+int MAX_SYMBOL_NUM; // 16bit for now
+
+Token* token;
+char* user_input;
+
+funcs* functions;
+
+// global array for program nodes
+Node* code[10000];
+
+// global number for label
+int g_label_num;
+
+BreakMarker* bm;
+
 int main(int argc, char **argv){
   if (argc != 2){
     fprintf(stderr, "wrong number of arguments\n");

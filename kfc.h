@@ -6,11 +6,11 @@
 #include <string.h>
 #include <math.h>
 
-int VAR_NAME_SIZE;
-int MAX_ARG_NUM;
-char* ARG_REG[6];
+extern int VAR_NAME_SIZE;
+extern int MAX_ARG_NUM;
+extern char* ARG_REG[6];
 //static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
-int MAX_SYMBOL_NUM; // 16bit for now
+extern int MAX_SYMBOL_NUM; // 16bit for now
 
 // tokenizer
 typedef enum{
@@ -69,8 +69,8 @@ Token* save_snapshot();
 void revert_snapshot(Token* sp);
 
 // curent token in interest
-Token* token;
-char* user_input;
+extern Token* token;
+extern char* user_input;
 
 // abstract syntax tree kind
 typedef enum{
@@ -233,13 +233,13 @@ struct funcs{
 };
 funcs* find_funcs(Token* tok);
 // a chain of functions
-funcs* functions;
+extern funcs* functions;
 
 // global array for program nodes
-Node* code[10000];
+extern Node* code[10000];
 
 // global number for label
-int g_label_num;
+extern int g_label_num;
 
 // parse function used in main()
 void initialize_global_scope();
@@ -271,7 +271,7 @@ struct BreakMarker{
   BreakMarker* prev_marker;
 };
 
-BreakMarker* bm;
+extern BreakMarker* bm;
 void enterNewLoop(LoopType new_loop_type, int new_label_number);
 void exitLoop();
 
