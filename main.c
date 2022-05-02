@@ -1,10 +1,7 @@
 #include "kfc.h"
 
-int VAR_NAME_SIZE;
-int MAX_ARG_NUM;
 char* ARG_REG[6];
 //static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
-int MAX_SYMBOL_NUM; // 16bit for now
 
 Token* token;
 char* user_input;
@@ -26,15 +23,12 @@ int main(int argc, char **argv){
   }
 
   // initialize constants
-  VAR_NAME_SIZE = 512;
-  MAX_ARG_NUM = 6;
   ARG_REG[0] = "rdi";
   ARG_REG[1] = "rsi";
   ARG_REG[2] = "rdx";
   ARG_REG[3] = "rcx";
   ARG_REG[4] = "r8";
   ARG_REG[5] = "r9";
-  MAX_SYMBOL_NUM = 65535; // 16bit for now
 
 
   // initialize scope

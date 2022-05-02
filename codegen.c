@@ -93,7 +93,6 @@ void gen(Node* node){
   int l_label_num = g_label_num;
   char str[VAR_NAME_SIZE];
   int arg_num = 0;
-  unsigned int hash;
   switch(node->kind){
   case ND_NUM:
     printf("  push %d\n", node->val);

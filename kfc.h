@@ -6,11 +6,11 @@
 #include <string.h>
 #include <math.h>
 
-extern int VAR_NAME_SIZE;
-extern int MAX_ARG_NUM;
+#define VAR_NAME_SIZE (512)
+#define MAX_ARG_NUM (6)
+#define MAX_SYMBOL_NUM (65535) // 16bit for now
 extern char* ARG_REG[6];
 //static const int MAX_SYMBOL_NUM = 65535; // 16bit for now
-extern int MAX_SYMBOL_NUM; // 16bit for now
 
 // tokenizer
 typedef enum{
