@@ -372,7 +372,7 @@ void gen(Node* node){
 void gen_lval(Node* node){
   if(node->kind == ND_VAR){
     if(node->is_global){
-      printf("  mov rax, OFFSET FLAT:%s\n", node->name);
+      printf("  lea rax, %s[rip]\n", node->name);
       printf("  push rax\n");
       return;
     }
@@ -426,8 +426,13 @@ void gen_global_var(Scope* global_scope){
     printf("#global var empty\n");
   }
   while(v!=NULL){
-    printf("%s:\n",v->name);
-    printf("  .zero %d\n",v->size_byte);
+    if(v->type->is_extern){
+      // nop
+    }else{
+      printf("  .global %s\n", v->name);
+      printf("%s:\n",v->name);
+      printf("  .zero %d\n",v->size_byte);
+    }
     v = v->next;
   }
   return;

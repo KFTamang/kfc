@@ -1,4 +1,4 @@
-
+#define NULL (0)
 int assert(int expected, int actual, char* code){
     if(expected == actual){
         return 0;
@@ -14,8 +14,8 @@ int assert(int expected, int actual, char* code){
 // global typedef
 typedef struct hoy{int arr[4];char* str;} struct_test_hoy;
 typedef enum{SUN, MON, TUE, WED, THU, FRI, SAT,} weeks;
-// global array
-int array[10];
+// extern global variable
+int extern_variable;
 // prototype declaration
 int prototype();
 char* prototype1(int hoge);
@@ -188,6 +188,8 @@ int main(){
     assert(7  ,test107(),"int i = 7;while(i<14){break;return i;}return i;");
     assert(1  ,test108(),"return 9%2;");
     assert(6  ,test109(),"int i = 32;return i%13;");
+    extern_variable = 22;
+    assert(22 ,test110(),"return extern_variable;");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

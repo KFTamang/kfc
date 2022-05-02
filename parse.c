@@ -623,6 +623,7 @@ Node* stmt(){
 // ENBF type_dec = ("int" | "char" | struct_dec | enum_dec) "*"*
 Type* type_dec(){
   Type* type;
+  int is_extern = consumeByKind(TK_EXTERN);
   if(consumeByKind(TK_TYPE_INT)){
     type = new_type(INT, NULL);
   }else if(consumeByKind(TK_TYPE_CHAR)){
@@ -651,6 +652,7 @@ Type* type_dec(){
   while(consume("*")){
     type = new_type(PTR, type);
   }
+  type->is_extern = is_extern;
   return type;
 }
 

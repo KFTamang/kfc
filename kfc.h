@@ -36,6 +36,7 @@ typedef enum{
   TK_BREAK,     // break
   TK_DEFAULT,   // default
   TK_CONTINUE,  // continue
+  TK_EXTERN,    // extern
 } TokenKind;
 
 typedef struct Token Token;
@@ -216,6 +217,7 @@ struct Type{
   Type *ptr_to;
   int array_size;
   Memlist* mem;
+  int is_extern;
 };
 
 struct Memlist{

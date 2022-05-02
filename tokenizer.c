@@ -249,6 +249,8 @@ Token* tokenize(char* p){
       // boolian
       if(d = tokenize_if_keyword_matches(p, &cur, i, "true", TK_NUM)){p += d; cur->val = 1; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "false", TK_NUM)){p += d; cur->val = 0; continue;}
+      // extern
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "extern", TK_EXTERN)){p += d; continue;}
       // local var
       cur = new_token(TK_IDENT, cur, p, i);
       p += i;
