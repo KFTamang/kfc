@@ -379,3 +379,9 @@ extern int extern_variable;
 int test110(){
     return extern_variable;
 }
+
+int test111(){
+    int i = 7;
+    --i;
+    return i;
+}

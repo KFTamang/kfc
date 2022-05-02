@@ -1065,6 +1065,7 @@ Memlist* find_member(Type* struct_type, char* name){
 
 // ENBF prefix = primary
 //             | "++" primary
+//             | "--" primary
 Node* prefix(){
   Node* node;
   if(consume("++")){
@@ -1072,6 +1073,11 @@ Node* prefix(){
     // ++prefix is parsed as prefix = prefix + 1
     Node*	add_node = new_node(ND_ADD, node, new_node_num(1));
     node = new_node(ND_ASSIGN, node, add_node);
+  }else if(consume("--")){
+    node = primary();
+    // --prefix is parsed as prefix = prefix - 1
+    Node*	sub_node = new_node(ND_SUB, node, new_node_num(1));
+    node = new_node(ND_ASSIGN, node, sub_node);
   }else{
     node = primary();
   }

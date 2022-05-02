@@ -190,6 +190,7 @@ int main(){
     assert(6  ,test109(),"int i = 32;return i%13;");
     extern_variable = 22;
     assert(22 ,test110(),"return extern_variable;");
+    assert(6  ,test111(),"int i = 7;--i;return i");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;
