@@ -463,7 +463,9 @@ Node* global_dec(){
   return node;
 }
 
-// ENBF stmt = expr ";" | "return" expr ";"
+// ENBF stmt = expr ";"
+//           | "return" expr ";"
+//           | "return" ";"
 //           | "{" stmt* "}"
 //           | "if" "(" expr ")" stmt ("else" stmt)?
 //           | "while" "(" expr ")" stmt
@@ -477,7 +479,12 @@ Node* stmt(){
   Node* node;
   // if return statement
   if(consumeByKind(TK_RETURN)){
-    node = new_node(ND_RETURN, expr(), NULL);
+    node = expr();
+    if(node != NULL){
+      node = new_node(ND_RETURN, node, NULL);
+    }else{
+      node = new_node(ND_RETURN, new_node(ND_EMPTY, NULL, NULL), NULL);
+    }
     expect(";");
   }else if(consume("{")){ // compound statement (block) {}
     enter_new_scope();

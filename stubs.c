@@ -385,3 +385,7 @@ int test111(){
     --i;
     return i;
 }
+
+void test112(){
+    return;
+}
