@@ -830,6 +830,7 @@ Type* new_array_type(Type* base, int size){
   new_array->ty = ARRAY;
   new_array->ptr_to = base;
   new_array->array_size = size;
+  new_array->is_extern = base->is_extern;
   return new_array;
 }
 
@@ -873,8 +874,9 @@ Node* new_var_node(Type* type, Token* tok){
   }
   Var* var = find_var_in_scope(tok, g_current_scope);
   // if variable is already declared
-  if(var != NULL){
-    error_at(token->str,"Local variable %s is already defined\n", var->name);
+  if((var != NULL) && (var->type->is_extern == false)){
+    fprintf(stderr, "%d, %d\n", var->type->ty, var->type->is_extern);
+    error_at(token->str,"Variable %s is already defined\n", var->name);
     exit(1);
   }
   // if array
