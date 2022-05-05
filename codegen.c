@@ -211,13 +211,13 @@ void gen(Node* node){
     printf("  jnz .Lcall%d\n", l_label_num);
     printf("  mov rax, 0\n");
     printf("  call %s\n", node->name);
-    printf("  jmp .Lend%d\n", l_label_num);
+    printf("  jmp .Lendcall%d\n", l_label_num);
     printf(".Lcall%d:\n", l_label_num);
     printf("  sub rsp, 8\n");
     printf("  mov rax, 0\n");
     printf("  call %s\n", node->name);
     printf("  add rsp, 8\n");
-    printf(".Lend%d:\n", l_label_num);
+    printf(".Lendcall%d:\n", l_label_num);
     printf("  push rax\n");
     return;
   case ND_FUNC_DEF:
@@ -442,9 +442,10 @@ void switch_case(Node* node){
   printf("  pop rax\n");
   printf("  mov rax, [rax]\n");
   int l_label_num = g_label_num;
+  int l_label_switchend = g_label_num;
   // local variables for default case
   node_list* default_node_list = NULL;
-  enterNewLoop(LT_SWITCH, g_label_num);
+  enterNewLoop(LT_SWITCH, l_label_switchend);
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
     if(sw->is_default){
       if(default_node_list){
@@ -456,9 +457,10 @@ void switch_case(Node* node){
     printf("  cmp rax, %d\n", sw->case_num);
     printf("  je .Lswitchcase%d\n", l_label_num);
     ++l_label_num;
+    ++g_label_num;
   }
   printf("  jmp .Lswitchcase%d\n", l_label_num);
-  l_label_num = g_label_num;
+  l_label_num = l_label_switchend;
   for(Switch_list* sw=node->sw_l; sw; sw=sw->next){
     if(sw->is_default){
       break;
@@ -466,12 +468,12 @@ void switch_case(Node* node){
     printf("  .Lswitchcase%d:\n", l_label_num);
     gen_node_list(sw->nl);
     ++l_label_num;
+    ++g_label_num;
   }
   printf("  .Lswitchcase%d:\n", l_label_num);
   if(default_node_list){
     gen_node_list(default_node_list);
   }
-  printf("  .Lendswitch%d:\n", g_label_num);
+  printf("  .Lendswitch%d:\n", l_label_switchend);
   exitLoop();
-  g_label_num = l_label_num + 1;
 }
