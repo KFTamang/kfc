@@ -419,9 +419,7 @@ void gen_global_var(Scope* global_scope){
     printf("#global var empty\n");
   }
   while(v!=NULL){
-    if(v->type->is_extern){
-      // nop
-    }else{
+    if((v->kind == VK_VAR) && (!v->type->is_extern)){
       printf("  .global %s\n", v->name);
       printf("%s:\n",v->name);
       printf("  .zero %d\n",v->size_byte);
