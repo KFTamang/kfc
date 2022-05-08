@@ -4,7 +4,7 @@ MAIN=main.c
 #SYMTAB_TEST=symtagen_test.c
 SYMTAB_TEST_O=symtabgen_test.c
 MAIN_TEST=main_test.c
-OBJS=$(SRCS:%.c=%.o)
+OBJS=$(SRCS:%.c=%.o) $(MAIN:%.c=%.o)
 
 #.SUFFIX: .o .c
 
@@ -14,7 +14,7 @@ parse.o:parse.h
 codegen.o:codegen.h
 
 kfc: $(OBJS) main.o
-	$(CC) -o kfc $(MAIN) $(OBJS) $(CFLAGS)
+	$(CC) -o kfc $(OBJS) $(CFLAGS)
 
 $(OBJS): kfc.h
 #main.o: kfc.h

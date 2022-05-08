@@ -18,12 +18,6 @@ void pointer_operation(Node* node){
   if(node->lhs->type == NULL && node->rhs->type == NULL){
     return;
   }
-  if(node->rhs->type != NULL &&
-    (node->rhs->type->ty == PTR || node->rhs->type->ty == ARRAY) &&
-     node->lhs->type != NULL &&
-    (node->lhs->type->ty == PTR || node->lhs->type->ty == ARRAY) ){
-    error("ERROR:Invalid add/sub operation with two pointer operands\n");
-  }
   if(node->lhs->type != NULL){
     switch(node->lhs->type->ty){
       case PTR:

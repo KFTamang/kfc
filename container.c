@@ -22,21 +22,21 @@ void error_at(char *loc, char *fmt, ...) {
   // locが含まれている行の開始地点と終了地点を取得
   char *line = loc;
   while (user_input < line && line[-1] != '\n')
-    line--;
+    --line;
 
   char *end = loc;
   while (*end != '\n')
-    end++;
+    ++end;
 
   // 見つかった行が全体の何行目なのかを調べる
   int line_num = 1;
-  for (char *p = user_input; p < line; p++)
+  for (char *p = user_input; p < line; ++p)
     if (*p == '\n')
-      line_num++;
+      ++line_num;
 
   // 見つかった行を、ファイル名と行番号と一緒に表示
   int indent = fprintf(stderr, "%s:%d: ", g_filename, line_num);
-  fprintf(stderr, "%.*s\n", (int)(end - line), line);
+  fprintf(stderr, "%.*s\n", (end - line), line);
 
   // エラー箇所を"^"で指し示して、エラーメッセージを表示
   int pos = loc - line + indent;
@@ -65,7 +65,7 @@ char* read_file(char* filename){
         printf("File move to end error\n");
         exit(EXIT_FAILURE);
     }
-    long file_size = ftell(fp);
+    int file_size = ftell(fp);
 
     // read file contents to buffer
     if(fseek(fp, 0, SEEK_SET)!=0){

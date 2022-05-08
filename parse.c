@@ -131,10 +131,6 @@ Node* new_node(NodeKind kind, Node* lhs, Node* rhs){
 //        error_at(token->str, "Type for right hand side is not defined for nodes\n");
         break;
       }
-      if((lhs->type->ty == PTR || lhs->type->ty == ARRAY) && (rhs->type->ty == PTR || rhs->type->ty == ARRAY) ){
-        error_at(token->str, "Operation between two pointers/arrays is not allowed\n");
-        break;
-      }
       if(lhs->type->ty == PTR || lhs->type->ty == ARRAY){
         node->type = lhs->type;
         break;
