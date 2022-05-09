@@ -129,21 +129,21 @@ void gen(Node* node){
   case ND_IF: // if(A) B;
     ++g_label_num;
     gen(node->cond); // code for conditional expression i.e. A
-    printf("  pop rax\n");
-    printf("  cmp rax, 0\n");
+    printf("  pop rax #ND_IF\n");
+    printf("  cmp rax, 0 #ND_IF\n");
     if(!node->els){ // without "else"
-      printf("  je .Lendif%d\n", l_label_num);
+      printf("  je .Lendif%d #ND_IF\n", l_label_num);
       gen(node->then); // code for resultant statement i.e. B
-      printf(".Lendif%d:\n", l_label_num);
+      printf(".Lendif%d: #ND_IF\n", l_label_num);
     }else{ // with "else"
-      printf("  je .Lelse%d\n", l_label_num);
+      printf("  je .Lelse%d #ND_IF\n", l_label_num);
       gen(node->then); // code for "then" statement i.e. B
-      printf("  jmp .Lendif%d\n", l_label_num); // skip "else" statement
-      printf(".Lelse%d:\n", l_label_num); 
+      printf("  jmp .Lendif%d #ND_IF\n", l_label_num); // skip "else" statement
+      printf(".Lelse%d: #ND_IF\n", l_label_num); 
       gen(node->els); // code for "else" statement i.e. B
-      printf(".Lendif%d:\n", l_label_num);
+      printf(".Lendif%d: #ND_IF\n", l_label_num);
     }
-    printf("  push rax\n");
+    printf("  push rax #ND_IF\n");
     return;
   case ND_WHILE: // while(A) B
     ++g_label_num;
@@ -337,9 +337,9 @@ void gen(Node* node){
     printf("  movzb rax, al\n");
     break;
   case ND_NEQ:
-    printf("  cmp rax, rdi\n");
-    printf("  setne al\n");
-    printf("  movzb rax, al\n");
+    printf("  cmp rax, rdi #ND_NEQ\n");
+    printf("  setne al #ND_NEQ\n");
+    printf("  movzb rax, al #ND_NEQ\n");
     break;
   case ND_LWT:
     printf("  cmp rax, rdi\n");
