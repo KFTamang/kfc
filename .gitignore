@@ -14,3 +14,4 @@ example/tictoctoe
 a.out
 .DS_Store
 sh_*
+*.s
