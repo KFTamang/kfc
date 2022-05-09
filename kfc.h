@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #define VAR_NAME_SIZE (512)
 #define MAX_ARG_NUM (6)
