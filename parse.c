@@ -901,15 +901,29 @@ Node* expr(){
   return assign();
 }
 
-// ENBF assign = logical ( ( "=" | "+=" ) assign)?
+// ENBF assign = conditional ( ( "=" | "+=" ) assign)?
 Node* assign(){
-  Node* node = logical();
+  Node* node = conditional();
   if (consume("=")){
     node = new_node(ND_ASSIGN, node, assign());
   }else if(consume("+=")){
     Node* logi = node;
     node = new_node(ND_ADD, logi, assign());
     node = new_node(ND_ASSIGN, logi, node);
+  }
+  return node;
+}
+
+// ENBF conditional = logical ("?" expr ":" conditional)
+Node* conditional(){
+  Node* node = logical();
+  if (consume("?")){
+    Node* first = node;
+    node = new_node(ND_COND, NULL, NULL);
+    node->cond = first;
+    node->lhs = expr();
+    expect(":");
+    node->rhs = conditional();
   }
   return node;
 }

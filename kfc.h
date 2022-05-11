@@ -106,6 +106,7 @@ typedef enum{
   ND_DEFAULT, // default in switch-case
   ND_CONTINUE, // continue
   ND_MOD, // modulo operation
+  ND_COND, // conditional operator (a?b:c)
 } NodeKind;
 
 typedef struct Node Node;

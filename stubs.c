@@ -389,3 +389,7 @@ int test111(){
 void test112(){
     return;
 }
+
+int test113(){
+    return 1 ? 22 : 33;
+}
