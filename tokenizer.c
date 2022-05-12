@@ -200,6 +200,8 @@ Token* tokenize(char* p){
           case 'r' : cur->val = '\r';break;
           case 't' : cur->val = '\t';break;
           case '0' : cur->val = '\0';break;
+          case 'f' : cur->val = '\f';break;
+          case 'v' : cur->val = '\v';break;
           default:error_at(cur->str, "Character literal contains unsupported escape sequence '\\%c'\n", *p);
         }
       }else{

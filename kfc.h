@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -285,3 +284,6 @@ int round_up_to_8(int in);
 // file reader
 char* read_file(char* filename);
 char* get_name_from_token(Token* tok);
+
+int isspace(int p);
+int isdigit(int p);

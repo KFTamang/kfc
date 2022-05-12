@@ -88,3 +88,19 @@ char* get_name_from_token(Token* tok){
   node_name[tok->len] = '\0';
   return node_name;
 }
+
+int isspace(int p){
+  if((p == ' ') || (p == '\t') || (p == '\n') || (p == '\v') || (p == '\f') || (p == '\r')){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+int isdigit(int p){
+  if((p >= '0') && (p <= '9')){
+    return 1;
+  }else{
+    return 0;
+  }
+}
