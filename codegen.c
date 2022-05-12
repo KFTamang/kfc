@@ -307,18 +307,12 @@ void gen(Node* node){
     gen(node->cond); // code for conditional expression
     printf("  pop rax #ND_COND\n");
     printf("  cmp rax, 0 #ND_COND\n");
-    printf("  jne .Lcond%d #ND_COND\n", l_label_num);
-    gen(node->then); // code for resultant statement i.e. B
-    printf(".Lendif%d: #ND_COND\n", l_label_num);
-    }else{ // with "else"
-      printf("  je .Lelse%d #ND_COND\n", l_label_num);
-      gen(node->then); // code for "then" statement i.e. B
-      printf("  jmp .Lendif%d #ND_COND\n", l_label_num); // skip "else" statement
-      printf(".Lelse%d: #ND_COND\n", l_label_num); 
-      gen(node->els); // code for "else" statement i.e. B
-      printf(".Lendif%d: #ND_COND\n", l_label_num);
-    }
-    printf("  push rax #ND_COND\n");
+    printf("  je .Lcond%d #ND_COND\n", l_label_num);
+    gen(node->lhs);
+    printf("  jmp .Lendcond%d #ND_COND\n", l_label_num);
+    printf(".Lcond%d: #ND_COND\n", l_label_num);
+    gen(node->rhs);
+    printf(".Lendcond%d: #ND_COND\n", l_label_num);
     return;
   }
     

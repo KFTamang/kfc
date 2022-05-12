@@ -64,6 +64,7 @@ Node* stmt();
 Node* var_dec();
 Node* expr();
 Node* assign();
+Node* conditional();
 Node* logical();
 Node* equality();
 Node* relational();

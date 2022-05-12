@@ -193,6 +193,8 @@ int main(){
     assert(6  ,test111(),"int i = 7;--i;return i");
     test112();
     assert(22 ,test113(),"return 1 ? 22 : 33;");
+    assert(44 ,test114(),"return 0 ? 33 : 44;");
+    assert(99 ,test115(),"int v = 99;return (4+2*-2) ? v-1 : v");
     // // typedef
     // typedef struct humi HUMI;
     // typedef struct test{int hoge;}TEST;

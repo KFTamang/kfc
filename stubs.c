@@ -391,5 +391,14 @@ void test112(){
 }
 
 int test113(){
-    return 1 ? 22 : 33;
+    return (1 ? 22 : 33);
+}
+
+int test114(){
+    return 0 ? 33 : 44;
+}
+
+int test115(){
+    int v = 99;
+    return (4+2*-2) ? v-1 : v;
 }
