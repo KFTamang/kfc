@@ -402,3 +402,8 @@ int test115(){
     int v = 99;
     return (4+2*-2) ? v-1 : v;
 }
+
+short test116(){return 7;}
+long test117(){return 101;}
+signed int test118(){return -128;}
+unsigned int test119(){return 444;}

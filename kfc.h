@@ -23,6 +23,10 @@ typedef enum{
   TK_TYPE_INT,  // type int
   TK_TYPE_CHAR, // type char
   TK_TYPE_VOID, // type void
+  TK_TYPE_LONG, // type long
+  TK_TYPE_SHORT, // type short
+  TK_TYPE_SIGNED, // type signed
+  TK_TYPE_UNSIGNED, // type unsigned
   TK_SIZEOF,    // sizeof operator
   TK_STRING,    // string literal
   TK_STRUCT,    // structure declaration

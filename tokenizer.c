@@ -234,6 +234,10 @@ Token* tokenize(char* p){
       if(d = tokenize_if_keyword_matches(p, &cur, i, "int", TK_TYPE_INT)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "char", TK_TYPE_CHAR)){p += d; continue;}
       if(d = tokenize_if_keyword_matches(p, &cur, i, "void", TK_TYPE_VOID)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "long", TK_TYPE_LONG)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "short", TK_TYPE_SHORT)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "signed", TK_TYPE_SIGNED)){p += d; continue;}
+      if(d = tokenize_if_keyword_matches(p, &cur, i, "unsigned", TK_TYPE_UNSIGNED)){p += d; continue;}
       // if sizeof
       if(d = tokenize_if_keyword_matches(p, &cur, i, "sizeof", TK_SIZEOF)){p += d; continue;}
       // struct declaration
