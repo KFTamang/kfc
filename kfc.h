@@ -1,4 +1,3 @@
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -287,3 +286,6 @@ char* get_name_from_token(Token* tok);
 
 int isspace(int p);
 int isdigit(int p);
+
+typedef void* va_list;
+#define va_start(ap, v) ((ap)=(va_list)&(v)+sizeof(v))
